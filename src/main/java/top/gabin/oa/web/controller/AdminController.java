@@ -5,14 +5,14 @@
 package top.gabin.oa.web.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import top.gabin.oa.web.dto.PageDTO;
+import top.gabin.oa.web.dto.AdminDTO;
 import top.gabin.oa.web.entity.AdminImpl;
-import top.gabin.oa.web.service.criteria.CriteriaCondition;
+import top.gabin.oa.web.service.AdminService;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
-import top.gabin.oa.web.service.criteria.CriteriaQueryUtils;
 import top.gabin.oa.web.utils.RenderUtils;
 
 import javax.annotation.Resource;
@@ -27,6 +27,8 @@ import java.util.Map;
 public class AdminController {
     @Resource
     private CriteriaQueryService queryService;
+    @Resource(name = "adminService")
+    private AdminService adminService;
 
     @RequestMapping(value = "list", method = RequestMethod.GET)
     public String list() {
@@ -38,10 +40,27 @@ public class AdminController {
         return "admin/edit";
     }
 
+    @RequestMapping(value = "edit", method = RequestMethod.GET)
+    public String edit(Long id, Model model) {
+        model.addAttribute("entity", adminService.findById(id));
+        return "admin/edit";
+    }
+
     @RequestMapping(value = "grid", method = RequestMethod.GET)
     public @ResponseBody Map<String, Object> grid(HttpServletRequest request) {
-        CriteriaCondition criteriaCondition = CriteriaQueryUtils.parseCondition(request);
-        PageDTO<AdminImpl> adminPageDTO = queryService.queryPage(AdminImpl.class, criteriaCondition);
-        return RenderUtils.filterPageDataResult(adminPageDTO, "id,name");
+        return queryService.queryPage(AdminImpl.class, request, "id,name");
     }
+
+    @RequestMapping(value = "save", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Object> save(AdminDTO adminDTO) {
+        adminService.merge(adminDTO);
+        return RenderUtils.SUCCESS_RESULT;
+    }
+
+    @RequestMapping(value = "delete", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Object> delete(String ids) {
+
+        return RenderUtils.SUCCESS_RESULT;
+    }
+
 }

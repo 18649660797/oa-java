@@ -2,7 +2,9 @@ package top.gabin.oa.web.service.criteria;
 
 import top.gabin.oa.web.dto.PageDTO;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 /**
  * criteria查询接口
@@ -24,6 +26,8 @@ public interface CriteriaQueryService {
      * @return PageDTO    分页对象
      */
     <T> PageDTO<T> queryPage(Class<T> entityClass, CriteriaCondition condition);
+
+    <T> Map<String, Object> queryPage(Class<T> entityClass, HttpServletRequest request, String pros);
 
     /**
      * 查询集合列表

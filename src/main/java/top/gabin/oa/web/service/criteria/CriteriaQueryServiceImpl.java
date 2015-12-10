@@ -8,11 +8,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
 import top.gabin.oa.web.dto.PageDTO;
+import top.gabin.oa.web.entity.AdminImpl;
+import top.gabin.oa.web.utils.RenderUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.util.*;
 
@@ -63,6 +66,13 @@ public class CriteriaQueryServiceImpl implements CriteriaQueryService {
         Long count = count(entityClass, condition);
         pageDTO.setTotalSize(count);
         return pageDTO;
+    }
+
+    @Override
+    public <T> Map<String, Object> queryPage(Class<T> entityClass, HttpServletRequest request, String pros) {
+        CriteriaCondition criteriaCondition = CriteriaQueryUtils.parseCondition(request);
+        PageDTO<AdminImpl> adminPageDTO = queryPage(AdminImpl.class, criteriaCondition);
+        return RenderUtils.filterPageDataResult(adminPageDTO, pros);
     }
 
     @Override

@@ -5,6 +5,7 @@
 package top.gabin.oa.web.entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,7 +26,7 @@ public class AdminImpl implements Admin {
     @JoinTable (name =  "edy_admin_permission" ,
             joinColumns = @JoinColumn(name = "admin_id", referencedColumnName = "id"),
             inverseJoinColumns =  @JoinColumn (name =  "permission_id" , referencedColumnName = "id"))
-    private List<Permission> permissionList;
+    private List<Permission> permissionList = new ArrayList<Permission>();
 
     @Override
     public Long getId() {

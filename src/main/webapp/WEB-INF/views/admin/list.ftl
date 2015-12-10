@@ -29,14 +29,14 @@
                 Store = Data.Store,
                 columns = [
                     {title: 'id', dataIndex: 'id', width: 60},
-                    {title: '名称', dataIndex: 'username', width: 60},
+                    {title: '名称', dataIndex: 'name', width: 60},
                     {title: '操作', dataIndex: 'id', width: 100, renderer: function(val, row) {
-                        return edy.rendererHelp.createLink("/index.php/home/admin/edit?id=" + val, "编辑");
+                        return edy.rendererHelp.createLink("/admin/edit?id=" + val, "编辑");
                     }}
                 ];
             var store = new Store({
                 url : '/admin/grid',
-                params: {gt_id: 2},
+                params: {gt_id: 0},
                 autoLoad:true, //自动加载数据
                 pageSize:30	// 配置分页数目
             }),
@@ -72,7 +72,7 @@
                                 if (!ids) {
                                     return edy.alert("至少选择一个记录");
                                 }
-                                $.post("/index.php/home/admin/delete", {ids: ids}, function(data) {
+                                $.post("/admin/delete", {ids: ids}, function(data) {
                                     if (edy.ajaxHelp.handleAjax(data)) {
                                         edy.alert("删除成功！");
                                         reload();

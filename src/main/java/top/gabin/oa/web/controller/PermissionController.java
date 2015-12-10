@@ -34,7 +34,7 @@ public class PermissionController {
     public @ResponseBody List<Map> grid(HttpServletRequest request) {
         CriteriaCondition criteriaCondition = CriteriaQueryUtils.parseCondition(request);
         PageDTO<PermissionImpl> adminPageDTO = queryService.queryPage(PermissionImpl.class, criteriaCondition);
-        return RenderUtils.filterPageData(adminPageDTO.getContent(), "id,name value,label text");
+        return RenderUtils.filterPageData(adminPageDTO.getContent(), "id value,name,label text");
     }
 
 }

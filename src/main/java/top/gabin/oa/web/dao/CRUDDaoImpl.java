@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Service("crudDao")
 public class CRUDDaoImpl implements CRUDDao {
-    @PersistenceContext(unitName = "blPU")
+    @PersistenceContext(name = "entityManagerFactory")
     protected EntityManager em;
 
     @Override

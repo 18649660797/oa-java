@@ -13,13 +13,13 @@
 <div class="demo-content">
     <div class="row">
         <div class="span24">
-            <form id="J_Form" class="form-horizontal" method="post" action="/index.php/home/admin/save">
+            <form id="J_Form" class="form-horizontal" method="post" action="/admin/save">
                 <input type="hidden" name="id" value="${(entity.id)!}"/>
                 <h3>员工信息：</h3>
                 <div class="control-group">
                     <label class="control-label"><s>*</s>账号：</label>
                     <div class="controls">
-                        <input type="text" class="control-text" data-rules="{required:true}" name="username" value="${(entity.username)!}" />
+                        <input type="text" class="control-text" data-rules="{required:true}" name="name" value="${(entity.username)!}" />
                     </div>
                 </div>
                 <div class="control-group">
@@ -52,7 +52,7 @@
             callback : function(data){
                 if (edy.ajaxHelp.handleAjax((data))) {
                     BUI.Message.Alert(data.message || "操作成功");
-                    location.href = "/index.php/home/admin/list";
+                    location.href = "/admin/list";
                 }
             }
         }).render();
