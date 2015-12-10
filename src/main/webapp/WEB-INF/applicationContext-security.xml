@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.springframework.org/schema/context  
+http://www.springframework.org/schema/context/spring-context-3.1.xsd
+http://www.springframework.org/schema/security  
+http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+    <security:http pattern="/static/**" security="none" />
+    <security:http auto-config="true" use-expressions="true">
+        <security:intercept-url pattern="/**" access="hasRole('ROLE_SUPPER')" />
+        <security:remember-me key="gabin@edy" token-validity-seconds="30" user-service-ref="blUserDetailsService"/>
+    </security:http>
+    <!--  The BLC Authentication manager.   -->
+    <security:authentication-manager alias="blAuthenticationManager">
+        <security:authentication-provider user-service-ref="blUserDetailsService">
+            <security:password-encoder ref="blPasswordEncoder" />
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+    <bean id="blPasswordEncoder" class="org.springframework.security.authentication.encoding.Md5PasswordEncoder"></bean>
+
+    <!--  User details service that authenticates using customer data in the database. -->
+    <security:jdbc-user-service data-source-ref="dataSource"
+                           id="blUserDetailsService"
+                           users-by-username-query="SELECT username,password,TRUE FROM edy_auth_user WHERE username=?"
+                           authorities-by-username-query="SELECT a.username,r.title from edy_auth_user a
+                                          JOIN edy_auth_group_access b ON a.id = b.uid
+                                          JOIN edy_auth_group c ON b.group_id = c.id
+                                          JOIN edy_auth_rule d on d.
+                                          WHERE username=?" />
+</beans>
