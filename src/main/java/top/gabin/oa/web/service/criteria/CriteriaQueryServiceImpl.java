@@ -9,7 +9,6 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
 import top.gabin.oa.web.service.criteria.dto.PageDTO;
 
-import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -23,7 +22,7 @@ import java.util.*;
  */
 @Service("criteriaQueryService")
 public class CriteriaQueryServiceImpl implements CriteriaQueryService {
-    @PersistenceContext//(unitName = "blPU")
+    @PersistenceContext(name = "entityManagerFactory")
     private EntityManager em;
     private static final Set<String> PARSE_PATTERNS = new HashSet<String>();
     static {
