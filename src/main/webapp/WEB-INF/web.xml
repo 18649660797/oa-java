@@ -4,6 +4,19 @@
 	http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
 	<display-name>Spring MVC Application</display-name>
+
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 	<listener>
 		<listener-class>top.gabin.oa.web.listener.ApplicationFlywayListener</listener-class>
 	</listener>
@@ -21,6 +34,7 @@
 	<listener>
 		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
 	</listener>
+
     <servlet>
 		<servlet-name>mvc-dispatcher</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -40,6 +54,23 @@
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>sitemesh-freemarker</servlet-name>
+		<servlet-class>com.opensymphony.module.sitemesh.freemarker.FreemarkerDecoratorServlet</servlet-class>
+		<init-param>
+			<param-name>TemplatePath</param-name>
+			<param-value>/</param-value>
+		</init-param>
+		<init-param>
+			<param-name>default_encoding</param-name>
+			<param-value>utf-8</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>sitemesh-freemarker</servlet-name>
+		<url-pattern>*.ftl</url-pattern>
+	</servlet-mapping>
 	<env-entry>
 		<env-entry-name>appName</env-entry-name>
 		<env-entry-type>java.lang.String</env-entry-type>
