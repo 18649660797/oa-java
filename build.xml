@@ -8,7 +8,7 @@
     <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
     
     <property name="project.root" location="${basedir}"/>
-    <property name="project.name" value="roma" />
+    <property name="project.name" value="oa" />
     
 	<!-- See the following URL for a description of this property file strategy -->
 	<!-- The only difference is we prepend a . for the home directory property files -->

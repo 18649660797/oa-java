@@ -9,23 +9,12 @@
 
     <properties>
         <spring.version>4.1.1.RELEASE</spring.version>
-        <httpsPort>18883</httpsPort>
+        <hibernate.version>4.3.11.Final</hibernate.version>
+        <httpsPort>8883</httpsPort>
         <httpPort>10000</httpPort>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
@@ -39,9 +28,28 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- spring start -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
             <version>${spring.version}</version>
         </dependency>
 
@@ -51,12 +59,41 @@
             <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- spring end -->
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>1.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.26</version>
+            <type>jar</type>
+            <!--<scope>compile</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernate.version}</version>
         </dependency>
     </dependencies>
 
@@ -91,12 +128,6 @@
                             <port>${httpPort}</port>
                             <maxIdleTime>60000</maxIdleTime>
                         </connector>
-                        <!--<connector implementation="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">
-                            <port>${httpsPort}</port>
-                            <keystore>${webappDirectory}/WEB-INF/blc-example.keystore</keystore>
-                            <keyPassword>broadleaf</keyPassword>
-                            <password>broadleaf</password>
-                        </connector>-->
                     </connectors>
                     <webAppConfig>
                         <contextPath>/</contextPath>
