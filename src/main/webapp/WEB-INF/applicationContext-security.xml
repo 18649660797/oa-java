@@ -9,9 +9,9 @@ http://www.springframework.org/schema/context
 http://www.springframework.org/schema/context/spring-context-3.1.xsd
 http://www.springframework.org/schema/security  
 http://www.springframework.org/schema/security/spring-security-3.1.xsd">
-    <security:http pattern="/static/**" security="none" />
+    <!--<security:http pattern="/static/**" security="none" />-->
     <security:http auto-config="true" use-expressions="true">
-        <security:intercept-url pattern="/**" access="hasRole('ROLE_SUPPER')" />
+        <security:intercept-url pattern="/*" access="hasRole('super')" />
         <security:remember-me key="gabin@edy" token-validity-seconds="30" user-service-ref="blUserDetailsService"/>
     </security:http>
     <!--  The BLC Authentication manager.   -->
@@ -26,10 +26,9 @@ http://www.springframework.org/schema/security/spring-security-3.1.xsd">
     <!--  User details service that authenticates using customer data in the database. -->
     <security:jdbc-user-service data-source-ref="dataSource"
                            id="blUserDetailsService"
-                           users-by-username-query="SELECT username,password,TRUE FROM edy_auth_user WHERE username=?"
-                           authorities-by-username-query="SELECT a.username,r.title from edy_auth_user a
-                                          JOIN edy_auth_group_access b ON a.id = b.uid
-                                          JOIN edy_auth_group c ON b.group_id = c.id
-                                          JOIN edy_auth_rule d on d.
-                                          WHERE username=?" />
+                           users-by-username-query="SELECT name,password,TRUE FROM edy_admin WHERE name=?"
+                           authorities-by-username-query="SELECT a.name,c.name from edy_admin a
+                                          JOIN edy_admin_permission b ON a.id = b.admin_id
+                                          JOIN edy_permission c ON b.permission_id = c.id
+                                          WHERE a.name=?" />
 </beans>

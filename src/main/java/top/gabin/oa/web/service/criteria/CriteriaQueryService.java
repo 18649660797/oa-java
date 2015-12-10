@@ -1,6 +1,6 @@
 package top.gabin.oa.web.service.criteria;
 
-import top.gabin.oa.web.service.criteria.dto.PageDTO;
+import top.gabin.oa.web.dto.PageDTO;
 
 import java.util.List;
 

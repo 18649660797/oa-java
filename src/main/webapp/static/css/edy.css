@@ -1,0 +1,18 @@
+.suggest {
+    display: inline-block;
+}
+
+.suggest .bui-combox {
+    border: none;
+}
+
+.login-box {
+    width: 500px;
+    margin: 0 auto;
+    margin-top: 10%;
+    border: solid 20px skyblue;
+    padding: 15px;
+    border-radius: 25px;
+    box-shadow: 10px 10px 5px #888888;
+
+}

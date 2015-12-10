@@ -7,7 +7,7 @@ package top.gabin.oa.web.service.criteria;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
-import top.gabin.oa.web.service.criteria.dto.PageDTO;
+import top.gabin.oa.web.dto.PageDTO;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
