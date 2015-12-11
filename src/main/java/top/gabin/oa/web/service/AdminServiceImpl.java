@@ -6,6 +6,7 @@ package top.gabin.oa.web.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import top.gabin.oa.web.dao.AdminDao;
 import top.gabin.oa.web.dao.CRUDDao;
 import top.gabin.oa.web.dto.AdminDTO;
 import top.gabin.oa.web.entity.Admin;
@@ -28,6 +29,8 @@ import java.util.Map;
 public class AdminServiceImpl implements AdminService {
     @Resource(name = "crudDao")
     private CRUDDao crudDao;
+    @Resource(name = "adminDao")
+    private AdminDao adminDao;
     @Resource
     private CriteriaQueryService queryService;
     @Override
@@ -36,11 +39,6 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Transactional("transactionManager")
-    @Override
-    public Admin saveOrUpdate(Admin admin) {
-        return crudDao.saveOrUpdate(admin);
-    }
-
     @Override
     public Admin merge(AdminDTO adminDTO) {
         if (adminDTO != null) {
@@ -61,8 +59,15 @@ public class AdminServiceImpl implements AdminService {
             List<PermissionImpl> permissionList = queryService.query(PermissionImpl.class, criteriaCondition);
             admin.getPermissionList().clear();
             admin.getPermissionList().addAll(permissionList);
-            saveOrUpdate(admin);
+            adminDao.saveOrUpdate(admin);
         }
         return null;
     }
+
+    @Transactional("transactionManager")
+    @Override
+    public void batchDelete(String ids) {
+        adminDao.batchDelete(ids);
+    }
+
 }

@@ -9,14 +9,14 @@ import java.util.List;
  * Time: 下午4:24
  * 为子类提供基础的增删改查方法
  */
-public interface CommonBaseDao<SUB, T> {
-    SUB findById(Long id);
+public interface CommonBaseDao<Supper, Child> {
+    Supper findById(Long id);
 
-    SUB saveOrUpdate(SUB t);
+    Supper saveOrUpdate(Supper t);
 
-    void delete(SUB t);
+    void delete(Supper t);
 
     void deleteById(Long id);
 
-    List<SUB> findAll();
+    List<Supper> findAll();
 }

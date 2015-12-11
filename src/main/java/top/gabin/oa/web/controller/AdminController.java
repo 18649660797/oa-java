@@ -59,7 +59,7 @@ public class AdminController {
 
     @RequestMapping(value = "delete", method = RequestMethod.POST)
     public @ResponseBody Map<String, Object> delete(String ids) {
-
+        adminService.batchDelete(ids);
         return RenderUtils.SUCCESS_RESULT;
     }
 

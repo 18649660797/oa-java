@@ -11,7 +11,7 @@
         <ul class="panel-content">
             <li>
                 <label>名称：</label>
-                <input type="text" class="control-text" name="like_username" value="" />
+                <input type="text" class="control-text" name="like_name" value="" />
             </li>
             <li>
                 <button type="submit" class="button button-primary">查询>></button>
