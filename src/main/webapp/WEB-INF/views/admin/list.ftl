@@ -28,7 +28,7 @@
             var Grid = Grid,
                 Store = Data.Store,
                 columns = [
-                    {title: 'id', dataIndex: 'id', width: 60},
+                    {title: 'ID', dataIndex: 'id', width: 80},
                     {title: '名称', dataIndex: 'name', width: 60},
                     {title: '操作', dataIndex: 'id', width: 100, renderer: function(val, row) {
                         return edy.rendererHelp.createLink("/admin/edit?id=" + val, "编辑");

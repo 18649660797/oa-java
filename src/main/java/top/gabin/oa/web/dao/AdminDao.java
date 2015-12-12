@@ -9,5 +9,5 @@ import top.gabin.oa.web.entity.AdminImpl;
  * @author linjiabin  on  15/12/11
  */
 public interface AdminDao extends CommonBaseDao<Admin, AdminImpl> {
-    void batchDelete(String ids);
+
 }

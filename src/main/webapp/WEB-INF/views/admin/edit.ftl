@@ -56,7 +56,7 @@
                 }
             }
         }).render();
-        $.get("/permission/grid", function(data) {
+        $.get("/permission/grid?gt_id=0", function(data) {
             var items = data;
             var select = new BUI.Select.Select({
                 render:'#s1',

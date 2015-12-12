@@ -4,6 +4,7 @@
  */
 package top.gabin.oa.web.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.gabin.oa.web.dao.AdminDao;
@@ -67,7 +68,19 @@ public class AdminServiceImpl implements AdminService {
     @Transactional("transactionManager")
     @Override
     public void batchDelete(String ids) {
-        adminDao.batchDelete(ids);
+        if (StringUtils.isNotBlank(ids)) {
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("in_id", ids);
+            CriteriaCondition condition = new CriteriaCondition();
+            condition.setConditions(params);
+            List<AdminImpl> adminList = queryService.query(AdminImpl.class, condition);
+            if (adminList == null) {
+                return;
+            }
+            for (Admin admin : adminList) {
+                adminDao.delete(admin);
+            }
+        }
     }
 
 }
