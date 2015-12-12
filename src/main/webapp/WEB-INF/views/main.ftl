@@ -31,7 +31,7 @@
                         height : 25
                     },
                     xclass : 'controller',
-                    content : "<div style='float: right;margin-right:80px;'>登录会员:<?php echo $_SESSION['S_UNAME'] ?><a style='margin-left: 60px;' href='/home/login/logout'>退出登录</a></div>"
+                    content : "<div style='float: right;margin-right:80px;'>登录会员:${Static["top.gabin.oa.web.utils.AuthUtils"].getCurrentLoginUserName()}<a style='margin-left: 60px;' href='/j_spring_security_logout'>退出登录</a></div>"
                 },{
                     xclass : 'controller',
                     layout : {
