@@ -28,8 +28,6 @@ import java.util.Map;
  */
 @Service("adminService")
 public class AdminServiceImpl implements AdminService {
-    @Resource(name = "crudDao")
-    private CRUDDao crudDao;
     @Resource(name = "adminDao")
     private AdminDao adminDao;
     @Resource
@@ -37,6 +35,14 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Admin findById(Long id) {
         return adminDao.findById(id);
+    }
+
+    @Override
+    public Admin findByName(String name) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("eq_name", name);
+        CriteriaCondition criteriaCondition = new CriteriaCondition(params);
+        return queryService.singleQuery(AdminImpl.class, criteriaCondition);
     }
 
     @Transactional("transactionManager")

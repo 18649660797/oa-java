@@ -117,9 +117,10 @@ public class CriteriaQueryServiceImpl implements CriteriaQueryService {
         return typedQuery;
     }
 
-
-
-
-
+    @Override
+    public <T> T singleQuery(Class<T> entityClass, CriteriaCondition condition) {
+        List<T> query = query(entityClass, condition);
+        return query == null || query.isEmpty() ? null : query.get(0);
+    }
 
 }

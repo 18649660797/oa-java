@@ -59,9 +59,7 @@
                         btnCls : 'button button-small',
                         text : '<i class="icon-plus"></i>添加',
                         listeners : {
-                            'click' : function() {
-                                location.href = "/admin/add";
-                            }
+                            'click' : edit
                         }
                     },
                     {
@@ -119,48 +117,48 @@
             function reload() {
                 store.load();
             }
-
+            top.reload = reload;
             BUI.use(['bui/overlay','bui/mask'],function(Overlay){
-                $(document).on("click", "[data-edit]", function() {
-                    var id = $(this).attr("data-edit");
-                    var dialog = new top.BUI.Overlay.Dialog({
-                        title:'编辑管理员',
-                        width:800,
-                        height:400,
-                        closeAction: "destroy",
-                        loader : {
-                            url : '/admin/edit',
-                            autoLoad : false, //不自动加载
-//                            params : {id : id},//附加的参数
-                            lazyLoad : false, //不延迟加载
-                            /*, //以下是默认选项
-                            dataType : 'text',   //加载的数据类型
-                            property : 'bodyContent', //将加载的内容设置到对应的属性
-                            loadMask : {
-                              //el , dialog 的body
-                            },
-                            lazyLoad : {
-                              event : 'show', //显示的时候触发加载
-                              repeat : true //是否重复加载
-                            },
-                            callback : function(text){
-                              var loader = this,
-                                target = loader.get('target'); //使用Loader的控件，此处是dialog
-                              //
-                            }
-                            */
-                        },
-                        mask:true,
-                        success: function() {
-                            top.$("#saveForm").submit();
-                            this.close();
-                        }
-                    });
-                    dialog.show();
-                    dialog.get('loader').load({id : id})
-                });
+                $(document).on("click", "[data-edit]", edit);
             });
-
+            function edit () {
+                var id = $(this).attr("data-edit");
+                var dialog = new top.BUI.Overlay.Dialog({
+                    title: (id && '编辑' || '新增') + '管理员',
+                    width:800,
+                    height:400,
+                    closeAction: "destroy",
+                    loader : {
+                        url : '/admin/edit',
+                        autoLoad : false, //不自动加载
+//                            params : {id : id},//附加的参数
+                        lazyLoad : false, //不延迟加载
+                        /*, //以下是默认选项
+                        dataType : 'text',   //加载的数据类型
+                        property : 'bodyContent', //将加载的内容设置到对应的属性
+                        loadMask : {
+                          //el , dialog 的body
+                        },
+                        lazyLoad : {
+                          event : 'show', //显示的时候触发加载
+                          repeat : true //是否重复加载
+                        },
+                        callback : function(text){
+                          var loader = this,
+                            target = loader.get('target'); //使用Loader的控件，此处是dialog
+                          //
+                        }
+                        */
+                    },
+                    mask:true,
+                    success: function() {
+                        top.$("#saveForm").submit();
+                        this.close();
+                    }
+                });
+                dialog.show();
+                dialog.get('loader').load({id : id})
+            }
         });
     } (jQuery));
 </script>

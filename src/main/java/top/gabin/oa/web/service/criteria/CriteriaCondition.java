@@ -26,6 +26,13 @@ public class CriteriaCondition {
     // sql sort
     private String sort;
 
+    public CriteriaCondition() {
+    }
+
+    public CriteriaCondition(Map<String, Object> conditions) {
+        this.conditions = conditions;
+    }
+
     public boolean isDistinct() {
         return distinct;
     }

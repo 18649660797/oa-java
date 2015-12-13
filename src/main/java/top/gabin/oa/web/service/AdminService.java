@@ -10,6 +10,7 @@ import top.gabin.oa.web.entity.Admin;
  */
 public interface AdminService {
     Admin findById(Long id);
+    Admin findByName(String name);
     Admin merge(AdminDTO adminDTO);
     void batchDelete(String ids);
 }

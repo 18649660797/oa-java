@@ -15,7 +15,9 @@ import java.util.List;
 @Table(name = "edy_admin")
 public class AdminImpl implements Admin {
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @TableGenerator(name = "admin_sequences", table = "edy_sequences", pkColumnName = "sequence_name",
+            valueColumnName = "sequence_next_hi_value", initialValue = 20, allocationSize = 50)
+    @GeneratedValue(generator = "admin_sequences", strategy = GenerationType.TABLE)
     @Column(name = "id")
     private Long id;
     @Column(name = "name")

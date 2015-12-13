@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>考勤数据</title>
 <#include "../include/resource.ftl"/>
 </head>
 <body>
@@ -14,7 +12,7 @@
                 <div class="control-group">
                     <label class="control-label"><s>*</s>账号：</label>
                     <div class="controls">
-                        <input type="text" class="control-text" data-rules="{required:true}" name="name" value="${(entity.name)!}" />
+                        <input type="text" class="control-text" data-rules="{required:true,uniqueName:true}" name="name" value="${(entity.name)!}" />
                     </div>
                 </div>
                 <#if entity?has_content == false>
@@ -38,12 +36,33 @@
 </div>
 <script type="text/javascript">
     BUI.use(['bui/form', 'bui/tree'],function  (Form) {
+        Form.Rules.add({
+            name : 'uniqueName',  //规则名称
+            msg : '管理员名称必须唯一',//默认显示的错误信息
+            validator : function(value,baseValue,formatMsg,group){ //验证函数，验证值、基准值、格式化后的错误信息、goup控件
+                var flag = false;
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url: "/admin/uniqueCheck",
+                    data: {name: $.trim(value), id: "${(entity.id)!}"},
+                    success: function(data) {
+                        flag = data && data.result
+                    },
+                    async: false
+                });
+                if (!flag) {
+                    return formatMsg;
+                }
+            }
+        });
         var form = new Form.Form({
             srcNode : '#saveForm',
             submitType : 'ajax',
             callback : function(data){
                 if (edy.ajaxHelp.handleAjax((data))) {
-                    BUI.Message.Alert(data.message || "操作成功");
+                    edy.alert(data.message || "操作成功");
+                    top.reload();
                 }
             }
         });

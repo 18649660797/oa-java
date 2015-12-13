@@ -137,7 +137,8 @@ public class RenderUtils {
      * @return
      */
     public static Map<String, Object> getSuccessResult(Object data) {
-        Map<String, Object> result = SUCCESS_RESULT;
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("result", true);
         result.put("data", data);
         return result;
     }

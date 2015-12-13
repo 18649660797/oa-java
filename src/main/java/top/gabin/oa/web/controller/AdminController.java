@@ -47,13 +47,15 @@ public class AdminController {
 
     @RequestMapping(value = "edit", method = RequestMethod.GET)
     public String edit(Long id, Model model) {
-        Admin admin = adminService.findById(id);
-        List<String> ids = new ArrayList<String>();
-        for (Permission permission : admin.getPermissionList()) {
-            ids.add(permission.getId()  + "");
+        if (id != null) {
+            Admin admin = adminService.findById(id);
+            List<String> ids = new ArrayList<String>();
+            for (Permission permission : admin.getPermissionList()) {
+                ids.add(permission.getId()  + "");
+            }
+            model.addAttribute("entity", admin);
+            model.addAttribute("permissions", StringUtils.join(ids, ","));
         }
-        model.addAttribute("entity", admin);
-        model.addAttribute("permissions", StringUtils.join(ids, ","));
         return "admin/edit";
     }
 
@@ -71,6 +73,15 @@ public class AdminController {
     @RequestMapping(value = "delete", method = RequestMethod.POST)
     public @ResponseBody Map<String, Object> delete(String ids) {
         adminService.batchDelete(ids);
+        return RenderUtils.SUCCESS_RESULT;
+    }
+
+    @RequestMapping(value = "uniqueCheck", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Object> uniqueCheck(String name, Long id) {
+        Admin admin = adminService.findByName(name);
+        if (admin != null && admin.getId() != id) {
+            return RenderUtils.getFailMap("管理员名称已经存在!");
+        }
         return RenderUtils.SUCCESS_RESULT;
     }
 

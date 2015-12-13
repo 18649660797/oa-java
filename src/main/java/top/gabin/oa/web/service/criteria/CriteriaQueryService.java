@@ -38,6 +38,8 @@ public interface CriteriaQueryService {
      */
     <T> List<T> query(Class<T> entityClass, CriteriaCondition condition);
 
+    <T> T singleQuery(Class<T> entityClass, CriteriaCondition condition);
+
     /**
      * 查询统计总数
      * @param entityClass 目标类，如ProductImpl.class，绑定实现类

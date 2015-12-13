@@ -15,7 +15,9 @@ import java.util.List;
 @Table(name = "edy_permission")
 public class PermissionImpl implements Permission {
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @TableGenerator(name = "permission_sequences",table = "edy_sequences", pkColumnName = "sequence_name",
+            valueColumnName = "sequence_next_hi_value", initialValue = 1000, allocationSize = 100)
+    @GeneratedValue(generator = "permission_sequences", strategy = GenerationType.TABLE)
     @Column(name = "id")
     private Long id;
     @Column(name = "name")
