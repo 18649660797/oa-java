@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<#include "../include/resource.ftl"/>
+</head>
+<body>
+<div class="row">
+    <form id="J_FORM" class="form-panel" action="data" method="post" style="margin-bottom:0;">
+        <div class="panel-title">
+            <span>
+                <label>姓名：</label>
+                <!--<input type="text" class="control-text" name="like_real_name" value="" />-->
+                <div id="realName" class="suggest"></div>
+                <label>考勤号：</label>
+                <div id="attendanceCn" class="suggest"></div>
+                <!--<input type="text" class="control-text" name="like_attendance_cn" value="" />-->
+                <label>部门：</label>
+                <select name="eq_department">
+                    <option value="">全部</option>
+                    <option value="产品中心">产品中心</option>
+                    <option value="开发部">开发部</option>
+                    <option value="测试部">测试部</option>
+                    <option value="运营部">运营部</option>
+                    <option value="销售部">销售部</option>
+                    <option value="市场部">市场部</option>
+                    <option value="行政部">行政部</option>
+                    <option value="客户中心">客户中心</option>
+                    <option value="云智盛世">云智盛世</option>
+                </select>
+            </span>
+        </div>
+        <ul class="panel-content">
+            <li>
+                <button type="submit" class="button button-primary">查询>></button>
+            </li>
+        </ul>
+    </form>
+</div>
+<div id="grid"></div>
+<script>
+    (function($) {
+        $(function() {
+            var Grid = BUI.Grid, Data = BUI.Data;
+            var editing = new Grid.Plugins.CellEditing({
+                triggerSelected : false //触发编辑的时候不选中行
+            });
+            var Grid = Grid,
+                Store = Data.Store,
+                columns = [
+                    {title: 'id', dataIndex: 'id', width: 60, renderer: function(val, row) {
+                        return edy.rendererHelp.createLink("/index.php/home/employee/edit?id=" + val, val)
+                    }},
+                    {title: '姓名', dataIndex: 'real_name', width: 60},
+                    {title: '考勤号', dataIndex: 'attendance_cn', width: 60},
+                    {title: '部门', dataIndex: 'department', width: 100}
+                ];
+            var store = new Store({
+                url : '/index.php/home/employee/data',
+                autoLoad:false, //自动加载数据
+//                        params : $("#J_FORM").serialize(),
+                pageSize:10	// 配置分页数目
+            }),
+            grid = new Grid.Grid({
+                render:'#grid',
+                columns : columns,
+                loadMask: true, //加载数据时显示屏蔽层
+                store: store,
+                // 底部工具栏
+                bbar:{
+                    // pagingBar:表明包含分页栏
+                    pagingBar:true,
+                },
+                tbar:{ //添加、删除
+                    items : [{
+                        btnCls : 'button button-small',
+                        text : '<i class="icon-plus"></i>添加',
+                        listeners : {
+                            'click' : function() {
+                                location.href = "/index.php/home/employee/edit";
+                            }
+                        }
+                    },
+                    {
+                        btnCls : 'button button-small',
+                        text : '<i class="icon-remove"></i>删除',
+                        listeners : {
+                            'click' : function() {
+                                var ids = getSelections();
+                                if (!ids) {
+                                    return edy.alert("至少选择一个记录");
+                                }
+                                $.post("/index.php/home/employee/delete", {ids: ids}, function(data) {
+                                    if (edy.ajaxHelp.handleAjax(data)) {
+                                        edy.alert("删除成功！");
+                                        reload();
+                                    }
+                                });
+                            }
+                        }
+                    }, {
+                        btnCls : 'button button-small',
+                        text : '<i class="icon-plus"></i>导入',
+                        listeners : {
+                            'click' : function() {
+                                location.href = "/index.php/home/employee/import"
+                            }
+                        }
+                    }]
+                },
+                plugins : [editing,Grid.Plugins.CheckSelection],
+            });
+            grid.render();
+            var form = new BUI.Form.HForm({
+                srcNode : '#J_FORM'
+            }).render();
+            form.on('beforesubmit',function(ev) {
+                //序列化成对象
+                var obj = form.serializeToObject();
+                obj.start = 0; //返回第一页
+                store.load(obj);
+                return false;
+            });
+            var obj = form.serializeToObject();
+            store.load(obj);
+            var Select = BUI.Select;
+            var suggest = new Select.Suggest({
+                render:'#realName',
+                name:'real_name',
+                url:'/index.php/home/employee/getRealNames'
+            });
+            suggest.render();
+            var suggestAttendance = new Select.Suggest({
+                render:'#attendanceCn',
+                name:'attendance_cn',
+                url:'/index.php/home/employee/getAttendanceCn'
+            });
+            suggestAttendance.render();
+            function getSelections() {
+                var selections = grid.getSelection();
+                var ids = [];
+                for (var key in selections) {
+                    ids.push(selections[key].id);
+                }
+                return ids.join(",");
+            }
+            function reload() {
+                store.load();
+            }
+        });
+    } (jQuery));
+</script>
+</body>
+</html>

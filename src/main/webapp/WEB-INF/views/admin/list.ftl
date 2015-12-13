@@ -31,7 +31,6 @@
                     {title: 'ID', dataIndex: 'id', width: 80},
                     {title: '名称', dataIndex: 'name', width: 60},
                     {title: '操作', dataIndex: 'id', width: 100, renderer: function(val, row) {
-//                        return edy.rendererHelp.createLink("/admin/edit?id=" + val, "编辑");
                         return "<a href='javascript:void(0);' data-edit='" + val + "'>编辑</a>";
                     }}
                 ];
@@ -71,14 +70,14 @@
                                 if (!ids) {
                                     return edy.alert("至少选择一个记录");
                                 }
-                                BUI.Message.Confirm("确认要删除选中的账号：" + getSelectionNames(), function() {
+                                edy.confirm("确认要删除选中的账号：" + getSelectionNames(), function() {
                                     $.post("/admin/delete", {ids: ids}, function(data) {
                                         if (edy.ajaxHelp.handleAjax(data)) {
                                             edy.confirm("删除成功！");
                                             reload();
                                         }
                                     });
-                                }, "question");
+                                });
                             }
                         }
                     }]
@@ -118,9 +117,7 @@
                 store.load();
             }
             top.reload = reload;
-            BUI.use(['bui/overlay','bui/mask'],function(Overlay){
-                $(document).on("click", "[data-edit]", edit);
-            });
+            $(document).on("click", "[data-edit]", edit);
             function edit () {
                 var id = $(this).attr("data-edit");
                 var dialog = new top.BUI.Overlay.Dialog({

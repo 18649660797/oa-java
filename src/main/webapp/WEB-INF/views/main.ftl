@@ -7,7 +7,7 @@
 </head>
 <body>
 <div class="header">
-    <div class="dl-title"><span class="">前端框架</span></div>
+    <div class="dl-title"><span class="">简单OA 管理系统</span></div>
     <div class="dl-log">欢迎您，<span class="dl-log-user">${Static["top.gabin.oa.web.utils.AuthUtils"].getCurrentLoginUserName()}</span>
         <a href="/j_spring_security_logout" title="退出系统" class="dl-log-quit">[退出]</a>
     </div>
@@ -40,9 +40,10 @@
             menu:[{
                 text:'考勤管理',
                 items:[
-                    {id:'employee-menu',text:'员工管理',href:'main/menu.php'},
-                    {id:'attendance-menu',text:'考勤数据',href:'main/menu.php'},
-                    {id:'exception-menu',text:'行政登记',href:'main/second-menu.php'}
+                    {id:'department-menu',text:'部门管理',href:'/department/list'},
+                    {id:'employee-menu',text:'员工管理',href:'/employee/list'},
+                    {id:'attendance-menu',text:'考勤数据',href:'/attendance/list'},
+                    {id:'exception-menu',text:'行政登记',href:'/exception/list'}
                 ]
             }]
         }];

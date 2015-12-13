@@ -65,7 +65,7 @@ public class CriteriaQueryServiceImpl implements CriteriaQueryService {
     @Override
     public <T> Map<String, Object> queryPage(Class<T> entityClass, HttpServletRequest request, String pros) {
         CriteriaCondition criteriaCondition = CriteriaQueryUtils.parseCondition(request);
-        PageDTO<AdminImpl> adminPageDTO = queryPage(AdminImpl.class, criteriaCondition);
+        PageDTO<T> adminPageDTO = queryPage(entityClass, criteriaCondition);
         return RenderUtils.filterPageDataResult(adminPageDTO, pros);
     }
 

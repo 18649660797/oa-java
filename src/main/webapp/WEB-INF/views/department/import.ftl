@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8"/>
-    <?php include_once $_SERVER["DOCUMENT_ROOT"] . "/Public/include/resources.php"; ?>
+<#include "../include/resource.ftl"/>
 </head>
 <body>
 <ul class="breadcrumb">

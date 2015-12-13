@@ -40,11 +40,6 @@ public class AdminController {
         return "admin/list";
     }
 
-    @RequestMapping(value = "add", method = RequestMethod.GET)
-    public String add() {
-        return "admin/edit";
-    }
-
     @RequestMapping(value = "edit", method = RequestMethod.GET)
     public String edit(Long id, Model model) {
         if (id != null) {
