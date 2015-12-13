@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="/static/css/edy.css" />
 <script src="/static/resources/jquery-1.8.1.min.js"></script>
 <script src="/static/resources/bui/bui.js"></script>
+<script src="/static/resources/jquery/ajaxfileupload.js"></script>
 <#--<script src="/static/resources/bui/bui-min.js"></script>-->
 <script src="/static/js/edy.js"></script>
 <style>

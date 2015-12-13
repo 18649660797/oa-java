@@ -7,4 +7,6 @@
     <context:component-scan base-package="top.gabin.oa.web.entity"/>
     <context:component-scan base-package="top.gabin.oa.web.service"/>
     <context:component-scan base-package="top.gabin.oa.web.dao"/>
+    <!-- file import -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
 </beans>

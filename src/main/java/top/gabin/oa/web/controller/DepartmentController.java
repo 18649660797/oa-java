@@ -8,17 +8,23 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import top.gabin.oa.web.dao.DepartmentDao;
 import top.gabin.oa.web.dto.AdminDTO;
+import top.gabin.oa.web.dto.AttendanceImportDTO;
 import top.gabin.oa.web.dto.DepartmentDTO;
 import top.gabin.oa.web.entity.*;
 import top.gabin.oa.web.service.DepartmentService;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
 import top.gabin.oa.web.utils.RenderUtils;
+import top.gabin.oa.web.utils.excel.ImportExcel;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,6 +39,7 @@ public class DepartmentController {
     private DepartmentService departmentService;
 
     private String dir = "department";
+    private static int maxSize = 10 * 1024 * 1024;
 
     @RequestMapping(value = "list", method = RequestMethod.GET)
     public String list() {
@@ -71,6 +78,34 @@ public class DepartmentController {
     public @ResponseBody Map<String, Object> delete(String ids) {
         departmentService.batchDelete(ids);
         return RenderUtils.SUCCESS_RESULT;
+    }
+
+    @RequestMapping(value = "importView", method = RequestMethod.GET)
+    public String importView() {
+       return dir + "/import";
+    }
+
+    //第一步 上传文件
+    @RequestMapping(value = "import", method = RequestMethod.POST)
+    public @ResponseBody Map productImport(@RequestParam("csvFile") MultipartFile file, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        if (file.isEmpty()) {
+            resultMap.put("message", "请选择文件!");
+            return resultMap;
+        }
+        if (file.getSize() > maxSize) {
+            resultMap.put("message", "上传文件大小超过限制。");
+            return resultMap;
+        }
+        try {
+            ImportExcel importExcel = new ImportExcel(file, 3, 0);
+            List<AttendanceImportDTO> dataList = importExcel.getDataList(AttendanceImportDTO.class);
+            resultMap.put("result", "success");
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put("message", "导入数据有异常!");
+        }
+        return resultMap;
     }
 
 }

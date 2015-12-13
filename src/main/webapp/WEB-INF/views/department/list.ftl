@@ -85,7 +85,36 @@
                         text : '<i class="icon-plus"></i>导入',
                         listeners : {
                             'click' : function() {
-                                location.href = "/department/import"
+                                var dialog = new top.BUI.Overlay.Dialog({
+                                    title: '导入部门',
+                                    width:430,
+                                    height:150,
+                                    closeAction: "destroy",
+                                    loader : {
+                                        url : '/department/importView',
+                                        autoLoad : false, //不自动加载
+                                        lazyLoad : false, //不延迟加载
+                                    },
+                                    mask:true,
+                                    success: function() {
+                                        top.$.ajaxFileUpload({
+                                            url : '/department/import',
+                                            secureuri: false,
+                                            fileElementId: "file",
+                                            dataType : 'json',
+                                            method : 'post',
+                                            success: function (data) {
+                                                edy.alert("导入成功！");
+                                            },
+                                            error: function (data, status, e) {
+                                                edy.alert("导入失败！");
+                                            }
+                                        });
+                                        this.close();
+                                    }
+                                });
+                                dialog.show();
+                                dialog.get('loader').load()
                             }
                         }
                     }]
