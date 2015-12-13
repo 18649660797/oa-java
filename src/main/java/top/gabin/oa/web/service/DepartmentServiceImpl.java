@@ -75,4 +75,15 @@ public class DepartmentServiceImpl implements DepartmentService {
         CriteriaCondition criteriaCondition = new CriteriaCondition(params);
         return queryService.singleQuery(DepartmentImpl.class, criteriaCondition);
     }
+
+    @Transactional("transactionManager")
+    @Override
+    public void batchSave(List<Department> departmentList) {
+        if (departmentList != null) {
+            for (Department department : departmentList) {
+                departmentDao.saveOrUpdate(department);
+            }
+        }
+    }
+
 }

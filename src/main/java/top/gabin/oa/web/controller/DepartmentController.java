@@ -4,6 +4,7 @@
  */
 package top.gabin.oa.web.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,7 @@ import top.gabin.oa.web.utils.excel.ImportExcel;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,6 +102,21 @@ public class DepartmentController {
         try {
             ImportExcel importExcel = new ImportExcel(file, 3, 0);
             List<AttendanceImportDTO> dataList = importExcel.getDataList(AttendanceImportDTO.class);
+            Map<String, Integer> cache = new HashMap<String, Integer>();
+            List<Department> departmentList = new ArrayList<Department>();
+            for (AttendanceImportDTO dto : dataList) {
+                String departmentName = dto.getDepartment();
+                if (StringUtils.isBlank(departmentName)) {
+                    continue;
+                }
+                if (!cache.containsKey(departmentName)) {
+                    DepartmentImpl department = new DepartmentImpl();
+                    department.setName(departmentName);
+                    departmentList.add(department);
+                    cache.put(dto.getDepartment(), 1);
+                }
+            }
+            departmentService.batchSave(departmentList);
             resultMap.put("result", "success");
         } catch (Exception e) {
             e.printStackTrace();

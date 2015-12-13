@@ -3,6 +3,8 @@ package top.gabin.oa.web.service;
 import top.gabin.oa.web.dto.DepartmentDTO;
 import top.gabin.oa.web.entity.Department;
 
+import java.util.List;
+
 /**
  * Class description
  *
@@ -13,4 +15,5 @@ public interface DepartmentService {
     Department findById(Long id);
     void batchDelete(String ids);
     Department findByName(String name);
+    void batchSave(List<Department> departmentList);
 }

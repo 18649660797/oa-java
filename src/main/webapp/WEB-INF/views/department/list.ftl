@@ -105,6 +105,7 @@
                                             method : 'post',
                                             success: function (data) {
                                                 edy.alert("导入成功！");
+                                                reload();
                                             },
                                             error: function (data, status, e) {
                                                 edy.alert("导入失败！");
