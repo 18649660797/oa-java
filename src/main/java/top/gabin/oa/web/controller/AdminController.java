@@ -4,19 +4,24 @@
  */
 package top.gabin.oa.web.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import top.gabin.oa.web.dto.AdminDTO;
+import top.gabin.oa.web.entity.Admin;
 import top.gabin.oa.web.entity.AdminImpl;
+import top.gabin.oa.web.entity.Permission;
 import top.gabin.oa.web.service.AdminService;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
 import top.gabin.oa.web.utils.RenderUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,7 +47,13 @@ public class AdminController {
 
     @RequestMapping(value = "edit", method = RequestMethod.GET)
     public String edit(Long id, Model model) {
-        model.addAttribute("entity", adminService.findById(id));
+        Admin admin = adminService.findById(id);
+        List<String> ids = new ArrayList<String>();
+        for (Permission permission : admin.getPermissionList()) {
+            ids.add(permission.getId()  + "");
+        }
+        model.addAttribute("entity", admin);
+        model.addAttribute("permissions", StringUtils.join(ids, ","));
         return "admin/edit";
     }
 

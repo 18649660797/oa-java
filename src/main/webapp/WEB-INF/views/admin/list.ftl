@@ -31,7 +31,8 @@
                     {title: 'ID', dataIndex: 'id', width: 80},
                     {title: '名称', dataIndex: 'name', width: 60},
                     {title: '操作', dataIndex: 'id', width: 100, renderer: function(val, row) {
-                        return edy.rendererHelp.createLink("/admin/edit?id=" + val, "编辑");
+//                        return edy.rendererHelp.createLink("/admin/edit?id=" + val, "编辑");
+                        return "<a href='javascript:void(0);' data-edit='" + val + "'>编辑</a>";
                     }}
                 ];
             var store = new Store({
@@ -72,12 +73,14 @@
                                 if (!ids) {
                                     return edy.alert("至少选择一个记录");
                                 }
-                                $.post("/admin/delete", {ids: ids}, function(data) {
-                                    if (edy.ajaxHelp.handleAjax(data)) {
-                                        edy.alert("删除成功！");
-                                        reload();
-                                    }
-                                });
+                                BUI.Message.Confirm("确认要删除选中的账号：" + getSelectionNames(), function() {
+                                    $.post("/admin/delete", {ids: ids}, function(data) {
+                                        if (edy.ajaxHelp.handleAjax(data)) {
+                                            edy.confirm("删除成功！");
+                                            reload();
+                                        }
+                                    });
+                                }, "question");
                             }
                         }
                     }]
@@ -105,9 +108,59 @@
                 }
                 return ids.join(",");
             }
+            function getSelectionNames() {
+                var selections = grid.getSelection();
+                var ids = [];
+                for (var key in selections) {
+                    ids.push(selections[key].name);
+                }
+                return ids.join(",");
+            }
             function reload() {
                 store.load();
             }
+
+            BUI.use(['bui/overlay','bui/mask'],function(Overlay){
+                $(document).on("click", "[data-edit]", function() {
+                    var id = $(this).attr("data-edit");
+                    var dialog = new top.BUI.Overlay.Dialog({
+                        title:'编辑管理员',
+                        width:800,
+                        height:400,
+                        closeAction: "destroy",
+                        loader : {
+                            url : '/admin/edit',
+                            autoLoad : false, //不自动加载
+//                            params : {id : id},//附加的参数
+                            lazyLoad : false, //不延迟加载
+                            /*, //以下是默认选项
+                            dataType : 'text',   //加载的数据类型
+                            property : 'bodyContent', //将加载的内容设置到对应的属性
+                            loadMask : {
+                              //el , dialog 的body
+                            },
+                            lazyLoad : {
+                              event : 'show', //显示的时候触发加载
+                              repeat : true //是否重复加载
+                            },
+                            callback : function(text){
+                              var loader = this,
+                                target = loader.get('target'); //使用Loader的控件，此处是dialog
+                              //
+                            }
+                            */
+                        },
+                        mask:true,
+                        success: function() {
+                            top.$("#saveForm").submit();
+                            this.close();
+                        }
+                    });
+                    dialog.show();
+                    dialog.get('loader').load({id : id})
+                });
+            });
+
         });
     } (jQuery));
 </script>

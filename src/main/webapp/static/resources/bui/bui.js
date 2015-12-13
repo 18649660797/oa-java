@@ -37037,7 +37037,6 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
      */
     setNodeChecked : function(node,checked,deep){
       deep = deep == null ? true : deep;
-
       if(!node){
         return;
       }

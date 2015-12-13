@@ -131,6 +131,18 @@ public class RenderUtils {
     }
 
     /**
+     * 返回 数据map
+     *
+     * @param data
+     * @return
+     */
+    public static Map<String, Object> getSuccessResult(Object data) {
+        Map<String, Object> result = SUCCESS_RESULT;
+        result.put("data", data);
+        return result;
+    }
+
+    /**
      * 缥 Model 中填充 参数
      *
      * @param modelAttrs

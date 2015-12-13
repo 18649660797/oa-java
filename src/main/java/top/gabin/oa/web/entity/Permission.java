@@ -1,5 +1,7 @@
 package top.gabin.oa.web.entity;
 
+import java.util.List;
+
 /**
  * Class description
  *
@@ -21,4 +23,11 @@ public interface Permission {
     Permission getParent();
 
     void setParent(Permission parent);
+
+    boolean isLeaf();
+
+    List<Permission> getChildrenList();
+
+    void setChildrenList(List<Permission> childrenList);
+
 }

@@ -5,6 +5,8 @@
 package top.gabin.oa.web.entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author linjiabin  on  15/12/10
@@ -23,6 +25,8 @@ public class PermissionImpl implements Permission {
     @ManyToOne(targetEntity = PermissionImpl.class)
     @JoinColumn(name = "pid")
     private Permission parent;
+    @OneToMany(mappedBy = "parent", targetEntity = PermissionImpl.class, fetch = FetchType.EAGER)
+    private List<Permission> childrenList = new ArrayList<Permission>();
 
     @Override
     public Long getId() {
@@ -63,4 +67,20 @@ public class PermissionImpl implements Permission {
     public void setParent(Permission parent) {
         this.parent = parent;
     }
+
+    @Override
+    public boolean isLeaf() {
+        return parent != null;
+    }
+
+    @Override
+    public List<Permission> getChildrenList() {
+        return childrenList;
+    }
+
+    @Override
+    public void setChildrenList(List<Permission> childrenList) {
+        this.childrenList = childrenList;
+    }
+
 }

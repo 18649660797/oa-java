@@ -36,7 +36,7 @@ public class AdminServiceImpl implements AdminService {
     private CriteriaQueryService queryService;
     @Override
     public Admin findById(Long id) {
-        return crudDao.findById(AdminImpl.class , id);
+        return adminDao.findById(id);
     }
 
     @Transactional("transactionManager")
@@ -48,10 +48,12 @@ public class AdminServiceImpl implements AdminService {
                 admin = findById(adminDTO.getId());
             }
             admin.setName(adminDTO.getName());
-            try {
-                admin.setPassword(Md5Utils.encryptMD5(adminDTO.getPassword()));
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
+            if (StringUtils.isNotBlank(adminDTO.getPassword())) {
+                try {
+                    admin.setPassword(Md5Utils.encryptMD5(adminDTO.getPassword()));
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
             }
             CriteriaCondition criteriaCondition = new CriteriaCondition();
             Map<String, Object> params = new HashMap<String, Object>();
