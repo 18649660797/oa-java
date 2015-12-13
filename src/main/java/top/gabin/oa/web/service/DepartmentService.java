@@ -12,7 +12,9 @@ import java.util.List;
  */
 public interface DepartmentService {
     void merge(DepartmentDTO departmentDTO);
+    void merge(Department department);
     Department findById(Long id);
+    List<Department> findAll();
     void batchDelete(String ids);
     Department findByName(String name);
     void batchSave(List<Department> departmentList);

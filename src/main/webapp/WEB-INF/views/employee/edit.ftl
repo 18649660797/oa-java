@@ -2,29 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-<#include "../include/resource.ftl"/>
+    <title>考勤数据</title>
+    <?php include_once $_SERVER["DOCUMENT_ROOT"] . "/Public/include/resources.php"; ?>
 </head>
 <body>
-<ul class="breadcrumb">
-    <li><a href="/index.php/home/employee/viewList">员工管理</a> <span class="divider">/</span></li>
-    <li class="active">{$entity?'编辑' : '添加'}员工</li>
-</ul>
 <div class="demo-content">
     <div class="row">
         <div class="span24">
-            <form id="J_Form" class="form-horizontal" method="post" action="/index.php/home/employee/save">
-                <input type="hidden" name="id" value="{$entity.id}"/>
-                <h3>员工信息：</h3>
+            <form id="saveForm" class="form-horizontal" method="post" action="/employee/save">
+                <input type="hidden" name="id" value="${(entity.id)!}"/>
                 <div class="control-group">
                     <label class="control-label"><s>*</s>姓名：</label>
                     <div class="controls">
-                        <input type="text" class="control-text" data-rules="{required:true}" name="realName" value="{$entity.real_name}" />
+                        <input type="text" class="control-text" data-rules="{required:true}" name="name" value="${(entity.name)!}" />
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label">考勤号：</label>
                     <div class="controls">
-                        <input type="text" class="control-text" name="attendanceCn" value="{$entity.attendance_cn}" />
+                        <input type="text" class="control-text" name="attendanceCN" data-rules="{required:true,uniqueCheck:true}" value="${(entity.attendanceCN)!}" />
                     </div>
                 </div>
                 <div class="control-group">
@@ -32,21 +28,13 @@
                     <div class="controls">
                         <select id="department" name="department">
                             <option value="">全部</option>
-                            <option value="产品中心">产品中心</option>
-                            <option value="开发部">开发部</option>
-                            <option value="测试部">测试部</option>
-                            <option value="运营部">运营部</option>
-                            <option value="销售部">销售部</option>
-                            <option value="市场部">市场部</option>
-                            <option value="行政部">行政部</option>
-                            <option value="客户中心">客户中心</option>
-                            <option value="云智盛世">云智盛世</option>
+                        <#if departmentList?? && departmentList?size gt 0>
+                            <#list departmentList as department>
+                                <option value="${(department.id)!}">${(department.name)!}</option>
+                            </#list>
+                        </#if>
                         </select>
                     </div>
-                </div>
-                <div class="form-actions span5 offset3">
-                    <button id="btnSearch" type="submit" class="button button-primary">提交</button>
-                    <button type="reset" class="button button-primary">重置</button>
                 </div>
             </form>
         </div>
@@ -54,17 +42,37 @@
 </div>
 <script type="text/javascript">
     BUI.use('bui/form',function  (Form) {
+        Form.Rules.add({
+            name : 'uniqueCheck',  //规则名称
+            msg : '部门名称必须唯一',//默认显示的错误信息
+            validator : function(value,baseValue,formatMsg,group){ //验证函数，验证值、基准值、格式化后的错误信息、goup控件
+                var flag = false;
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url: "/employee/uniqueCheck",
+                    data: {name: $.trim(value), id: "${(entity.id)!}"},
+                    success: function(data) {
+                        flag = data && data.result
+                    },
+                    async: false
+                });
+                if (!flag) {
+                    return formatMsg;
+                }
+            }
+        });
         new Form.Form({
-            srcNode : '#J_Form',
+            srcNode : '#saveForm',
             submitType : 'ajax',
             callback : function(data){
                 if (edy.ajaxHelp.handleAjax((data))) {
-                    BUI.Message.Alert(data.message || "操作成功");
-                    location.href = "/index.php/home/employee/viewList";
+                    edy.alert(data.message || "操作成功");
+                    top.reload();
                 }
             }
         }).render();
-        $("#department").val("{$entity.department}");
+        $("#department").val("${(entity.department.id)!}");
     });
 
 </script>

@@ -19,4 +19,7 @@ public interface CommonBaseDao<Supper, Child> {
     void deleteById(Long id);
 
     List<Supper> findAll();
+
+    void batchInsert(List<Supper> list);
+
 }

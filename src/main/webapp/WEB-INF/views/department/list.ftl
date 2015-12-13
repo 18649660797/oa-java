@@ -8,14 +8,13 @@
 <div class="row">
     <form id="J_FORM" class="form-panel" action="data" method="post" style="margin-bottom:0;">
         <input type="hidden" name="sort" value="id asc"/>
-        <div class="panel-title">
-            <span>
-                <label>部门名称：</label>
-                <input type="text" class="control-text" name="like_name" value="" />
-            </span>
-        </div>
+
         <ul class="panel-content">
             <li>
+                <span>
+                    <label><b>部门名称：</b></label>
+                    <input type="text" class="control-text" name="like_name" value="" />
+                </span>
                 <button type="submit" class="button button-primary">查询>></button>
             </li>
         </ul>
@@ -44,6 +43,7 @@
                 pageSize:10	// 配置分页数目
             }),
             grid = new Grid.Grid({
+                height: 500,
                 render:'#grid',
                 columns : columns,
                 loadMask: true, //加载数据时显示屏蔽层

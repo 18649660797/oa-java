@@ -5,10 +5,6 @@
 <#include "../include/resource.ftl"/>
 </head>
 <body>
-<ul class="breadcrumb">
-    <li><a href="/index.php/home/employee/viewList">员工管理</a> <span class="divider">/</span></li>
-    <li class="active">导入员工</li>
-</ul>
 <form id="J_Form" action="/index.php/home/employee/excel" method="post" enctype="multipart/form-data" class="form-horizontal">
     <div class="tips tips-small tips-info">
         <span class="x-icon x-icon-small x-icon-info"><i class="icon icon-white icon-info"></i></span>
@@ -17,12 +13,6 @@
     <div class="control-group">
         <div class="controls">
             <input type="file" name="file" id="file" data-rules="{required:true}" /><br>
-        </div>
-    </div>
-    <div class="row actions-bar">
-        <div class="form-actions span13 offset3">
-            <button type="submit" class="button button-primary">保存</button>
-            <button type="reset" class="button">重置</button>
         </div>
     </div>
 </form>

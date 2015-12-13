@@ -87,7 +87,6 @@ public class DepartmentController {
        return dir + "/import";
     }
 
-    //第一步 上传文件
     @RequestMapping(value = "import", method = RequestMethod.POST)
     public @ResponseBody Map productImport(@RequestParam("csvFile") MultipartFile file, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<String, Object>();

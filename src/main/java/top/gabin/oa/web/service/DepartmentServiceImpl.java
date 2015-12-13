@@ -46,6 +46,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    public void merge(Department department) {
+        departmentDao.saveOrUpdate(department);
+    }
+
+    @Override
     public Department findById(Long id) {
         return departmentDao.findById(id);
     }
@@ -86,4 +91,8 @@ public class DepartmentServiceImpl implements DepartmentService {
         }
     }
 
+    @Override
+    public List<Department> findAll() {
+        return departmentDao.findAll();
+    }
 }

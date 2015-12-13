@@ -51,4 +51,16 @@ public abstract class CommonBaseDaoImpl<SUB, T> implements CommonBaseDao<SUB, T>
         Query query = em.createQuery("from " + clazz.getName());
         return query.getResultList();
     }
+
+    @Override
+    public void batchInsert(List<SUB> list) {
+        for (int i = 0; i < list.size(); i++) {
+            em.persist(list.get(i));
+            if (i % 1000 == 0) {
+                em.flush();
+                em.clear();
+            }
+        }
+    }
+
 }

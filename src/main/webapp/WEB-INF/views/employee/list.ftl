@@ -16,17 +16,13 @@
                 <div id="attendanceCn" class="suggest"></div>
                 <!--<input type="text" class="control-text" name="like_attendance_cn" value="" />-->
                 <label>部门：</label>
-                <select name="eq_department">
+                <select name="eq_department.id">
                     <option value="">全部</option>
-                    <option value="产品中心">产品中心</option>
-                    <option value="开发部">开发部</option>
-                    <option value="测试部">测试部</option>
-                    <option value="运营部">运营部</option>
-                    <option value="销售部">销售部</option>
-                    <option value="市场部">市场部</option>
-                    <option value="行政部">行政部</option>
-                    <option value="客户中心">客户中心</option>
-                    <option value="云智盛世">云智盛世</option>
+                    <#if departmentList?? && departmentList?size gt 0>
+                        <#list departmentList as department>
+                            <option value="${(department.id)!}">${(department.name)!}</option>
+                        </#list>
+                    </#if>
                 </select>
             </span>
         </div>
@@ -49,19 +45,20 @@
                 Store = Data.Store,
                 columns = [
                     {title: 'id', dataIndex: 'id', width: 60, renderer: function(val, row) {
-                        return edy.rendererHelp.createLink("/index.php/home/employee/edit?id=" + val, val)
+                        return "<a href='javascript:void(0);' data-edit='" + val + "'>" + val + "</a>";
                     }},
-                    {title: '姓名', dataIndex: 'real_name', width: 60},
-                    {title: '考勤号', dataIndex: 'attendance_cn', width: 60},
+                    {title: '姓名', dataIndex: 'name', width: 60},
+                    {title: '考勤号', dataIndex: 'attendanceCN', width: 60},
                     {title: '部门', dataIndex: 'department', width: 100}
                 ];
             var store = new Store({
-                url : '/index.php/home/employee/data',
+                url : '/employee/grid',
                 autoLoad:false, //自动加载数据
 //                        params : $("#J_FORM").serialize(),
                 pageSize:10	// 配置分页数目
             }),
             grid = new Grid.Grid({
+                height: 450,
                 render:'#grid',
                 columns : columns,
                 loadMask: true, //加载数据时显示屏蔽层
@@ -76,9 +73,7 @@
                         btnCls : 'button button-small',
                         text : '<i class="icon-plus"></i>添加',
                         listeners : {
-                            'click' : function() {
-                                location.href = "/index.php/home/employee/edit";
-                            }
+                            'click' : edit
                         }
                     },
                     {
@@ -90,11 +85,13 @@
                                 if (!ids) {
                                     return edy.alert("至少选择一个记录");
                                 }
-                                $.post("/index.php/home/employee/delete", {ids: ids}, function(data) {
-                                    if (edy.ajaxHelp.handleAjax(data)) {
-                                        edy.alert("删除成功！");
-                                        reload();
-                                    }
+                                edy.confirm("确认要删除选中的员工：" + getSelectionNames(), function() {
+                                    $.post("/employee/delete", {ids: ids}, function(data) {
+                                        if (edy.ajaxHelp.handleAjax(data)) {
+                                            edy.alert("删除成功！");
+                                            reload();
+                                        }
+                                    });
                                 });
                             }
                         }
@@ -103,7 +100,37 @@
                         text : '<i class="icon-plus"></i>导入',
                         listeners : {
                             'click' : function() {
-                                location.href = "/index.php/home/employee/import"
+                                var dialog = new top.BUI.Overlay.Dialog({
+                                    title: '导入员工',
+                                    width:430,
+                                    height:150,
+                                    closeAction: "destroy",
+                                    loader : {
+                                        url : '/employee/importView',
+                                        autoLoad : false, //不自动加载
+                                        lazyLoad : false, //不延迟加载
+                                    },
+                                    mask:true,
+                                    success: function() {
+                                        top.$.ajaxFileUpload({
+                                            url : '/employee/import',
+                                            secureuri: false,
+                                            fileElementId: "file",
+                                            dataType : 'json',
+                                            method : 'post',
+                                            success: function (data) {
+                                                edy.alert("导入成功！");
+                                                reload();
+                                            },
+                                            error: function (data, status, e) {
+                                                edy.alert("导入失败！");
+                                            }
+                                        });
+                                        this.close();
+                                    }
+                                });
+                                dialog.show();
+                                dialog.get('loader').load()
                             }
                         }
                     }]
@@ -126,14 +153,14 @@
             var Select = BUI.Select;
             var suggest = new Select.Suggest({
                 render:'#realName',
-                name:'real_name',
-                url:'/index.php/home/employee/getRealNames'
+                name:'like_name',
+                url:'/employee/suggest/name'
             });
             suggest.render();
             var suggestAttendance = new Select.Suggest({
                 render:'#attendanceCn',
-                name:'attendance_cn',
-                url:'/index.php/home/employee/getAttendanceCn'
+                name:'like_attendanceCN',
+                url:'/employee/suggest/attendanceCN'
             });
             suggestAttendance.render();
             function getSelections() {
@@ -144,9 +171,41 @@
                 }
                 return ids.join(",");
             }
+            function getSelectionNames() {
+                var selections = grid.getSelection();
+                var ids = [];
+                for (var key in selections) {
+                    ids.push(selections[key].name);
+                }
+                return ids.join(",");
+            }
             function reload() {
                 store.load();
             }
+            top.reload = reload;
+            function edit () {
+                var id = $(this).attr("data-edit");
+                var dialog = new top.BUI.Overlay.Dialog({
+                    title: (id && '编辑' || '新增') + '员工',
+                    width:430,
+                    height:250,
+                    closeAction: "destroy",
+                    loader : {
+                        url : '/employee/edit',
+                        autoLoad : false, //不自动加载
+                        lazyLoad : false, //不延迟加载
+                    },
+                    mask:true,
+                    success: function() {
+                        top.$("#saveForm").submit();
+                        this.close();
+                    }
+                });
+                dialog.show();
+                dialog.get('loader').load({id : id})
+            }
+
+            $(document).on("click", "[data-edit]", edit);
         });
     } (jQuery));
 </script>
