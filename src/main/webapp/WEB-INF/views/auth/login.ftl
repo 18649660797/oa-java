@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <?php include_once $_SERVER["DOCUMENT_ROOT"] . "/Public/include/resources.php"; ?>
+    <title>OA 内测</title>
+    <#include "../include/resource.ftl"/>
 </head>
 <body class="login-page">
 <div class="login-box">
-    <form id="J_Form" action="/index.php/home/login/auth" method="post" enctype="multipart/form-data" class="form-horizontal">
+    <form id="J_Form" action="/j_spring_security_check" method="post" class="form-horizontal">
+        <input style="display: none;" checked type="checkbox" name="_spring_security_remember_me">
         <div class="control-group">
             <label class="control-label">用户名：</label>
             <div class="controls">
-                <input type="text" name="username" data-rules="{required:true}" /><br>
+                <input type="text" name="j_username" data-rules="{required:true}" /><br>
             </div>
         </div>
         <div class="control-group">
             <label class="control-label">密码：</label>
             <div class="controls">
-                <input type="password" name="password" data-rules="{required:true}" /><br>
+                <input type="password" name="j_password" data-rules="{required:true}" /><br>
             </div>
         </div>
         <hr/>
@@ -33,11 +35,11 @@
             var Form = BUI.Form;
             new Form.Form({
                 srcNode : '#J_Form',
-                submitType : 'ajax',
+                submitType : 'normal',
                 callback : function(data){
                     if (edy.ajaxHelp.handleAjax((data))) {
                         BUI.Message.Alert("登录成功");
-                        location.href = "/index.php/home/index/main";
+                        location.href = "/";
                     }
                 }
             }).render();
