@@ -4,8 +4,6 @@
  */
 package top.gabin.oa.web.dto;
 
-import java.util.Date;
-
 /**
  * @author linjiabin  on  15/12/14
  */
@@ -13,8 +11,26 @@ public class LeaveDTO {
     private Long id;
     private Integer type;
     private Long employeeId;
-    private Date beginDate;
-    private Date endDate;
+    private String name;
+    private String beginDate;
+    private String endDate;
+    private String remark;
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Long getId() {
         return id;
@@ -40,19 +56,19 @@ public class LeaveDTO {
         this.employeeId = employeeId;
     }
 
-    public Date getBeginDate() {
+    public String getBeginDate() {
         return beginDate;
     }
 
-    public void setBeginDate(Date beginDate) {
+    public void setBeginDate(String beginDate) {
         this.beginDate = beginDate;
     }
 
-    public Date getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
 }

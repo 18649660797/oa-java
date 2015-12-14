@@ -12,6 +12,10 @@ public interface Leave {
 
     void setId(Long id);
 
+    String getRemark();
+
+    void setRemark(String remark);
+
     Date getEndDate();
 
     void setEndDate(Date endDate);

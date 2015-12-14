@@ -27,7 +27,7 @@
 <script>
     BUI.use('common/main',function(){
         var config = [{
-            id:'menu',
+            id:'permission',
             menu:[{
                 text:'权限管理',
                 items:[
@@ -36,7 +36,7 @@
             }
             ]
         },{
-            id:'search',
+            id:'attendance',
             menu:[{
                 text:'考勤管理',
                 items:[

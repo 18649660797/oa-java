@@ -1,6 +1,6 @@
 package top.gabin.oa.web.service;
 
-import org.springframework.transaction.annotation.Transactional;
+import top.gabin.oa.web.dao.LeaveImportDTO;
 import top.gabin.oa.web.dto.LeaveDTO;
 import top.gabin.oa.web.entity.Leave;
 
@@ -17,4 +17,5 @@ public interface LeaveService {
     Leave findById(Long id);
     Leave merge(Leave leave);
     Leave merge(LeaveDTO leaveDTO);
+    void importLeave(List<LeaveImportDTO> leaveImportDTOList);
 }

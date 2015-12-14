@@ -29,6 +29,18 @@ public class LeaveImpl implements Leave {
     private Employee employee;
     @Column(name = "type")
     private Integer type;
+    @Column(name = "remark")
+    private String remark;
+
+    @Override
+    public String getRemark() {
+        return remark;
+    }
+
+    @Override
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 
     @Override
     public Long getId() {

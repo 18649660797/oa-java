@@ -1,7 +1,5 @@
 package top.gabin.oa.web.constant;
 
-import top.gabin.oa.web.entity.Leave;
-
 /**
  * @author linjiabin  on  15/12/14
  */
@@ -43,6 +41,15 @@ public enum LeaveType {
     public static LeaveType instance(Integer type) {
         for (LeaveType leaveType : LeaveType.values()) {
             if (type == leaveType.getType()) {
+                return leaveType;
+            }
+        }
+        return null;
+    }
+
+    public static LeaveType instance(String label) {
+        for (LeaveType leaveType : LeaveType.values()) {
+            if (label.equals(leaveType.getLabel())) {
                 return leaveType;
             }
         }

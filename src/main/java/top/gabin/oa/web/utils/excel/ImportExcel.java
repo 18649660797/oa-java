@@ -328,7 +328,7 @@ public class ImportExcel {
 						}else if (valType == Float.class){
 							val = Float.valueOf(val.toString());
 						}else if (valType == Date.class){
-							val = DateUtil.getJavaDate((Double)val);
+							val = DateUtil.getJavaDate((Double.parseDouble(val.toString())));
 						}else{
 							if (ef.fieldType() != Class.class){
 								val = ef.fieldType().getMethod("getValue", String.class).invoke(null, val.toString());

@@ -6,19 +6,16 @@
 <body>
 <div class="row">
     <form id="J_FORM" class="form-panel" action="data" method="post" style="margin-bottom:0;">
-        <input type="hidden" name="join" value="edy_employee e on e.id = a.e_id"/>
         <div class="panel-title">
             <span>
                 <label>姓名：</label>
-                <input type="text" class="control-text" name="like_e:real_name" value="" />
-
-                <label>开始时间：</label><input name="between_beginDate" type="text" class="calendar" /> <label>至</label> <input name="between_beginDate" type="text" class="calendar" />
-                <label>结束时间：</label><input name="between_endDate" type="text" class="calendar" /> <label>至</label> <input name="between_endDate" type="text" class="calendar" />
+                <input type="text" class="control-text" name="like_employee.name" value="" />
+                <label>开始时间：</label><input name="ge_beginDate" type="text" class="calendar" /> <label>至</label> <input name="le_beginDate" type="text" class="calendar" />
+                <label>结束时间：</label><input name="ge_endDate" type="text" class="calendar" /> <label>至</label> <input name="le_endDate" type="text" class="calendar" />
             </span>
         </div>
         <ul class="panel-content">
             <li>
-
                 <label>假别：</label>
                 <select name="eq_type">
                     <option value="">全部</option>
@@ -62,11 +59,9 @@
                     }},
                     {title: '姓名', dataIndex: 'realName', width: 60},
                     {title: '部门', dataIndex: 'department', width: 60},
-                    {title: '类型', dataIndex: 'type', width: 60, renderer: function(val, row) {
-                        return {1: "事假", 2: "病假", 3: "调休", 4: "外出", 5: "丧假", 6: "年假", 7: "婚假", 8: "产假"}[val];
-                    }},
-                    {title: '开始日期', dataIndex: 'beginDate', width: 150},
-                    {title: '结束时间', dataIndex: 'endTime', width: 150},
+                    {title: '类型', dataIndex: 'type', width: 60},
+                    {title: '开始日期', dataIndex: 'beginDate', width: 150, renderer: BUI.Grid.Format.datetimeRenderer},
+                    {title: '结束时间', dataIndex: 'endDate', width: 150, renderer: BUI.Grid.Format.datetimeRenderer},
                     {title: '备注', dataIndex: 'remark', width: 150}
                 ];
             var store = new Store({
@@ -76,6 +71,7 @@
                 pageSize:10	// 配置分页数目
             }),
             grid = new Grid.Grid({
+                height: 450,
                 render:'#grid',
                 columns : columns,
                 loadMask: true, //加载数据时显示屏蔽层
@@ -102,7 +98,7 @@
                                 if (!ids) {
                                     return edy.alert("至少选择一个记录");
                                 }
-                                edy.confirm("确认要删除选中的账号：" + getSelectionNames(), function() {
+                                edy.confirm("确认要删除选中的账号?", function() {
                                     $.post("/leave/delete", {ids: ids}, function(data) {
                                         if (edy.ajaxHelp.handleAjax(data)) {
                                             edy.confirm("删除成功！");
@@ -125,7 +121,37 @@
                             text : '<i class="icon-plus"></i>导入',
                             listeners : {
                                 'click' : function() {
-                                    location.href = "/leave/viewImport"
+                                    var dialog = new top.BUI.Overlay.Dialog({
+                                        title: '导入请假外出登记',
+                                        width:430,
+                                        height:150,
+                                        closeAction: "destroy",
+                                        loader : {
+                                            url : '/leave/importView',
+                                            autoLoad : false, //不自动加载
+                                            lazyLoad : false, //不延迟加载
+                                        },
+                                        mask:true,
+                                        success: function() {
+                                            top.$.ajaxFileUpload({
+                                                url : '/leave/import',
+                                                secureuri: false,
+                                                fileElementId: "file",
+                                                dataType : 'json',
+                                                method : 'post',
+                                                success: function (data) {
+                                                    edy.alert("导入成功！");
+                                                    reload();
+                                                },
+                                                error: function (data, status, e) {
+                                                    edy.alert("导入失败！");
+                                                }
+                                            });
+                                            this.close();
+                                        }
+                                    });
+                                    dialog.show();
+                                    dialog.get('loader').load()
                                 }
                             }
                         }]
@@ -156,6 +182,7 @@
             function reload() {
                 store.load();
             }
+            top.reload = reload;
             function edit () {
                 var id = $(this).attr("data-edit");
                 var dialog = new top.BUI.Overlay.Dialog({
@@ -177,14 +204,7 @@
                 dialog.show();
                 dialog.get('loader').load({id : id})
             }
-            function getSelectionNames() {
-                var selections = grid.getSelection();
-                var ids = [];
-                for (var key in selections) {
-                    ids.push(selections[key].name);
-                }
-                return ids.join(",");
-            }
+            $(document).on("click", "[data-edit]", edit);
         });
     } (jQuery));
 </script>

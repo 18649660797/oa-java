@@ -16,6 +16,7 @@ public interface EmployeeService {
     void batchDelete(String ids);
     void batchInsert(List<Employee> employeeList);
     Employee findById(Long id);
+    Employee findByName(String name);
     void merge(EmployeeDTO employeeDTO);
     Employee findByAttendanceCN(String attendanceCN);
 }

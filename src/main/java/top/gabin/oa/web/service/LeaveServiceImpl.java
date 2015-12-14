@@ -4,18 +4,22 @@
  */
 package top.gabin.oa.web.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.gabin.oa.web.constant.LeaveType;
 import top.gabin.oa.web.dao.LeaveDao;
+import top.gabin.oa.web.dao.LeaveImportDTO;
 import top.gabin.oa.web.dto.LeaveDTO;
 import top.gabin.oa.web.entity.Employee;
 import top.gabin.oa.web.entity.Leave;
 import top.gabin.oa.web.entity.LeaveImpl;
 import top.gabin.oa.web.service.criteria.CriteriaCondition;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
+import top.gabin.oa.web.utils.date.DateUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +68,7 @@ public class LeaveServiceImpl implements LeaveService {
     }
 
     @Override
+    @Transactional("transactionManager")
     public Leave merge(LeaveDTO leaveDTO) {
         Leave leave = new LeaveImpl();
         if (leaveDTO != null) {
@@ -71,14 +76,14 @@ public class LeaveServiceImpl implements LeaveService {
                 leave = leaveDao.findById(leaveDTO.getId());
             }
             if (leaveDTO.getBeginDate() != null) {
-                leave.setBeginDate(leaveDTO.getBeginDate());
+                leave.setBeginDate(DateUtils.parseDate(leaveDTO.getBeginDate()));
             }
             if (leaveDTO.getEndDate() != null) {
-                leave.setEndDate(leaveDTO.getEndDate());
+                leave.setEndDate(DateUtils.parseDate(leaveDTO.getEndDate()));
             }
-            Long employeeId = leaveDTO.getEmployeeId();
-            if (employeeId != null) {
-                Employee employee = employeeService.findById(employeeId);
+            String name = leaveDTO.getName();
+            if (StringUtils.isNotBlank(name)) {
+                Employee employee = employeeService.findByName(name);
                 if (employee != null) {
                     leave.setEmployee(employee);
                 }
@@ -86,9 +91,39 @@ public class LeaveServiceImpl implements LeaveService {
             if (leaveDTO.getType() != null) {
                 leave.setType(LeaveType.instance(leaveDTO.getType()));
             }
+            if (StringUtils.isNotBlank(leaveDTO.getRemark())) {
+                leave.setRemark(leaveDTO.getRemark());
+            }
             leaveDao.saveOrUpdate(leave);
         }
         return leave;
     }
 
+    @Override
+    @Transactional("transactionManager")
+    public void importLeave(List<LeaveImportDTO> leaveImportDTOList) {
+        Map<String, Employee> cacheEmployee = new HashMap<String, Employee>();
+        List<Leave> leaveList = new ArrayList<Leave>();
+        for (LeaveImportDTO dto : leaveImportDTOList) {
+            String realName = dto.getName();
+            if (StringUtils.isBlank(realName)) {
+                continue;
+            }
+            Leave leave = new LeaveImpl();
+            leave.setBeginDate(dto.getBeginDate());
+            leave.setEndDate(dto.getEndDate());
+            leave.setType(LeaveType.instance(dto.getLeaveName()));
+            Employee employee;
+            if (cacheEmployee.containsKey(realName)) {
+                employee = cacheEmployee.get(realName);
+            } else {
+                employee = employeeService.findByName(realName);
+            }
+            leave.setEmployee(employee);
+            leaveList.add(leave);
+        }
+        for (Leave leave : leaveList) {
+            leaveDao.saveOrUpdate(leave);
+        }
+    }
 }

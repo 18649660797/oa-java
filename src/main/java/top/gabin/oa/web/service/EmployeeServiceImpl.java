@@ -104,6 +104,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeDao.findById(id);
     }
 
+    @Override
+    public Employee findByName(String name) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("eq_name", name);
+        CriteriaCondition criteriaCondition = new CriteriaCondition(params);
+        return queryService.singleQuery(EmployeeImpl.class, criteriaCondition);
+    }
+
     @Transactional("transactionManager")
     @Override
     public void merge(EmployeeDTO employeeDTO) {
