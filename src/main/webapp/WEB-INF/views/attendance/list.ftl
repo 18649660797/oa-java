@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>考勤数据</title>
-    <?php include_once $_SERVER["DOCUMENT_ROOT"] . "/Public/include/resources.php"; ?>
+<#include "../include/resource.ftl"/>
 </head>
 <body>
     <div class="row">

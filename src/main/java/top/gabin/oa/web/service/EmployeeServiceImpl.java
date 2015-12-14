@@ -60,7 +60,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                     if (department == null) {
                         department = new DepartmentImpl();
                         department.setName(departmentName);
-                        departmentService.merge(department);
+                        departmentService.persist(department);
                     }
                     employee.setDepartment(department);
                     cacheDepartment.put(departmentName, department);

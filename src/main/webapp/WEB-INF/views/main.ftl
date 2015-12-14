@@ -43,7 +43,7 @@
                     {id:'department-menu',text:'部门管理',href:'/department/list'},
                     {id:'employee-menu',text:'员工管理',href:'/employee/list'},
                     {id:'attendance-menu',text:'考勤数据',href:'/attendance/list'},
-                    {id:'exception-menu',text:'行政登记',href:'/exception/list'}
+                    {id:'exception-menu',text:'行政登记',href:'/leave/list'}
                 ]
             }]
         }];
