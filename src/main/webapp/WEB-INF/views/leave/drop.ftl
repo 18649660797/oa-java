@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8"/>
-    <?php include_once $_SERVER["DOCUMENT_ROOT"] . "/Public/include/resources.php"; ?>
+<#include "../include/resource.ftl"/>
 </head>
 <body>
 <ul class="breadcrumb">
-    <li><a href="/index.php/home/attendance/viewList">考勤管理</a> <span class="divider">/</span></li>
-    <li class="active">清除月份考勤</li>
+    <li><a href="/index.php/home/exception/viewList">行政登记</a> <span class="divider">/</span></li>
+    <li class="active">清除月份行政登记</li>
 </ul>
-<form id="J_Form" action="/index.php/home/attendance/dropMonth" method="post" class="form-horizontal">
+<form id="J_Form" action="/index.php/home/exception/dropMonth" method="post" class="form-horizontal">
     <div class="control-group">
         <label class="control-label">清除月份：</label>
         <div class="controls">
@@ -65,7 +64,7 @@
                 callback: function (data) {
                     if (edy.ajaxHelp.handleAjax((data))) {
                         BUI.Message.Alert("操作成功");
-                        location.href = "/home/attendance/list";
+                        location.href = "/home/exception/list";
                     }
                 }
             }).render();

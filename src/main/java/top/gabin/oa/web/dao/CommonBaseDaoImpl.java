@@ -1,11 +1,21 @@
 package top.gabin.oa.web.dao;
 
 
+import org.apache.commons.lang3.StringUtils;
+import top.gabin.oa.web.dto.AttendanceImportDTO;
+import top.gabin.oa.web.entity.Department;
+import top.gabin.oa.web.entity.DepartmentImpl;
+import top.gabin.oa.web.entity.Employee;
+import top.gabin.oa.web.entity.EmployeeImpl;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -33,6 +43,11 @@ public abstract class CommonBaseDaoImpl<SUB, T> implements CommonBaseDao<SUB, T>
     @Override
     public SUB saveOrUpdate(SUB t){
         return em.merge(t);
+    }
+
+    @Override
+    public void persist(SUB t) {
+        em.persist(t);
     }
 
     @Override

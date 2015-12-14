@@ -14,6 +14,8 @@ public interface CommonBaseDao<Supper, Child> {
 
     Supper saveOrUpdate(Supper t);
 
+    void persist(Supper t);
+
     void delete(Supper t);
 
     void deleteById(Long id);

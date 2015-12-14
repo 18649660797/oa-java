@@ -51,6 +51,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    public void persist(Department department) {
+        departmentDao.persist(department);
+    }
+
+    @Override
     public Department findById(Long id) {
         return departmentDao.findById(id);
     }

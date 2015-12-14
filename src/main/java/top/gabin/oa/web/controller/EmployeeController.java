@@ -110,7 +110,11 @@ public class EmployeeController {
 
     @RequestMapping(value = "suggest/{key}", method = RequestMethod.POST, produces="text/html;charset=UTF-8")
     public @ResponseBody String suggest(HttpServletRequest request, String callback, @PathVariable(value = "key") String key, String name) {
-        List<EmployeeImpl> query = queryService.query(EmployeeImpl.class, CriteriaQueryUtils.parseCondition(request));
+        CriteriaCondition criteriaCondition = CriteriaQueryUtils.parseCondition(request);
+        if (StringUtils.isNotBlank(name)) {
+            criteriaCondition.getConditions().put("like_name", name);
+        }
+        List<EmployeeImpl> query = queryService.query(EmployeeImpl.class, criteriaCondition);
         List<Map> list = RenderUtils.filterPageData(query, key);
         List<String> names = new ArrayList<String>();
         for (Map map : list) {
