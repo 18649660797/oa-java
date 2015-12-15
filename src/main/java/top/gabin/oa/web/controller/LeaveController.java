@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import top.gabin.oa.web.dao.LeaveImportDTO;
+import top.gabin.oa.web.dto.LeaveImportDTO;
 import top.gabin.oa.web.dto.LeaveDTO;
 import top.gabin.oa.web.entity.Department;
 import top.gabin.oa.web.entity.LeaveImpl;
@@ -102,6 +102,17 @@ public class LeaveController {
             resultMap.put("message", "导入数据有异常!");
         }
         return resultMap;
+    }
+
+    @RequestMapping(value = "dropView", method = RequestMethod.GET)
+    public String dropView() {
+        return dir + "/drop";
+    }
+
+    @RequestMapping(value = "dropMonth", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Object> dropMonth(String month) {
+        leaveService.clearMonth(month);
+        return RenderUtils.SUCCESS_RESULT;
     }
 
 }

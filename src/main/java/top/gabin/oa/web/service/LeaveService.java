@@ -1,6 +1,6 @@
 package top.gabin.oa.web.service;
 
-import top.gabin.oa.web.dao.LeaveImportDTO;
+import top.gabin.oa.web.dto.LeaveImportDTO;
 import top.gabin.oa.web.dto.LeaveDTO;
 import top.gabin.oa.web.entity.Leave;
 
@@ -18,4 +18,11 @@ public interface LeaveService {
     Leave merge(Leave leave);
     Leave merge(LeaveDTO leaveDTO);
     void importLeave(List<LeaveImportDTO> leaveImportDTOList);
+
+    /**
+     * 清除月份的请假数据
+     * @param month
+     */
+    void clearMonth(String month);
+
 }

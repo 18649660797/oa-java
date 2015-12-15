@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.gabin.oa.web.constant.LeaveType;
 import top.gabin.oa.web.dao.LeaveDao;
-import top.gabin.oa.web.dao.LeaveImportDTO;
+import top.gabin.oa.web.dto.LeaveImportDTO;
 import top.gabin.oa.web.dto.LeaveDTO;
 import top.gabin.oa.web.entity.Employee;
 import top.gabin.oa.web.entity.Leave;
@@ -126,4 +126,11 @@ public class LeaveServiceImpl implements LeaveService {
             leaveDao.saveOrUpdate(leave);
         }
     }
+
+    @Transactional("transactionManager")
+    @Override
+    public void clearMonth(String month) {
+        leaveDao.clearMonth(month);
+    }
+
 }

@@ -2,7 +2,7 @@
  * Copyright (c) 2015 云智盛世
  * Created with LeaveImportDTO.
  */
-package top.gabin.oa.web.dao;
+package top.gabin.oa.web.dto;
 
 import top.gabin.oa.web.utils.excel.annotation.ExcelField;
 

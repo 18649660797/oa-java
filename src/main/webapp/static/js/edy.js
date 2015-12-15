@@ -16,8 +16,8 @@
     };
     edy.ajaxHelp = {
         handleAjax: function(data) {
-            if (!data || data.error) {
-                edy.alert(data.error);
+            if (!data || !data.result) {
+                edy.alert(data.message);
                 return false;
             }
             return true;

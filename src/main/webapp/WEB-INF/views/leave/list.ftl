@@ -54,11 +54,11 @@
             var Grid = Grid,
                 Store = Data.Store,
                 columns = [
-                    {title: 'id', dataIndex: 'id', width: 60, renderer: function(val, row) {
-                        return "<a href='javascript:void(0);' data-edit='" + val + "'>编辑</a>";
+                    {title: 'id', dataIndex: 'id', width: 80, renderer: function(val, row) {
+                        return "<a href='javascript:void(0);' data-edit='" + val + "'>" + val + "</a>";
                     }},
                     {title: '姓名', dataIndex: 'realName', width: 60},
-                    {title: '部门', dataIndex: 'department', width: 60},
+                    {title: '部门', dataIndex: 'department', width: 100},
                     {title: '类型', dataIndex: 'type', width: 60},
                     {title: '开始日期', dataIndex: 'beginDate', width: 150, renderer: BUI.Grid.Format.datetimeRenderer},
                     {title: '结束时间', dataIndex: 'endDate', width: 150, renderer: BUI.Grid.Format.datetimeRenderer},
@@ -113,7 +113,24 @@
                         text : '<i class="icon-remove"></i>清空月份记录',
                         listeners : {
                             'click' : function() {
-                                location.href = "/leave/drop"
+                                var dialog = new top.BUI.Overlay.Dialog({
+                                    title: '清除月份行政登记',
+                                    width:430,
+                                    height:150,
+                                    closeAction: "destroy",
+                                    loader : {
+                                        url : '/leave/dropView',
+                                        autoLoad : false, //不自动加载
+                                        lazyLoad : false, //不延迟加载
+                                    },
+                                    mask:true,
+                                    success: function() {
+                                        top.$("#saveForm").submit();
+                                        this.close();
+                                    }
+                                });
+                                dialog.show();
+                                dialog.get('loader').load()
                             }
                         }
                     }, {
@@ -156,7 +173,7 @@
                             }
                         }]
                 },
-                plugins : [editing,Grid.Plugins.CheckSelection],
+                plugins : [editing,Grid.Plugins.CheckSelection,Grid.Plugins.ColumnResize],
             });
             grid.render();
             var form = new BUI.Form.HForm({
