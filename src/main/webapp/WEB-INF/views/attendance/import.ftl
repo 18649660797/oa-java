@@ -4,10 +4,6 @@
 <#include "../include/resource.ftl"/>
 </head>
 <body>
-<ul class="breadcrumb">
-    <li><a href="/index.php/home/attendance/viewList">考勤管理</a> <span class="divider">/</span></li>
-    <li class="active">导入考勤数据</li>
-</ul>
 <form id="J_Form" action="/index.php/home/attendance/import" method="post" enctype="multipart/form-data" class="form-horizontal">
     <div class="control-group">
         <label class="control-label">考勤初始文件：</label>
@@ -15,18 +11,11 @@
             <input type="file" name="file" id="file" data-rules="{required:true}" /><br>
         </div>
     </div>
-    <div class="row actions-bar">
-        <div class="form-actions span13 offset3">
-            <button type="submit" class="button button-primary">保存</button>
-            <button type="reset" class="button">重置</button>
-        </div>
-    </div>
 </form>
 <script>
     (function($) {
         $(function() {
             var Form = BUI.Form;
-
             new Form.Form({
                 srcNode : '#J_Form'
             }).render();

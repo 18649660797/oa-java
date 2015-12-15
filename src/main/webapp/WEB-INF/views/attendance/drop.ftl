@@ -2,23 +2,18 @@
 <html>
 <head>
 <#include "../include/resource.ftl"/>
+    <style>
+        .bui-monthpicker.bui-overlay{
+            z-index: 9999999999999;
+        }
+    </style>
 </head>
 <body>
-<ul class="breadcrumb">
-    <li><a href="/index.php/home/attendance/viewList">考勤管理</a> <span class="divider">/</span></li>
-    <li class="active">清除月份考勤</li>
-</ul>
-<form id="J_Form" action="/index.php/home/attendance/dropMonth" method="post" class="form-horizontal">
+<form id="saveForm" action="/attendance/dropMonth" method="post" class="form-horizontal">
     <div class="control-group">
         <label class="control-label">清除月份：</label>
         <div class="controls">
             <input type="text" id="J_Month" name="month">
-        </div>
-    </div>
-    <div class="row actions-bar">
-        <div class="form-actions span13 offset3">
-            <button type="submit" class="button button-primary">删除</button>
-            <button type="reset" class="button">重置</button>
         </div>
     </div>
 </form>
@@ -59,12 +54,12 @@
 
             var Form = BUI.Form;
             new Form.Form({
-                srcNode: '#J_Form',
+                srcNode: '#saveForm',
                 submitType: 'ajax',
                 callback: function (data) {
                     if (edy.ajaxHelp.handleAjax((data))) {
-                        BUI.Message.Alert("操作成功");
-                        location.href = "/home/attendance/list";
+                        edy.alert(data.message || "操作成功");
+                        top.reload();
                     }
                 }
             }).render();

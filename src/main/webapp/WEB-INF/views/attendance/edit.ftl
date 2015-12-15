@@ -4,73 +4,44 @@
 <#include "../include/resource.ftl"/>
 </head>
 <body>
-<ul class="breadcrumb">
-    <li><a href="/index.php/home/attendance/viewList">员工管理</a> <span class="divider">/</span></li>
-    <li class="active">{$entity?'编辑' : '添加'}员工</li>
-</ul>
 <div class="demo-content">
     <div class="row">
         <div class="span24">
-            <form id="J_Form" class="form-horizontal" method="post" action="/index.php/home/attendance/save">
-                <input type="hidden" name="id" value="{$entity.id}"/>
+            <form id="saveForm" class="form-horizontal" method="post" action="/attendance/save">
+                <input type="hidden" name="id" value="${(entity.id)!}"/>
                 <div class="control-group">
                     <label class="control-label"><s>*</s>姓名：</label>
                     <div class="controls">
-                        <input readonly type="text" class="control-text" data-rules="{required:true}" name="realName" value="{$entity.real_name}" />
+                        <input readonly type="text" class="control-text" data-rules="{required:true}" name="employeeName" value="${(entity.employee.name)!}" />
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label">考勤号：</label>
                     <div class="controls">
-                        <input readonly type="text" class="control-text" name="attendanceCn" value="{$entity.attendance_cn}" />
+                        <input readonly type="text" class="control-text" value="${(entity.employee.attendanceCN)!}" />
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label">考勤日期：</label>
                     <div class="controls">
-                        <input readonly type="text" class="control-text" name="work_date" value="{$entity.work_date}" />
+                        <input readonly type="text" class="control-text" name="workDate" value="${(entity.workDate)!}" />
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label">上午打卡：</label>
                     <div class="controls">
-                        <input type="text" class="control-text" name="am_time" value="{$entity.am_time}" />
+                        <input type="text" class="control-text" data-messages="{regexp:'时间格式:09:00'}" data-rules="{regexp:/^[0-2][0-9]\:[0-6][0-9]$/}" name="amTime" value="${(entity.amTime)!}" />
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label">下午打卡：</label>
                     <div class="controls">
-                        <input type="text" class="control-text" name="pm_time" value="{$entity.pm_time}" />
+                        <input type="text" class="control-text" data-messages="{regexp:'时间格式:18:00'}" data-rules="{regexp:/^[0-2][0-9]\:[0-6][0-9]$/}" name="pmTime" value="${(entity.pmTime)!}" />
                     </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label">备注：</label>
-                    <div class="controls control-row-auto">
-                        <textarea name="remark" class="control-row4 input-large">{$entity.remark}</textarea>
-                    </div>
-                </div>
-                <div class="form-actions span5 offset3">
-                    <button id="btnSearch" type="submit" class="button button-primary">提交</button>
-                    <button type="reset" class="button button-primary">重置</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-<script type="text/javascript">
-    BUI.use('bui/form',function  (Form) {
-        new Form.Form({
-            srcNode : '#J_Form',
-            submitType : 'ajax',
-            callback : function(data){
-                if (edy.ajaxHelp.handleAjax((data))) {
-                    BUI.Message.Alert(data.message || "操作成功");
-                    location.href = "/index.php/home/attendance/viewList";
-                }
-            }
-        }).render();
-    });
-</script>
-<!-- script end -->
 </body>
 </html>

@@ -6,30 +6,24 @@
 <body>
     <div class="row">
         <form id="J_FORM" class="form-panel" action="data" method="post" style="margin-bottom:0;">
-            <input type="hidden" name="join" value="edy_employee e on e.id = a.e_id"/>
-            <input type="hidden" name="eq_a:status" value="1"/>
             <div class="panel-title">
             <span>
                 <label>考勤月：</label>
-                <input type="text" id="J_Month" name="like_a:work_date" value="">
+                <input type="text" id="J_Month" name="workDate" value="">
 
-                <label>打卡日期：</label><input name="between_a:work_date" type="text" class="calendar" /> <label>至</label> <input name="between_a:work_date" type="text" class="calendar" />
+                <label>打卡日期：</label><input name="ge_workDate" type="text" class="calendar" /> <label>至</label> <input name="le_workDate" type="text" class="calendar" />
 
                 <label>姓名：</label>
-                <!--<input type="text" class="control-text" name="like_e:real_name" value="" />-->
                 <div class="suggest" id="realName"></div>
 
                 <label>部门：</label>
-                <select name="eq_e:department">
+                <select name="eq_employee.department.id">
                     <option value="">全部</option>
-                    <option value="产品中心">产品中心</option>
-                    <option value="开发部">开发部</option>
-                    <option value="运营部">运营部</option>
-                    <option value="销售部">销售部</option>
-                    <option value="市场部">市场部</option>
-                    <option value="行政部">行政部</option>
-                    <option value="客户中心">客户中心</option>
-                    <option value="云智盛世">云智盛世</option>
+                <#if departmentList?? && departmentList?size gt 0>
+                    <#list departmentList as department>
+                        <option value="${(department.id)!}">${(department.name)!}</option>
+                    </#list>
+                </#if>
                 </select>
             </span>
             </div>
@@ -102,15 +96,26 @@
                     Store = Data.Store,
                     columns = [
                         {title: 'id', dataIndex: 'id', width: 60, renderer: function(val, row) {
-                            return edy.rendererHelp.createLink("/index.php/home/attendance/edit?id=" + val, val)
+                            return "<a href='javascript:void(0);' data-edit='" + val + "'>" + val + "</a>";
                         }},
-                        {title: '姓名', dataIndex: 'real_name', width: 80},
+                        {title: '姓名', dataIndex: 'employee', width: 80},
+                        {title: '状态', dataIndex: 'status', width: 80},
                         {title: '部门', dataIndex: 'department', width: 80},
-                        {title: '打卡日期', dataIndex: 'work_date', width: 100},
-                        {title: '上午打卡', dataIndex: 'am_time', width: 80},
-                        {title: '下午打卡', dataIndex: 'pm_time', width: 80},
-                        {title: '前日晚卡', dataIndex: 'yesterday', width: 80},
-                        {title: '迟到', dataIndex: 'am_time', width: 80, renderer: function(val, row) {
+                        {title: '打卡日期', dataIndex: 'workDate', width: 100, renderer: BUI.Grid.Format.dateRenderer},
+                        {title: '上午打卡', dataIndex: 'amTime', width: 80},
+                        {title: '下午打卡', dataIndex: 'pmTime', width: 80},
+                        {title: '前日晚卡', dataIndex: 'yesterday', width: 80, renderer: function(val, row) {
+                            if (!val) {
+                                return "";
+                            }
+                            var result = "";
+                            var arr= val.split(":");
+                            if (arr[0] > 21 || (arr[0] == 21 && arr[1] >= 30)) {
+                                return "<label style='color:red;'>" + val + "</label>";
+                            }
+                            return val;
+                        }},
+                        {title: '迟到', dataIndex: 'amTime', width: 80, renderer: function(val, row) {
                             if (!val) {
                                 return "";
                             }
@@ -123,7 +128,7 @@
                             }
                             return result;
                         }},
-                        {title: '早退', dataIndex: 'pm_time', width: 80, renderer: function(val, row) {
+                        {title: '早退', dataIndex: 'pmTime', width: 80, renderer: function(val, row) {
                             if (!val) {
                                 return "";
                             }
@@ -135,16 +140,16 @@
                                 result += pmRule + "分钟" ;
                             }
                             return result;
-                        }},
-                        {title: '备注', dataIndex: 'remark', width: 80}
+                        }}
                     ];
                 var store = new Store({
-                    url : '/index.php/home/attendance/data',
+                    url : '/attendance/grid',
                     autoLoad:false, //自动加载数据
 //                        params : $("#J_FORM").serialize(),
                     pageSize:10	// 配置分页数目
                 }),
                 grid = new Grid.Grid({
+                    height: 500,
                     render:'#grid',
                     columns : columns,
                     loadMask: true, //加载数据时显示屏蔽层
@@ -160,7 +165,38 @@
                             text : '<i class="icon-plus"></i>导入考勤数据',
                             listeners : {
                                 'click' : function() {
-                                    location.href = "/index.php/home/attendance/upload";
+                                    var dialog = new top.BUI.Overlay.Dialog({
+                                        title: '导入请假外出登记',
+                                        width:430,
+                                        height:150,
+                                        closeAction: "destroy",
+                                        loader : {
+                                            url : '/attendance/importView',
+                                            autoLoad : false, //不自动加载
+                                            lazyLoad : false, //不延迟加载
+                                        },
+                                        mask:true,
+                                        success: function() {
+                                            top.$.ajaxFileUpload({
+                                                url : '/attendance/import',
+                                                secureuri: false,
+                                                fileElementId: "file",
+                                                dataType : 'json',
+                                                method : 'post',
+                                                success: function (data) {
+                                                    edy.alert("导入成功！");
+                                                    reload();
+                                                },
+                                                error: function (data, status, e) {
+                                                    //edy.alert("导入失败！");
+                                                    reload();
+                                                }
+                                            });
+                                            this.close();
+                                        }
+                                    });
+                                    dialog.show();
+                                    dialog.get('loader').load()
                                 }
                             }
                         },
@@ -169,20 +205,37 @@
                             text : '<i class="icon-remove"></i>清空月份考勤',
                             listeners : {
                                 'click' : function() {
-                                    location.href = "/index.php/home/attendance/drop";
+                                    var dialog = new top.BUI.Overlay.Dialog({
+                                        title: '清除月份考勤记录',
+                                        width:430,
+                                        height:150,
+                                        closeAction: "destroy",
+                                        loader : {
+                                            url : '/attendance/dropView',
+                                            autoLoad : false, //不自动加载
+                                            lazyLoad : false, //不延迟加载
+                                        },
+                                        mask:true,
+                                        success: function() {
+                                            top.$("#saveForm").submit();
+                                            this.close();
+                                        }
+                                    });
+                                    dialog.show();
+                                    dialog.get('loader').load()
                                 }
                             }
                         },
                         {
                             btnCls : 'button button-small',
-                            text : '<i class="icon-remove"></i>过滤节假日',
+                            text : '<i class="icon-remove"></i>批量设置节假日',
                             listeners : {
                                 'click' : function() {
                                     var Select = BUI.Select, select, month = $("#J_Month").val(), calendar;
                                     if (!month) {
                                         return edy.alert("请选择一个考勤月");
                                     }
-                                    $.post("/index.php/home/attendance/getDays", {month: month}, function(data) {
+                                    $.post("/attendance/getDays", {month: month}, function(data) {
                                         var items = data;
                                         select = new Select.Combox({
                                             render:'#s1',
@@ -227,7 +280,11 @@
                                         contentId: "calendarDiv",
                                         success: function() {
                                             var days = $("#hide").val();
-                                            $.post("/index.php/home/attendance/unsetDays", {days:days}, function(data) {
+                                            var tmpArr = days.split(",");
+                                            for (var i = 0; i < tmpArr.length; i++) {
+                                                tmpArr[i] = "\'" + tmpArr[i] + " 00:00:00\'";
+                                            }
+                                            $.post("/attendance/unsetDays", {days:tmpArr.join(",")}, function(data) {
 
                                             });
                                             $("#s1 li").remove();
@@ -255,7 +312,7 @@
                                     if (!month) {
                                         return edy.alert("请选择一个考勤月");
                                     }
-                                    window.open("/index.php/home/attendance/analysis?month=" + month)
+                                    window.open("/attendance/analysis?month=" + month)
                                 }
                             }
                         }]
@@ -282,12 +339,54 @@
                 var Select = BUI.Select;
                 var suggest = new Select.Suggest({
                     render:'#realName',
-                    name:'realName',
-                    url:'/index.php/home/attendance/getRealNames'
+                    name:'name',
+                    url:'/employee/suggest/name'
                 });
                 suggest.render();
+                function getSelections() {
+                    var selections = grid.getSelection();
+                    var ids = [];
+                    for (var key in selections) {
+                        ids.push(selections[key].id);
+                    }
+                    return ids.join(",");
+                }
+                function reload() {
+                    store.load();
+                }
+                top.reload = reload;
             });
-
+            function edit () {
+                var id = $(this).attr("data-edit");
+                var dialog = new top.BUI.Overlay.Dialog({
+                    title: (id && '编辑' || '新增') + '请假登记',
+                    width:800,
+                    height:350,
+                    closeAction: "destroy",
+                    loader : {
+                        url : '/attendance/edit',
+                        autoLoad : false, //不自动加载
+                        lazyLoad : false
+                    },
+                    mask:true,
+                    success: function() {
+                        var data = top.$("#saveForm").serializeArray();
+                        var action = top.$("#saveForm").attr("action");
+                        $.post(action, data, function(data) {
+                            if (edy.ajaxHelp.handleAjax((data))) {
+                                if (edy.ajaxHelp.handleAjax((data))) {
+                                    edy.alert(data.message || "操作成功");
+                                    top.reload();
+                                }
+                            }
+                        });
+                        this.close();
+                    }
+                });
+                dialog.show();
+                dialog.get('loader').load({id : id})
+            }
+            $(document).on("click", "[data-edit]", edit);
         });
     } (jQuery));
 </script>

@@ -18,5 +18,7 @@ public interface EmployeeService {
     Employee findById(Long id);
     Employee findByName(String name);
     void merge(EmployeeDTO employeeDTO);
+    void merge(Employee employee);
+    void persist(Employee employee);
     Employee findByAttendanceCN(String attendanceCN);
 }

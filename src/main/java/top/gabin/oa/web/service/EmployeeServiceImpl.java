@@ -137,6 +137,18 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
     }
 
+    @Transactional("transactionManager")
+    @Override
+    public void merge(Employee employee) {
+        employeeDao.saveOrUpdate(employee);
+    }
+
+    @Transactional("transactionManager")
+    @Override
+    public void persist(Employee employee) {
+        employeeDao.persist(employee);
+    }
+
     @Override
     public Employee findByAttendanceCN(String attendanceCN) {
         Map<String, Object> params = new HashMap<String, Object>();

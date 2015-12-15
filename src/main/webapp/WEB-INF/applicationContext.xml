@@ -9,4 +9,5 @@
     <context:component-scan base-package="top.gabin.oa.web.dao"/>
     <!-- file import -->
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+    <bean id="SpringBeanUtils" class="top.gabin.oa.web.utils.SpringBeanUtils"></bean>
 </beans>

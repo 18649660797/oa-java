@@ -16,7 +16,7 @@ import top.gabin.oa.web.entity.Leave;
 import top.gabin.oa.web.entity.LeaveImpl;
 import top.gabin.oa.web.service.criteria.CriteriaCondition;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
-import top.gabin.oa.web.utils.date.DateUtils;
+import top.gabin.oa.web.utils.date.TimeUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -76,10 +76,10 @@ public class LeaveServiceImpl implements LeaveService {
                 leave = leaveDao.findById(leaveDTO.getId());
             }
             if (leaveDTO.getBeginDate() != null) {
-                leave.setBeginDate(DateUtils.parseDate(leaveDTO.getBeginDate()));
+                leave.setBeginDate(TimeUtils.parseDate(leaveDTO.getBeginDate()));
             }
             if (leaveDTO.getEndDate() != null) {
-                leave.setEndDate(DateUtils.parseDate(leaveDTO.getEndDate()));
+                leave.setEndDate(TimeUtils.parseDate(leaveDTO.getEndDate()));
             }
             String name = leaveDTO.getName();
             if (StringUtils.isNotBlank(name)) {

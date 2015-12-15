@@ -18,8 +18,8 @@ public class AttendanceImportDTO {
     private String cn;
     @ExcelField(value = "department", title = "部门")
     private String department;
-    @ExcelField(value = "workData", title = "日期")
-    private String workData;
+    @ExcelField(value = "workDate", title = "日期")
+    private String workDate;
     @ExcelField(value = "planNO", title = "班次")
     private String planNO;
     @ExcelField(value = "amTime1", title = "上班1")
@@ -67,12 +67,12 @@ public class AttendanceImportDTO {
         this.department = department;
     }
 
-    public String getWorkData() {
-        return workData;
+    public String getWorkDate() {
+        return workDate;
     }
 
-    public void setWorkData(String workData) {
-        this.workData = workData;
+    public void setWorkDate(String workDate) {
+        this.workDate = workDate;
     }
 
     public String getPlanNO() {
