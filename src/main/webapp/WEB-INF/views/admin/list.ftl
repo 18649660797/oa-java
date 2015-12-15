@@ -12,8 +12,6 @@
             <li>
                 <label>名称：</label>
                 <input type="text" class="control-text" name="like_name" value="" />
-            </li>
-            <li>
                 <button type="submit" class="button button-primary">查询>></button>
             </li>
         </ul>
@@ -44,6 +42,7 @@
                 triggerSelected : false //触发编辑的时候不选中行
             }),
             grid = new Grid.Grid({
+                height: edy.getSuggestGridHeight(),
                 render:'#grid',
                 columns : columns,
                 loadMask: true, //加载数据时显示屏蔽层

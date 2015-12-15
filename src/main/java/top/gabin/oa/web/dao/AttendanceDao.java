@@ -11,4 +11,5 @@ public interface AttendanceDao extends CommonBaseDao<Attendance, AttendanceImpl>
     void clearMonth(String month);
     Attendance findYesterday(Attendance attendance);
     void batchSetLeaveDays(String days);
+    void batchSetWorkDays(String days);
 }

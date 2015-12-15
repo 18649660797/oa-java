@@ -41,4 +41,13 @@ public class AttendanceDaoImpl extends CommonBaseDaoImpl<Attendance, top.gabin.o
         Query query = em.createNativeQuery("update edy_attendance set status=0 where work_date in (" + days + ")");
         query.executeUpdate();
     }
+
+    @Override
+    public void batchSetWorkDays(String days) {
+        if (StringUtils.isBlank(days)) {
+            return;
+        }
+        Query query = em.createNativeQuery("update edy_attendance set status=1 where work_date in (" + days + ")");
+        query.executeUpdate();
+    }
 }

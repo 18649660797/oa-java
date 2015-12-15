@@ -16,4 +16,5 @@ public interface AttendanceService {
     void merge(AttendanceDTO attendanceDTO);
     Attendance findById(Long id);
     void batchSetLeaveDays(String days);
+    void batchSetWorkDays(String days);
 }

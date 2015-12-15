@@ -175,4 +175,10 @@ public class AttendanceServiceImpl implements AttendanceService {
     public void batchSetLeaveDays(String days) {
         attendanceDao.batchSetLeaveDays(days);
     }
+
+    @Override
+    @Transactional("transactionManager")
+    public void batchSetWorkDays(String days) {
+        attendanceDao.batchSetWorkDays(days);
+    }
 }

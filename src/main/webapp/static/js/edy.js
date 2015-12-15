@@ -28,5 +28,8 @@
             return "<a href='{0}'>{1}</a>".replace("{0}", href || "").replace("{1}", text || "");
         }
     };
+    edy.getSuggestGridHeight = function() {
+        return $("body").height() - $(".row:first-child").height();
+    }
     w.edy = edy;
 } (window, jQuery));

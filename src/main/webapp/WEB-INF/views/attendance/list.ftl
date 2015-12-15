@@ -149,7 +149,7 @@
                     pageSize:10	// 配置分页数目
                 }),
                 grid = new Grid.Grid({
-                    height: 500,
+                    height: edy.getSuggestGridHeight(),
                     render:'#grid',
                     columns : columns,
                     loadMask: true, //加载数据时显示屏蔽层
@@ -280,12 +280,94 @@
                                         contentId: "calendarDiv",
                                         success: function() {
                                             var days = $("#hide").val();
-                                            var tmpArr = days.split(",");
+                                            var tmpArr = days.split(";");
                                             for (var i = 0; i < tmpArr.length; i++) {
                                                 tmpArr[i] = "\'" + tmpArr[i] + " 00:00:00\'";
                                             }
                                             $.post("/attendance/unsetDays", {days:tmpArr.join(",")}, function(data) {
+                                                if (edy.ajaxHelp.handleAjax(data)) {
+                                                    reload();
+                                                }
+                                            });
+                                            $("#s1 li").remove();
+                                            $("#hide").val("");
+                                            select.destroy();
+                                            calendar.destroy();
+                                            this.close();
+                                        },
+                                        cancel: function() {
+                                            $("#s1 li").remove();
+                                            $("#hide").val("");
+                                            select.destroy();
+                                            calendar.destroy();
+                                            this.close();
+                                        }
+                                    }).show();
+                                }
+                            }
+                        },
+                        {
+                            btnCls : 'button button-small',
+                            text : '<i class="icon-remove"></i>批量设置工作日',
+                            listeners : {
+                                'click' : function() {
+                                    var Select = BUI.Select, select, month = $("#J_Month").val(), calendar;
+                                    if (!month) {
+                                        return edy.alert("请选择一个考勤月");
+                                    }
+                                    $.post("/attendance/getDays", {month: month}, function(data) {
+                                        var items = data;
+                                        select = new Select.Combox({
+                                            render:'#s1',
+                                            showTag:true,
+                                            limit : 3, //限制最多3个
+                                            width: 500,
+                                            valueField : '#hide',//显示tag的Combox必须存在valueField
+                                            items:items,
+                                            forbitInput : true, //只能从列表中选择，输入无效,一般用于suggest中
+                                            tagFormatter : function(value){ //将id : text中的id去掉
+                                                var arr = value.split(':');
 
+                                                return arr[1]; //用户输入
+                                            },
+                                            list : { //自定义列表
+                                                textGetter : function(item){
+                                                    return item.id + ':' + item.text;
+                                                },
+                                                idField : 'id' //默认是value
+                                            }
+                                        });
+                                        select.render();
+                                        var Calendar = BUI.Calendar;
+                                        calendar = new Calendar.Calendar({
+                                            render:'#calendar',
+                                        });
+                                        calendar.render();
+                                        calendar.on('selectedchange',function (ev) {
+                                            var _tmp_ = function(val) {
+                                                return val > 9 ? val : "0" + val;
+                                            };
+                                            var date = new Date(ev.date);
+                                            date = date.getFullYear() + "-" + _tmp_(date.getMonth() + 1) + "-" + _tmp_(date.getDate());
+                                            select.setSelectedValue(date);
+                                        });
+                                    });
+                                    new BUI.Overlay.Dialog({
+                                        closeAction: "destroy",
+                                        title: "过滤节假日",
+                                        width: 580,
+                                        height: 250,
+                                        contentId: "calendarDiv",
+                                        success: function() {
+                                            var days = $("#hide").val();
+                                            var tmpArr = days.split(";");
+                                            for (var i = 0; i < tmpArr.length; i++) {
+                                                tmpArr[i] = "\'" + tmpArr[i] + " 00:00:00\'";
+                                            }
+                                            $.post("/attendance/setDays", {days:tmpArr.join(",")}, function(data) {
+                                                if (edy.ajaxHelp.handleAjax(data)) {
+                                                    reload();
+                                                }
                                             });
                                             $("#s1 li").remove();
                                             $("#hide").val("");

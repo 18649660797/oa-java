@@ -57,7 +57,7 @@
                 pageSize:10	// 配置分页数目
             }),
             grid = new Grid.Grid({
-                height: 450,
+                height: edy.getSuggestGridHeight(),
                 render:'#grid',
                 columns : columns,
                 loadMask: true, //加载数据时显示屏蔽层

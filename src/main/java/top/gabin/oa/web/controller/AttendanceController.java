@@ -152,4 +152,10 @@ public class AttendanceController {
         return RenderUtils.SUCCESS_RESULT;
     }
 
+    @RequestMapping(value = "setDays", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Object> setDays(String days) {
+        attendanceService.batchSetWorkDays(days);
+        return RenderUtils.SUCCESS_RESULT;
+    }
+
 }
