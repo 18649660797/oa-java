@@ -5,8 +5,8 @@
 package top.gabin.oa.web.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.gabin.oa.web.constant.AttendanceStatus;
@@ -14,6 +14,7 @@ import top.gabin.oa.web.dao.AttendanceDao;
 import top.gabin.oa.web.dto.AttendanceDTO;
 import top.gabin.oa.web.dto.AttendanceImportDTO;
 import top.gabin.oa.web.dto.AttendanceWorkFlowDTO;
+import top.gabin.oa.web.dto.EmployeeAttendanceDTO;
 import top.gabin.oa.web.entity.*;
 import top.gabin.oa.web.service.criteria.CriteriaCondition;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
@@ -27,6 +28,7 @@ import java.util.*;
  */
 @Service("attendanceService")
 public class AttendanceServiceImpl implements AttendanceService {
+    private static final Logger logger = LoggerFactory.getLogger(AttendanceService.class);
     @Resource(name = "departmentService")
     private DepartmentService departmentService;
     @Resource(name = "employeeService")
@@ -197,7 +199,6 @@ public class AttendanceServiceImpl implements AttendanceService {
         Map<Long, Map<Long, List<Attendance>>> departmentGroup = new HashMap<Long, Map<Long, List<Attendance>>>();
         for (Attendance attendance : attendanceList) {
             Map<Long, List<Attendance>> employeeGroup;
-            String department = attendance.getEmployee().getDepartment().getName();
             Long departmentId = attendance.getEmployee().getDepartment().getId();
             if (departmentGroup.containsKey(departmentId)) {
                 employeeGroup = departmentGroup.get(departmentId);
@@ -235,7 +236,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                             Date date = TimeUtils.parseDate(format);
                             if (amNeedFitTime == null || amNeedFitTime.before(date)) {
                                 attendanceWorkFlowDTO.setAmNeedFitTime(date);
-                                System.out.println(attendance.getEmployee().getName() + "昨日加班，今日打卡时间" + format);
+                                attendanceWorkFlowDTO.setYesterdayWorkDelay(true);
                             }
                         }
                     }
@@ -244,6 +245,85 @@ public class AttendanceServiceImpl implements AttendanceService {
             }
         }
         return workFlowDTOGroup;
+    }
+
+    @Override
+    public Map<Long, Map<Long, EmployeeAttendanceDTO>> dealAttendanceRule(Map<Long, Map<Long, List<AttendanceWorkFlowDTO>>> workFlowDTOGroup) {
+        Map<Long, Map<Long, EmployeeAttendanceDTO>> resultDTOMap = new HashMap<Long, Map<Long, EmployeeAttendanceDTO>>();
+        for (Long key : workFlowDTOGroup.keySet()) {
+            Map<Long, List<AttendanceWorkFlowDTO>> employeeGroup = workFlowDTOGroup.get(key);
+            Map<Long, EmployeeAttendanceDTO> employeeAttendanceDTOMap = new HashMap<Long, EmployeeAttendanceDTO>();
+            for (Long key0 : employeeGroup.keySet()) {
+                List<AttendanceWorkFlowDTO> attendances = employeeGroup.get(key0);
+                EmployeeAttendanceDTO employeeAttendanceDTO = new EmployeeAttendanceDTO();
+                employeeAttendanceDTO.setAttendanceWorkFlowDTOList(attendances);
+                for (int i = 0; i < attendances.size(); i++) {
+                    AttendanceWorkFlowDTO attendanceWorkFlowDTO = attendances.get(i);
+                    Attendance attendance = attendanceWorkFlowDTO.getAttendance();
+                    Date workDate = attendance.getWorkDate();
+                    String amTime = attendance.getAmTime();
+                    Date amDate = StringUtils.isBlank(amTime) ? null : TimeUtils.parseDate(TimeUtils.format(workDate, "yyyy-MM-dd " + amTime + ":00"));
+                    String pmTime = attendance.getPmTime();
+                    Date pmDate = StringUtils.isBlank(pmTime) ? null : TimeUtils.parseDate(TimeUtils.format(workDate, "yyyy-MM-dd " + pmTime + ":00"));
+                    if (amDate == null && pmDate == null) {
+                        attendanceWorkFlowDTO.setHasNowWork(true);
+                    }
+                    if (!attendanceWorkFlowDTO.isNotNeedFit()) {
+                        Date amNeedFitTime = attendanceWorkFlowDTO.getAmNeedFitTime();
+                        Date pmNeedFitTime = attendanceWorkFlowDTO.getPmNeedFitTime();
+                        String s = "";
+                        // 如果迟到
+                        if (amDate != null && amNeedFitTime != null && amDate.after(amNeedFitTime)) {
+                            int delaySeconds = employeeAttendanceDTO.getDelaySeconds();
+                            long minutes = TimeUtils.getMinutes(amDate, amNeedFitTime);
+                            attendanceWorkFlowDTO.setAmMinutes((int) minutes);
+                            // 十五分钟内
+                            if (minutes <= 15 && delaySeconds < EmployeeAttendanceDTO.delayLimit) {
+                                attendanceWorkFlowDTO.setAmLimit(true);
+
+                            } else {
+                                // 如果超过15分钟
+                                int amMoney = employeeAttendanceDTO.getDelayMoneys();
+                                if (minutes <= 30) {
+                                    amMoney += attendanceWorkFlowDTO.ADD_MONEY_ONE;
+                                    s += "迟到扣除" + amMoney + "元工资;";
+
+                                } else if (minutes > 30 && minutes <= 60) {
+                                    s +=  "迟到扣除1h工资;";
+                                } else if (minutes > 60 && minutes <= 180) {
+                                    s += "迟到扣除3h工资;";
+                                } else if (minutes > 180) {
+                                    s += "迟到扣除1天工资;";
+                                }
+                                attendanceWorkFlowDTO.setAmMoney(amMoney);
+                                employeeAttendanceDTO.setDelayMoneys(amMoney);
+                            }
+                            employeeAttendanceDTO.setDelaySeconds(delaySeconds + 1);
+                        }
+                        // 如果早退
+                        if (pmDate != null && pmNeedFitTime != null && pmDate.before(pmNeedFitTime)) {
+                            int goQuickSeconds = employeeAttendanceDTO.getGoQuickSeconds();
+                            if (goQuickSeconds < EmployeeAttendanceDTO.goQuickLimit) {
+                                attendanceWorkFlowDTO.setPmLimit(true);
+                            } else {
+                                int pmMoney = employeeAttendanceDTO.getGoQuickMoneys();
+                                pmMoney += attendanceWorkFlowDTO.ADD_MONEY_ONE;
+                                attendanceWorkFlowDTO.setPmMoney(pmMoney);
+                                employeeAttendanceDTO.setDelayMoneys(pmMoney);
+                                s += "早退扣除" + pmMoney + "元工资;";
+                            }
+                            long minutes = TimeUtils.getMinutes(pmNeedFitTime, pmDate);
+                            attendanceWorkFlowDTO.setPmMinutes((int) minutes);
+                            employeeAttendanceDTO.setGoQuickSeconds(goQuickSeconds + 1);
+                        }
+                        attendanceWorkFlowDTO.setRemark(s);
+                    }
+                }
+                employeeAttendanceDTOMap.put(key0, employeeAttendanceDTO);
+            }
+            resultDTOMap.put(key, employeeAttendanceDTOMap);
+        }
+        return resultDTOMap;
     }
 
 }
