@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * @author linjiabin  on  15/12/16
  */
-public class LeaveWorkFlowDTO {
+public class AttendanceWorkFlowDTO {
     private Attendance attendance;
     private Date amNeedFitTime;
     private Date pmNeedFitTime;

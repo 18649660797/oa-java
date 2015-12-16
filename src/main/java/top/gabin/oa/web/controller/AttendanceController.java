@@ -8,8 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,7 +30,6 @@ import top.gabin.oa.web.service.criteria.CriteriaQueryService;
 import top.gabin.oa.web.service.criteria.CriteriaQueryUtils;
 import top.gabin.oa.web.utils.RenderUtils;
 import top.gabin.oa.web.utils.date.TimeUtils;
-import top.gabin.oa.web.utils.excel.ExportExcel;
 import top.gabin.oa.web.utils.excel.ImportExcel;
 
 import javax.annotation.Resource;
@@ -41,7 +38,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author linjiabin  on  15/12/14
@@ -203,12 +199,13 @@ public class AttendanceController {
         }
         int i = 3;
         // 3、处理数据
-        Map<Long, Map<Long, List<LeaveWorkFlowDTO>>> attendanceGroup = leaveService.workFlow(departmentGroup, leaveMap);
+        Map<Long, Map<Long, List<AttendanceWorkFlowDTO>>> attendanceGroup = leaveService.workFlow(departmentGroup, leaveMap);
+        attendanceGroup = attendanceService.yesterdayWorkDelayWorkFlow(attendanceGroup);
         for (Long key : attendanceGroup.keySet()) {
-            Map<Long, List<LeaveWorkFlowDTO>> employeeGroup = attendanceGroup.get(key);
+            Map<Long, List<AttendanceWorkFlowDTO>> employeeGroup = attendanceGroup.get(key);
             Attendance a = null;
             for (Long key0 : employeeGroup.keySet()) {
-                List<LeaveWorkFlowDTO> attendances = employeeGroup.get(key0);
+                List<AttendanceWorkFlowDTO> attendances = employeeGroup.get(key0);
                 // 迟到次数
                 int $delayTimes = 0;
                 // 上午乐捐
@@ -217,8 +214,8 @@ public class AttendanceController {
                 int $overlayTimes = 0;
                 // 下午乐捐
                 int $applyMoneyPm = 0;
-                for (LeaveWorkFlowDTO leaveWorkFlowDTO : attendances) {
-                    Attendance attendance = leaveWorkFlowDTO.getAttendance();
+                for (AttendanceWorkFlowDTO attendanceWorkFlowDTO : attendances) {
+                    Attendance attendance = attendanceWorkFlowDTO.getAttendance();
                     HSSFRow row1 = sheet.createRow(i++);
                     // 填充部门
                     String departmentName = attendance.getEmployee().getDepartment().getName();
@@ -239,11 +236,11 @@ public class AttendanceController {
                     if (AttendanceStatus.LEAVE.equals(attendance.getStatus())) {
                         row1.getCell(2).setCellStyle(getBlueFontStyle(workbook));
                     } else {
-                        List<Leave> leaveList = leaveWorkFlowDTO.getLeaveList();
+                        List<Leave> leaveList = attendanceWorkFlowDTO.getLeaveList();
                         String remark = "";
                         if (leaveList != null && leaveList.size() > 0) {
                             if (leaveList.size() == 1) {
-                                Double hours = leaveWorkFlowDTO.getLeaveTimes() / 60D;
+                                Double hours = attendanceWorkFlowDTO.getLeaveTimes() / 60D;
                                 Leave leave = leaveList.get(0);
                                 switch (leave.getType()) {
                                     case NORMAL_LEAVE:
@@ -345,12 +342,13 @@ public class AttendanceController {
         }
         int i = 3;
         // 3、处理数据
-        Map<Long, Map<Long, List<LeaveWorkFlowDTO>>> attendanceGroup = leaveService.workFlow(departmentGroup, leaveMap);
+        Map<Long, Map<Long, List<AttendanceWorkFlowDTO>>> attendanceGroup = leaveService.workFlow(departmentGroup, leaveMap);
+        attendanceGroup = attendanceService.yesterdayWorkDelayWorkFlow(attendanceGroup);
         for (Long key : attendanceGroup.keySet()) {
-            Map<Long, List<LeaveWorkFlowDTO>> employeeGroup = attendanceGroup.get(key);
+            Map<Long, List<AttendanceWorkFlowDTO>> employeeGroup = attendanceGroup.get(key);
             Attendance a = null;
             for (Long key0 : employeeGroup.keySet()) {
-                List<LeaveWorkFlowDTO> attendances = employeeGroup.get(key0);
+                List<AttendanceWorkFlowDTO> attendances = employeeGroup.get(key0);
                 // 迟到次数
                 int $delayTimes = 0;
                 // 上午乐捐
@@ -359,8 +357,8 @@ public class AttendanceController {
                 int $overlayTimes = 0;
                 // 下午乐捐
                 int $applyMoneyPm = 0;
-                for (LeaveWorkFlowDTO leaveWorkFlowDTO : attendances) {
-                    Attendance attendance = leaveWorkFlowDTO.getAttendance();
+                for (AttendanceWorkFlowDTO attendanceWorkFlowDTO : attendances) {
+                    Attendance attendance = attendanceWorkFlowDTO.getAttendance();
                     HSSFRow row1 = sheet.createRow(i++);
                     // 填充部门
                     String departmentName = attendance.getEmployee().getDepartment().getName();
@@ -375,27 +373,32 @@ public class AttendanceController {
                     String workDateFromat = TimeUtils.format(attendance.getWorkDate(), "yyyy-MM-dd");
                     row1.createCell(3).setCellValue(workDateFromat);
                     // 填充上午打卡时间
-                    row1.createCell(4).setCellValue(attendance.getAmTime());
+                    String amTime = attendance.getAmTime();
+                    row1.createCell(4).setCellValue(amTime);
                     // 填充下午打开时间
-                    row1.createCell(5).setCellValue(attendance.getPmTime());
+                    String pmTime = attendance.getPmTime();
+                    row1.createCell(5).setCellValue(pmTime);
                     if (AttendanceStatus.LEAVE.equals(attendance.getStatus())) {
                         row1.getCell(2).setCellStyle(getBlueFontStyle(workbook));
                     } else {
-                        List<Leave> leaveList = leaveWorkFlowDTO.getLeaveList();
+                        if (StringUtils.isBlank(pmTime) && StringUtils.isBlank(amTime)) {
+                            row1.createCell(12).setCellValue(7.5);
+                        }
+                        List<Leave> leaveList = attendanceWorkFlowDTO.getLeaveList();
                         String remark = "";
                         if (leaveList != null && leaveList.size() > 0) {
                             if (leaveList.size() == 1) {
-                                Double hours = leaveWorkFlowDTO.getLeaveTimes() / 60D;
+                                Double hours = attendanceWorkFlowDTO.getLeaveTimes() / 60D;
                                 Leave leave = leaveList.get(0);
                                 switch (leave.getType()) {
                                     case NORMAL_LEAVE:
-                                        row1.getCell(6).setCellValue(hours);
+                                        row1.createCell(6).setCellValue(hours);
                                         break;
                                     case SICK_LEAVE:
-                                        row1.getCell(7).setCellValue(hours);
+                                        row1.createCell(7).setCellValue(hours);
                                         break;
                                     case OFF_LEAVE:
-                                        row1.getCell(8).setCellValue(hours);
+                                        row1.createCell(8).setCellValue(hours);
                                         break;
                                     case OUT_LEAVE:
                                     case FUNERAL_LEAVE:
@@ -443,37 +446,45 @@ public class AttendanceController {
         return RenderUtils.SUCCESS_RESULT;
     }
 
-    private static HSSFCellStyle blueFontStyle;
-    private static HSSFCellStyle headStyle;
 
     private static HSSFCellStyle getHeadFontStyle(HSSFWorkbook workbook) {
-//        if (headStyle != null) {
-//            return headStyle;
-//        }
-        headStyle = workbook.createCellStyle();
-        headStyle.setFillForegroundColor(HSSFColor.SKY_BLUE.index);
-        headStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-        headStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-        headStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-        headStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
-        headStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
-        headStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        HSSFCellStyle cellStyle = workbook.createCellStyle();
+        cellStyle.setFillForegroundColor(HSSFColor.SKY_BLUE.index);
+        cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+        cellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+        cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+        cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
         //生成标题字体
         HSSFFont font = workbook.createFont();
         font.setColor(HSSFColor.VIOLET.index);
         font.setFontHeightInPoints((short)12);
         font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
         //字体应用
-        headStyle.setFont(font);
-        return headStyle;
+        cellStyle.setFont(font);
+        return cellStyle;
+    }
+
+    private static HSSFCellStyle getBlueFillStyle(HSSFWorkbook workbook) {
+        HSSFCellStyle cellStyle = workbook.createCellStyle();
+        cellStyle.setFillForegroundColor(HSSFColor.BLUE.index);
+        //生成标题字体
+        HSSFFont font = workbook.createFont();
+        font.setColor(HSSFColor.BLACK.index);
+        font.setFontHeightInPoints((short)12);
+        font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        //字体应用
+        cellStyle.setFont(font);
+        return cellStyle;
     }
 
     private static HSSFCellStyle getBlueFontStyle(HSSFWorkbook workbook) {
 //        if (blueFontStyle != null) {
 //            return blueFontStyle;
 //        }
-        blueFontStyle = workbook.createCellStyle();
-        blueFontStyle.setFillForegroundColor(HSSFColor.BLACK.index);
+        HSSFCellStyle cellStyle = workbook.createCellStyle();
+        cellStyle.setFillForegroundColor(HSSFColor.BLACK.index);
 //        style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 //        style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
 //        style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
@@ -486,8 +497,8 @@ public class AttendanceController {
         font.setFontHeightInPoints((short)12);
         font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
         //字体应用
-        blueFontStyle.setFont(font);
-        return blueFontStyle;
+        cellStyle.setFont(font);
+        return cellStyle;
     }
 
 }

@@ -5,22 +5,22 @@
 package top.gabin.oa.web.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.gabin.oa.web.constant.AttendanceStatus;
 import top.gabin.oa.web.dao.AttendanceDao;
 import top.gabin.oa.web.dto.AttendanceDTO;
 import top.gabin.oa.web.dto.AttendanceImportDTO;
+import top.gabin.oa.web.dto.AttendanceWorkFlowDTO;
 import top.gabin.oa.web.entity.*;
 import top.gabin.oa.web.service.criteria.CriteriaCondition;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
 import top.gabin.oa.web.utils.date.TimeUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author linjiabin  on  15/12/15
@@ -216,5 +216,34 @@ public class AttendanceServiceImpl implements AttendanceService {
         return departmentGroup;
     }
 
+    @Override
+    public Map<Long, Map<Long, List<AttendanceWorkFlowDTO>>> yesterdayWorkDelayWorkFlow(Map<Long, Map<Long, List<AttendanceWorkFlowDTO>>> workFlowDTOGroup) {
+        for (Long key : workFlowDTOGroup.keySet()) {
+            Map<Long, List<AttendanceWorkFlowDTO>> employeeGroup = workFlowDTOGroup.get(key);
+            for (Long key0 : employeeGroup.keySet()) {
+                Attendance yesterday = null;
+                List<AttendanceWorkFlowDTO> attendances = employeeGroup.get(key0);
+                for (AttendanceWorkFlowDTO attendanceWorkFlowDTO : attendances) {
+                    Attendance attendance = attendanceWorkFlowDTO.getAttendance();
+                    if (yesterday != null && StringUtils.isNotBlank(yesterday.getPmTime())) {
+                        String pmTime = yesterday.getPmTime();
+                        Date pmDate = TimeUtils.parseDate("2015-01-01 " + pmTime + ":00");
+                        if (TimeUtils.afterOrEqual(pmDate, TimeUtils.parseDate("2015-01-01 21:30:00"))) {
+                            Date amNeedFitTime = attendanceWorkFlowDTO.getAmNeedFitTime();
+                            Date workDate = attendance.getWorkDate();
+                            String format = TimeUtils.format(workDate, "yyyy-MM-dd 10:00:00");
+                            Date date = TimeUtils.parseDate(format);
+                            if (amNeedFitTime == null || amNeedFitTime.before(date)) {
+                                attendanceWorkFlowDTO.setAmNeedFitTime(date);
+                                System.out.println(attendance.getEmployee().getName() + "昨日加班，今日打卡时间" + format);
+                            }
+                        }
+                    }
+                    yesterday = attendance;
+                }
+            }
+        }
+        return workFlowDTOGroup;
+    }
 
 }

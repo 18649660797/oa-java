@@ -5,20 +5,17 @@
 package top.gabin.oa.web.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import top.gabin.oa.web.constant.AttendanceStatus;
 import top.gabin.oa.web.constant.LeaveType;
 import top.gabin.oa.web.dao.LeaveDao;
 import top.gabin.oa.web.dto.LeaveImportDTO;
 import top.gabin.oa.web.dto.LeaveDTO;
-import top.gabin.oa.web.dto.LeaveWorkFlowDTO;
+import top.gabin.oa.web.dto.AttendanceWorkFlowDTO;
 import top.gabin.oa.web.entity.*;
 import top.gabin.oa.web.service.criteria.CriteriaCondition;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
 import top.gabin.oa.web.utils.date.TimeUtils;
-import top.gabin.oa.web.utils.date.UtilDateTime;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -160,27 +157,23 @@ public class LeaveServiceImpl implements LeaveService {
     }
 
     @Override
-    public Map<Long, Map<Long, List<LeaveWorkFlowDTO>>> workFlow(Map<Long, Map<Long, List<Attendance>>> attendanceGroup, Map<Long, List<Leave>> leaveGroup) {
-        Map<Long, Map<Long, List<LeaveWorkFlowDTO>>> leaveWorkFlowGroup = new HashMap<Long, Map<Long, List<LeaveWorkFlowDTO>>>();
+    public Map<Long, Map<Long, List<AttendanceWorkFlowDTO>>> workFlow(Map<Long, Map<Long, List<Attendance>>> attendanceGroup, Map<Long, List<Leave>> leaveGroup) {
+        Map<Long, Map<Long, List<AttendanceWorkFlowDTO>>> leaveWorkFlowGroup = new HashMap<Long, Map<Long, List<AttendanceWorkFlowDTO>>>();
         for (Long key : attendanceGroup.keySet()) {
-            Map<Long, List<LeaveWorkFlowDTO>>  LeaveWorkFlowGroup = leaveWorkFlowGroup.get(key);
+            Map<Long, List<AttendanceWorkFlowDTO>>  LeaveWorkFlowGroup = leaveWorkFlowGroup.get(key);
             if (LeaveWorkFlowGroup == null || LeaveWorkFlowGroup.isEmpty()) {
-                LeaveWorkFlowGroup = new HashMap<Long, List<LeaveWorkFlowDTO>>();
+                LeaveWorkFlowGroup = new HashMap<Long, List<AttendanceWorkFlowDTO>>();
             }
             Map<Long, List<Attendance>> employeeGroup = attendanceGroup.get(key);
             for (Long key0 : employeeGroup.keySet()) {
-                List<LeaveWorkFlowDTO> leaveWorkFlowDTOList = LeaveWorkFlowGroup.get(key0);
-                if (leaveWorkFlowDTOList == null || leaveWorkFlowDTOList.isEmpty()) {
-                    leaveWorkFlowDTOList = new ArrayList<LeaveWorkFlowDTO>();
+                List<AttendanceWorkFlowDTO> attendanceWorkFlowDTOList = LeaveWorkFlowGroup.get(key0);
+                if (attendanceWorkFlowDTOList == null || attendanceWorkFlowDTOList.isEmpty()) {
+                    attendanceWorkFlowDTOList = new ArrayList<AttendanceWorkFlowDTO>();
                 }
                 List<Attendance> attendances = employeeGroup.get(key0);
                 for (Attendance attendance : attendances) {
-                    System.out.println(attendance.getEmployee().getId());
-                    if (attendance.getEmployee().getId().compareTo(351L) == 0) {
-                        System.out.println("**************************************************");
-                    }
-                    LeaveWorkFlowDTO leaveWorkFlowDTO = new LeaveWorkFlowDTO();
-                    leaveWorkFlowDTO.setAttendance(attendance);
+                    AttendanceWorkFlowDTO attendanceWorkFlowDTO = new AttendanceWorkFlowDTO();
+                    attendanceWorkFlowDTO.setAttendance(attendance);
                     Long id = attendance.getEmployee().getId();
                     String workDateFormat = TimeUtils.format(attendance.getWorkDate(), "yyyy-MM-dd");
                     // 上午应打卡时间
@@ -199,7 +192,7 @@ public class LeaveServiceImpl implements LeaveService {
                                 Date endDate = leave.getEndDate();
                                 if (TimeUtils.isBetween(tmpBeginDate, beginDate, endDate) || TimeUtils.isBetween(tmpEndDate, beginDate, endDate)) {
                                     tmpLeaveList.add(leave);
-                                    leaveWorkFlowDTO.getLeaveList().add(leave);
+                                    attendanceWorkFlowDTO.getLeaveList().add(leave);
                                 }
                             }
                             if (!tmpLeaveList.isEmpty()) {
@@ -213,8 +206,8 @@ public class LeaveServiceImpl implements LeaveService {
                                     Date beginDate = leave.getBeginDate();
                                     Date endDate = leave.getEndDate();
                                     if (TimeUtils.isContainRange(beginDate, endDate, tmpBeginDate, tmpEndDate)) {
-                                        leaveWorkFlowDTO.setLeaveTimes(75 * 6L);
-                                        leaveWorkFlowDTO.setNotNeedFit(true);
+                                        attendanceWorkFlowDTO.setLeaveTimes(75 * 6L);
+                                        attendanceWorkFlowDTO.setNotNeedFit(true);
                                     } else if (TimeUtils.beforeOrEqual(beginDate, tmpBeginDate)) { // 请假开始时间在上午需要打卡的时刻或之前
                                         // 请假结束时间在上午需要打卡之后
                                         if (endDate.after(tmpBeginDate)) {
@@ -231,22 +224,22 @@ public class LeaveServiceImpl implements LeaveService {
                                             }
                                         }
                                     }
-                                    leaveWorkFlowDTO.setAmNeedFitTime(tmpBeginDate);
-                                    leaveWorkFlowDTO.setPmNeedFitTime(tmpEndDate);
-                                    if (!leaveWorkFlowDTO.isNotNeedFit()) {
+                                    attendanceWorkFlowDTO.setAmNeedFitTime(tmpBeginDate);
+                                    attendanceWorkFlowDTO.setPmNeedFitTime(tmpEndDate);
+                                    if (!attendanceWorkFlowDTO.isNotNeedFit()) {
                                         long delayTimes = (tmpEndDate.getTime() - tmpBeginDate.getTime()) / 1000 / 60;
                                         if (TimeUtils.isContainRange(tmpBeginDate, tmpEndDate, TimeUtils.parseDate(workDateFormat + " 12:00:00"), TimeUtils.parseDate(workDateFormat + " 13:30:00"))); {
                                             delayTimes -= 90;
                                         }
-                                        leaveWorkFlowDTO.setLeaveTimes(delayTimes);
+                                        attendanceWorkFlowDTO.setLeaveTimes(delayTimes);
                                     }
                                 }
                             }
                         }
                     }
-                    leaveWorkFlowDTOList.add(leaveWorkFlowDTO);
+                    attendanceWorkFlowDTOList.add(attendanceWorkFlowDTO);
                 }
-                LeaveWorkFlowGroup.put(key0, leaveWorkFlowDTOList);
+                LeaveWorkFlowGroup.put(key0, attendanceWorkFlowDTOList);
             }
             leaveWorkFlowGroup.put(key, LeaveWorkFlowGroup);
         }
