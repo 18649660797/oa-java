@@ -25,12 +25,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * －－－－－－－－－－－
+ * 管理员模块Controller类
+ * －－－－－－－－－－－
  * @author linjiabin  on  15/12/10
  */
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
-    @Resource
+    @Resource(name = "criteriaQueryService")
     private CriteriaQueryService queryService;
     @Resource(name = "adminService")
     private AdminService adminService;

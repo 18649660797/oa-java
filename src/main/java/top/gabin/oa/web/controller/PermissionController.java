@@ -32,7 +32,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/permission")
 public class PermissionController {
-    @Resource
+    @Resource(name = "criteriaQueryService")
     private CriteriaQueryService queryService;
     @Resource(name = "permissionService")
     private PermissionService permissionService;

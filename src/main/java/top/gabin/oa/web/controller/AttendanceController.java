@@ -45,7 +45,7 @@ import java.util.*;
 @Controller
 @RequestMapping("/attendance")
 public class AttendanceController {
-    @Resource
+    @Resource(name = "criteriaQueryService")
     private CriteriaQueryService queryService;
     @Resource(name = "departmentService")
     private DepartmentService departmentService;

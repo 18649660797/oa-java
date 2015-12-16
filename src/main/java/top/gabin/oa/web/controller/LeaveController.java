@@ -34,7 +34,7 @@ import java.util.Map;
 @RequestMapping("/leave")
 public class LeaveController {
 
-    @Resource
+    @Resource(name = "criteriaQueryService")
     private CriteriaQueryService queryService;
     @Resource(name = "leaveService")
     private LeaveService leaveService;

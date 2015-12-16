@@ -27,7 +27,7 @@ public class PermissionImpl implements Permission {
     @ManyToOne(targetEntity = PermissionImpl.class)
     @JoinColumn(name = "pid")
     private Permission parent;
-    @OneToMany(mappedBy = "parent", targetEntity = PermissionImpl.class, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "parent", targetEntity = PermissionImpl.class, fetch = FetchType.LAZY)
     private List<Permission> childrenList = new ArrayList<Permission>();
 
     @Override

@@ -37,7 +37,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/employee")
 public class EmployeeController {
-    @Resource
+    @Resource(name = "criteriaQueryService")
     private CriteriaQueryService queryService;
     @Resource(name = "employeeService")
     private EmployeeService employeeService;
