@@ -5,20 +5,18 @@
 package top.gabin.oa.web.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.gabin.oa.web.dao.AdminDao;
-import top.gabin.oa.web.dao.CRUDDao;
 import top.gabin.oa.web.dto.AdminDTO;
 import top.gabin.oa.web.entity.Admin;
 import top.gabin.oa.web.entity.AdminImpl;
 import top.gabin.oa.web.entity.PermissionImpl;
 import top.gabin.oa.web.service.criteria.CriteriaCondition;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
-import top.gabin.oa.web.utils.Md5Utils;
 
 import javax.annotation.Resource;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +26,11 @@ import java.util.Map;
  */
 @Service("adminService")
 public class AdminServiceImpl implements AdminService {
+    protected String salt;
     @Resource(name = "adminDao")
     private AdminDao adminDao;
+    @Resource(name = "blPasswordEncoder")
+    protected PasswordEncoder passwordEncoder;
     @Resource
     private CriteriaQueryService queryService;
     @Override
@@ -55,11 +56,7 @@ public class AdminServiceImpl implements AdminService {
             }
             admin.setName(adminDTO.getName());
             if (StringUtils.isNotBlank(adminDTO.getPassword())) {
-                try {
-                    admin.setPassword(Md5Utils.encryptMD5(adminDTO.getPassword()));
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                }
+                admin.setPassword(passwordEncoder.encodePassword(adminDTO.getPassword(), salt));
             }
             CriteriaCondition criteriaCondition = new CriteriaCondition();
             Map<String, Object> params = new HashMap<String, Object>();
