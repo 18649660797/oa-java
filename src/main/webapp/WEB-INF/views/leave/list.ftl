@@ -55,7 +55,7 @@
                 Store = Data.Store,
                 columns = [
                     {title: 'id', dataIndex: 'id', width: 80, renderer: function(val, row) {
-                        return "<a href='javascript:void(0);' data-edit='" + val + "'>" + val + "</a>";
+                        return edy.rendererHelp.createJavaScriptLink("edit", val, "编辑");
                     }},
                     {title: '姓名', dataIndex: 'realName', width: 60},
                     {title: '部门', dataIndex: 'department', width: 100},
@@ -67,7 +67,6 @@
             var store = new Store({
                 url : '/leave/grid',
                 autoLoad:false, //自动加载数据
-//                        params : $("#J_FORM").serialize(),
                 pageSize:10	// 配置分页数目
             }),
             grid = new Grid.Grid({
@@ -78,8 +77,7 @@
                 store: store,
                 // 底部工具栏
                 bbar:{
-                    // pagingBar:表明包含分页栏
-                    pagingBar:true,
+                    pagingBar:true
                 },
                 tbar:{ //添加、删除
                     items : [{
@@ -173,7 +171,7 @@
                             }
                         }]
                 },
-                plugins : [editing,Grid.Plugins.CheckSelection,Grid.Plugins.ColumnResize],
+                plugins : [editing,Grid.Plugins.CheckSelection,Grid.Plugins.ColumnResize]
             });
             grid.render();
             var form = new BUI.Form.HForm({

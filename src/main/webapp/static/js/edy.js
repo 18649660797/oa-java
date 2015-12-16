@@ -26,10 +26,13 @@
     edy.rendererHelp = {
         createLink: function(href, text) {
             return "<a href='{0}'>{1}</a>".replace("{0}", href || "").replace("{1}", text || "");
+        },
+        createJavaScriptLink: function(prefix, val, text) {
+            return "<a href='javascript:void(0)' data-{0}='{2}'>{1}</a>".replace("{0}", prefix || "").replace(/\{1}/g, text || "").replace(/\{2}/g, val);;
         }
     };
     edy.getSuggestGridHeight = function() {
         return $("body").height() - $(".row:first-child").height();
-    }
+    };
     w.edy = edy;
 } (window, jQuery));

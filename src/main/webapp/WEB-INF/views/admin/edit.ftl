@@ -76,7 +76,7 @@
                 data : data,
                 root : {
                     id : '0',
-//                    text : '0'
+                    text : '0'
                 }
                 // 这边是使用异步加载的方式，每次只加载一级分类，点击节点后继续加载
 //                    ,url: "/admin/adminProduct/category/simpleTreeAjax",

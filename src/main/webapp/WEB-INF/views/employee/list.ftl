@@ -44,7 +44,7 @@
                 Store = Data.Store,
                 columns = [
                     {title: 'id', dataIndex: 'id', width: 60, renderer: function(val, row) {
-                        return "<a href='javascript:void(0);' data-edit='" + val + "'>" + val + "</a>";
+                        return edy.rendererHelp.createJavaScriptLink("edit", val, "编辑");
                     }},
                     {title: '姓名', dataIndex: 'name', width: 60},
                     {title: '考勤号', dataIndex: 'attendanceCN', width: 60},
@@ -134,7 +134,7 @@
                         }
                     }]
                 },
-                plugins : [editing,Grid.Plugins.CheckSelection],
+                plugins : [editing,Grid.Plugins.CheckSelection,Grid.Plugins.ColumnResize],
             });
             grid.render();
             var form = new BUI.Form.HForm({

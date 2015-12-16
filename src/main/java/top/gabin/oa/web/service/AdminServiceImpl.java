@@ -88,4 +88,17 @@ public class AdminServiceImpl implements AdminService {
         }
     }
 
+    @Transactional("transactionManager")
+    @Override
+    public void reset(Long id, String password) {
+        if (id == null || StringUtils.isBlank(password)) {
+            return;
+        }
+        Admin admin = findById(id);
+        if (admin != null) {
+            admin.setPassword(passwordEncoder.encodePassword(password, salt));
+        }
+        adminDao.persist(admin);
+    }
+
 }

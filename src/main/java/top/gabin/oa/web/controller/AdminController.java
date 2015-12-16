@@ -37,10 +37,11 @@ public class AdminController {
     private CriteriaQueryService queryService;
     @Resource(name = "adminService")
     private AdminService adminService;
+    private String dir = "admin";
 
     @RequestMapping(value = "list", method = RequestMethod.GET)
     public String list() {
-        return "admin/list";
+        return dir + "/list";
     }
 
     @RequestMapping(value = "edit", method = RequestMethod.GET)
@@ -54,7 +55,7 @@ public class AdminController {
             model.addAttribute("entity", admin);
             model.addAttribute("permissions", StringUtils.join(ids, ","));
         }
-        return "admin/edit";
+        return dir + "/edit";
     }
 
     @RequestMapping(value = "grid", method = RequestMethod.GET)
@@ -81,6 +82,21 @@ public class AdminController {
             return RenderUtils.getFailMap("管理员名称已经存在!");
         }
         return RenderUtils.SUCCESS_RESULT;
+    }
+
+    @RequestMapping(value = "reset", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Object> reset(String password, Long id) {
+        adminService.reset(id, password);
+        return RenderUtils.SUCCESS_RESULT;
+    }
+
+    @RequestMapping(value = "viewPwdSet", method = RequestMethod.GET)
+    public String viewSetPwd(Long id, Model model) {
+        if (id != null) {
+            Admin admin = adminService.findById(id);
+            model.addAttribute("entity", admin);
+        }
+       return dir + "/passwordSet";
     }
 
 }

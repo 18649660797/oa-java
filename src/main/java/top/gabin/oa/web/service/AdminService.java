@@ -13,4 +13,11 @@ public interface AdminService {
     Admin findByName(String name);
     Admin merge(AdminDTO adminDTO);
     void batchDelete(String ids);
+
+    /**
+     * 重新设置密码
+     * @param id
+     * @param password
+     */
+    void reset(Long id, String password);
 }

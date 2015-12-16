@@ -28,8 +28,11 @@
                 columns = [
                     {title: 'ID', dataIndex: 'id', width: 80},
                     {title: '名称', dataIndex: 'name', width: 60},
-                    {title: '操作', dataIndex: 'id', width: 100, renderer: function(val, row) {
-                        return "<a href='javascript:void(0);' data-edit='" + val + "'>编辑</a>";
+                    {title: '操作', dataIndex: 'id', width: 150, renderer: function(val, row) {
+                        var html = edy.rendererHelp.createJavaScriptLink("edit", val, "编辑");
+                        html += "  " + edy.rendererHelp.createJavaScriptLink("delete", val, "删除");
+                        html += "  " + edy.rendererHelp.createJavaScriptLink("set-pwd", val, "修改密码");
+                        return html;
                     }}
                 ];
             var store = new Store({
@@ -81,7 +84,7 @@
                         }
                     }]
                 },
-                plugins : [editing,Grid.Plugins.CheckSelection],
+                plugins : [editing,Grid.Plugins.CheckSelection,Grid.Plugins.ColumnResize],
             });
             grid.render();
 
@@ -116,7 +119,37 @@
                 store.load();
             }
             top.reload = reload;
-            $(document).on("click", "[data-edit]", edit);
+            $(document).on("click", "[data-edit]", edit).on("click", "[data-delete]", function() {
+                var id = $(this).attr("data-delete");
+                edy.confirm("确定删除？", function() {
+                    $.post("/admin/delete", {ids: id}, function(data) {
+                        if (edy.ajaxHelp.handleAjax(data)) {
+                            edy.alert("操作成功！");
+                            reload();
+                        }
+                    });
+                })
+            }).on("click", "[data-set-pwd]", function() {
+                var id = $(this).attr("data-set-pwd");
+                var dialog = new top.BUI.Overlay.Dialog({
+                    title: '管理员密码重设',
+                    width:450,
+                    height:250,
+                    closeAction: "destroy",
+                    loader : {
+                        url : '/admin/viewPwdSet',
+                        autoLoad : false, //不自动加载
+                        lazyLoad : false, //不延迟加载
+                    },
+                    mask:true,
+                    success: function() {
+                        top.$("#pwdForm").submit();
+                        this.close();
+                    }
+                });
+                dialog.show();
+                dialog.get('loader').load({id : id})
+            });
             function edit () {
                 var id = $(this).attr("data-edit");
                 var dialog = new top.BUI.Overlay.Dialog({
@@ -127,24 +160,7 @@
                     loader : {
                         url : '/admin/edit',
                         autoLoad : false, //不自动加载
-//                            params : {id : id},//附加的参数
                         lazyLoad : false, //不延迟加载
-                        /*, //以下是默认选项
-                        dataType : 'text',   //加载的数据类型
-                        property : 'bodyContent', //将加载的内容设置到对应的属性
-                        loadMask : {
-                          //el , dialog 的body
-                        },
-                        lazyLoad : {
-                          event : 'show', //显示的时候触发加载
-                          repeat : true //是否重复加载
-                        },
-                        callback : function(text){
-                          var loader = this,
-                            target = loader.get('target'); //使用Loader的控件，此处是dialog
-                          //
-                        }
-                        */
                     },
                     mask:true,
                     success: function() {
