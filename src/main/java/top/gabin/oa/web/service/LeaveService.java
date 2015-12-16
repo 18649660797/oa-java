@@ -2,9 +2,12 @@ package top.gabin.oa.web.service;
 
 import top.gabin.oa.web.dto.LeaveImportDTO;
 import top.gabin.oa.web.dto.LeaveDTO;
+import top.gabin.oa.web.dto.LeaveWorkFlowDTO;
+import top.gabin.oa.web.entity.Attendance;
 import top.gabin.oa.web.entity.Leave;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Class description
@@ -25,4 +28,6 @@ public interface LeaveService {
      */
     void clearMonth(String month);
 
+    Map<Long,List<Leave>> getLeaveGroup(String month);
+    Map<Long, Map<Long, List<LeaveWorkFlowDTO>>> workFlow(Map<Long, Map<Long, List<Attendance>>> attendanceGroup, Map<Long, List<Leave>> leaveGroup);
 }

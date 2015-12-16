@@ -17,6 +17,8 @@ import java.util.Date;
  */
 public class Test {
     public static void main(String[] args) {
-        System.out.println(DateUtils.addDays(new Date(), -1));
+        Date date = new Date();
+        System.out.println((DateUtils.addHours(date, 1).getTime() - date.getTime())/60/60);
+
     }
 }

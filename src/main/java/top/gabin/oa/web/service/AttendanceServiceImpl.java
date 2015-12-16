@@ -181,4 +181,40 @@ public class AttendanceServiceImpl implements AttendanceService {
     public void batchSetWorkDays(String days) {
         attendanceDao.batchSetWorkDays(days);
     }
+
+    @Override
+    public Map<Long, Map<Long, List<Attendance>>> getAttendanceGroup(String month) {
+        // 1、获取指定月份所有的考勤
+        Map<String, Object> conditions = new HashMap<String, Object>();
+        CriteriaCondition criteriaCondition = new CriteriaCondition(conditions);
+        if (StringUtils.isNotBlank(month)) {
+            conditions.put("ge_workDate", month + "-01 00:00:00");
+            conditions.put("le_workDate", month + "-31 00:00:00");
+        }
+        criteriaCondition.setSort("workDate asc");
+        List<AttendanceImpl> attendanceList = queryService.query(AttendanceImpl.class, criteriaCondition);
+        // 2、根据员工分组考勤数据
+        Map<Long, Map<Long, List<Attendance>>> departmentGroup = new HashMap<Long, Map<Long, List<Attendance>>>();
+        for (Attendance attendance : attendanceList) {
+            Map<Long, List<Attendance>> employeeGroup;
+            String department = attendance.getEmployee().getDepartment().getName();
+            Long departmentId = attendance.getEmployee().getDepartment().getId();
+            if (departmentGroup.containsKey(departmentId)) {
+                employeeGroup = departmentGroup.get(departmentId);
+            } else {
+                employeeGroup = new HashMap<Long, List<Attendance>>();
+                departmentGroup.put(departmentId, employeeGroup);
+            }
+            Long id = attendance.getEmployee().getId();
+            List<Attendance> attendances = employeeGroup.get(id);
+            if (attendances == null) {
+                attendances = new ArrayList<Attendance>();
+                employeeGroup.put(id, attendances);
+            }
+            attendances.add(attendance);
+        }
+        return departmentGroup;
+    }
+
+
 }

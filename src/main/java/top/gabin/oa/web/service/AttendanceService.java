@@ -3,8 +3,10 @@ package top.gabin.oa.web.service;
 import top.gabin.oa.web.dto.AttendanceDTO;
 import top.gabin.oa.web.dto.AttendanceImportDTO;
 import top.gabin.oa.web.entity.Attendance;
+import top.gabin.oa.web.entity.Leave;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author linjiabin  on  15/12/15
@@ -17,4 +19,5 @@ public interface AttendanceService {
     Attendance findById(Long id);
     void batchSetLeaveDays(String days);
     void batchSetWorkDays(String days);
+    Map<Long, Map<Long,List<Attendance>>> getAttendanceGroup(String month);
 }

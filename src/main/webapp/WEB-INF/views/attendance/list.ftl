@@ -166,7 +166,7 @@
                             listeners : {
                                 'click' : function() {
                                     var dialog = new top.BUI.Overlay.Dialog({
-                                        title: '导入请假外出登记',
+                                        title: '导入考勤数据',
                                         width:430,
                                         height:150,
                                         closeAction: "destroy",
