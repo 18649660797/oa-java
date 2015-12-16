@@ -5,6 +5,7 @@
 package top.gabin.oa.date;
 
 import org.apache.commons.lang3.time.DateUtils;
+import top.gabin.oa.web.utils.date.TimeUtils;
 
 import java.util.Date;
 
@@ -17,8 +18,9 @@ import java.util.Date;
  */
 public class Test {
     public static void main(String[] args) {
-        Date date = new Date();
-        System.out.println((DateUtils.addHours(date, 1).getTime() - date.getTime())/60/60);
+        System.out.println(TimeUtils.parseDate("2015-11-12 09:00:00").getTime() < TimeUtils.parseDate("2015-11-12 12:00:00").getTime());
+        System.out.print(TimeUtils.parseDate("2015-11-12 10:00:00").getTime() > TimeUtils.parseDate("2015-11-12 13:30:00").getTime());
+
 
     }
 }

@@ -234,11 +234,14 @@ public class AttendanceController {
                     if (AttendanceStatus.LEAVE.equals(attendance.getStatus())) {
                         row1.getCell(2).setCellStyle(getBlueFontStyle(workbook));
                     } else {
-                        // 旷工
-                        if (attendanceWorkFlowDTO.isHasNowWork()) {
-                            setValue(row1, 12, 7.5);
-                            row1.getCell(4).setCellStyle(getYellowFillStyle(workbook));
-                            row1.getCell(5).setCellStyle(getYellowFillStyle(workbook));
+                        if (attendanceWorkFlowDTO.getLeaveTimes() != null && attendanceWorkFlowDTO.getLeaveTimes() / 60D == 7.5D) {
+                        } else {
+                            // 旷工
+                            if (attendanceWorkFlowDTO.isHasNowWork()) {
+                                setValue(row1, 12, 7.5);
+                                row1.getCell(4).setCellStyle(getYellowFillStyle(workbook));
+                                row1.getCell(5).setCellStyle(getYellowFillStyle(workbook));
+                            }
                         }
                         if (attendanceWorkFlowDTO.isYesterdayWorkDelay()) {
                             row1.getCell(4).setCellStyle(getGreenFillStyle(workbook));
@@ -256,27 +259,30 @@ public class AttendanceController {
                             row1.getCell(5).setCellStyle(getYellowFillStyle(workbook));
                         }
                         List<Leave> leaveList = attendanceWorkFlowDTO.getLeaveList();
-                        String remark = attendanceWorkFlowDTO.getRemark();
+                        String remark = StringUtils.isBlank(attendanceWorkFlowDTO.getRemark()) ? "" : attendanceWorkFlowDTO.getRemark();
                         if (leaveList != null && leaveList.size() > 0) {
                             if (leaveList.size() == 1) {
-                                Double hours = attendanceWorkFlowDTO.getLeaveTimes() / 60D;
                                 Leave leave = leaveList.get(0);
+                                long minutes = attendanceWorkFlowDTO.getLeaveTimes();
+                                int hours =  (int) minutes / 60;
+                                int minute =  (int) minutes % 60;
+                                String times = hours + "小时" + minute + "分";
                                 switch (leave.getType()) {
                                     case NORMAL_LEAVE:
-                                        setValue(row1, 6, hours);
+                                        setValue(row1, 6, times);
                                         break;
                                     case SICK_LEAVE:
-                                        setValue(row1, 7, hours);
+                                        setValue(row1, 7, times);
                                         break;
                                     case OFF_LEAVE:
-                                        setValue(row1, 8, hours);
+                                        setValue(row1, 8, times);
                                         break;
                                     case OUT_LEAVE:
                                     case FUNERAL_LEAVE:
                                     case YEAR_LEAVE:
                                     case MATERNITY_LEAVE:
                                     case MARRY_LEAVE:
-                                        remark += leave.getType().getLabel() + hours;
+                                        remark += leave.getType().getLabel() + times;
                                         break;
                                 }
                             } else {
@@ -284,23 +290,26 @@ public class AttendanceController {
                                 row1.createCell(7);
                                 row1.createCell(8);
                                 for (Leave leave : leaveList) {
-                                    Double hours = TimeUtils.getMinutes(leave.getEndDate(), leave.getBeginDate()) / 60D;
+                                    long minutes = TimeUtils.getMinutes(leave.getEndDate(), leave.getBeginDate());
+                                    int hours =  (int) minutes / 60;
+                                    int minute =  (int) minutes % 60;
+                                    String times = hours + "小时" + minute + "分";
                                     switch (leave.getType()) {
                                         case NORMAL_LEAVE:
-                                            setValue(row1, 6, hours);
+                                            setValue(row1, 6, times);
                                             break;
                                         case SICK_LEAVE:
-                                            setValue(row1, 7, hours);
+                                            setValue(row1, 7, times);
                                             break;
                                         case OFF_LEAVE:
-                                            setValue(row1, 8, hours);
+                                            setValue(row1, 8, times);
                                             break;
                                         case OUT_LEAVE:
                                         case FUNERAL_LEAVE:
                                         case YEAR_LEAVE:
                                         case MATERNITY_LEAVE:
                                         case MARRY_LEAVE:
-                                            remark += leave.getType().getLabel() + hours;
+                                            remark += leave.getType().getLabel() + times;
                                             break;
                                     }
                                 }

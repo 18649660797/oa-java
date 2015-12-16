@@ -71,40 +71,30 @@ public class TimeUtils {
     }
 
     public static boolean isBetween(Date source, Date a, Date b) {
-        if (source.equals(a) || source.equals(b)) {
+        if (source.getTime() == a.getTime() || source.getTime() == b.getTime()) {
             return true;
         }
-        if (source.after(a) && source.before(b)) {
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean isContainRange(Date a1, Date b1, Date a, Date b) {
-        if (a1.equals(a) || b1.equals(b)) {
-            return true;
-        }
-        if (a1.before(a) && b1.after(b)) {
+        if (source.getTime() > a.getTime() && source.getTime() < b.getTime()) {
             return true;
         }
         return false;
     }
 
     public static boolean beforeOrEqual(Date a1, Date b1) {
-        if (a1.equals(b1)) {
+        if (a1.getTime() == b1.getTime()) {
             return true;
         }
-        if (a1.before(b1)) {
+        if (a1.getTime() < b1.getTime()) {
             return true;
         }
         return false;
     }
 
     public static boolean afterOrEqual(Date a1, Date b1) {
-        if (a1.equals(b1)) {
+        if (a1.getTime() == b1.getTime()) {
             return true;
         }
-        if (a1.after(b1)) {
+        if (a1.getTime() > b1.getTime()) {
             return true;
         }
         return false;

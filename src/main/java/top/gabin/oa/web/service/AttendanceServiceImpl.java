@@ -305,6 +305,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                             int goQuickSeconds = employeeAttendanceDTO.getGoQuickSeconds();
                             if (goQuickSeconds < EmployeeAttendanceDTO.goQuickLimit) {
                                 attendanceWorkFlowDTO.setPmLimit(true);
+                                s += "下班补卡;";
                             } else {
                                 int pmMoney = employeeAttendanceDTO.getGoQuickMoneys();
                                 pmMoney += attendanceWorkFlowDTO.ADD_MONEY_ONE;

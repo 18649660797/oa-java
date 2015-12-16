@@ -25,7 +25,7 @@
                 <div class="control-group">
                     <label class="control-label"><s>*</s>类型：</label>
                     <div class="controls">
-                        <select name="type">
+                        <select id="type" name="type">
                             <option value="1">事假</option>
                             <option value="2">病假</option>
                             <option value="3">调休</option>

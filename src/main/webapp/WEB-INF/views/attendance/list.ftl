@@ -421,7 +421,7 @@
                 var Select = BUI.Select;
                 var suggest = new Select.Suggest({
                     render:'#realName',
-                    name:'name',
+                    name:'like_employee.name',
                     url:'/employee/suggest/name'
                 });
                 suggest.render();

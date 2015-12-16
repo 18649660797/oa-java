@@ -208,7 +208,8 @@ public class LeaveServiceImpl implements LeaveService {
                                 for (Leave leave : tmpLeaveList) {
                                     Date beginDate = leave.getBeginDate();
                                     Date endDate = leave.getEndDate();
-                                    if (TimeUtils.isContainRange(beginDate, endDate, tmpBeginDate, tmpEndDate)) {
+                                    long delayTimes = 0;
+                                    if (TimeUtils.beforeOrEqual(beginDate, tmpBeginDate) && TimeUtils.afterOrEqual(endDate, tmpEndDate)) {
                                         attendanceWorkFlowDTO.setLeaveTimes(75 * 6L);
                                         attendanceWorkFlowDTO.setNotNeedFit(true);
                                     } else if (TimeUtils.beforeOrEqual(beginDate, tmpBeginDate)) { // 请假开始时间在上午需要打卡的时刻或之前
@@ -219,6 +220,7 @@ public class LeaveServiceImpl implements LeaveService {
                                                 tmpBeginDate = endDate;
                                             }
                                         }
+                                        delayTimes = (endDate.getTime() - TimeUtils.parseDate(workDateFormat + " 09:00:00").getTime()) / 1000 / 60;
                                     } else if (TimeUtils.afterOrEqual(endDate, tmpEndDate)) { // 请假结束时间在下午需要打卡的时刻或之后
                                         // 请假开始时间在上午需要打卡之前
                                         if (beginDate.before(tmpEndDate)) {
@@ -226,13 +228,21 @@ public class LeaveServiceImpl implements LeaveService {
                                                 tmpEndDate = beginDate;
                                             }
                                         }
+                                        delayTimes = (TimeUtils.parseDate(workDateFormat + " 18:00:00").getTime() - beginDate.getTime()) / 1000 / 60;
+                                    } else {
+                                        delayTimes = (endDate.getTime() - beginDate.getTime()) / 1000 / 60;
+                                    }
+                                    if (tmpBeginDate.getTime() == TimeUtils.parseDate(workDateFormat + " 12:00:00").getTime()) {
+                                        tmpBeginDate =  TimeUtils.parseDate(workDateFormat + " 13:30:00");
                                     }
                                     attendanceWorkFlowDTO.setAmNeedFitTime(tmpBeginDate);
+                                    if (tmpEndDate.getTime() == TimeUtils.parseDate(workDateFormat + " 13:30:00").getTime()) {
+                                        tmpEndDate =  TimeUtils.parseDate(workDateFormat + " 12:00:00");
+                                    }
                                     attendanceWorkFlowDTO.setPmNeedFitTime(tmpEndDate);
                                     if (!attendanceWorkFlowDTO.isNotNeedFit()) {
-                                        long delayTimes = (tmpEndDate.getTime() - tmpBeginDate.getTime()) / 1000 / 60;
-                                        if (TimeUtils.isContainRange(tmpBeginDate, tmpEndDate, TimeUtils.parseDate(workDateFormat + " 12:00:00"), TimeUtils.parseDate(workDateFormat + " 13:30:00"))); {
-                                            delayTimes -= 90;
+                                        if (TimeUtils.beforeOrEqual(beginDate, TimeUtils.parseDate(workDateFormat + " 12:00:00")) &&  TimeUtils.afterOrEqual(endDate, TimeUtils.parseDate(workDateFormat + " 13:30:00"))) {
+                                            delayTimes = delayTimes - 90;
                                         }
                                         attendanceWorkFlowDTO.setLeaveTimes(delayTimes);
                                     }
