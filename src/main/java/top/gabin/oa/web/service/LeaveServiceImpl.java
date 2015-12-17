@@ -5,15 +5,12 @@
 package top.gabin.oa.web.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.gabin.oa.web.constant.LeaveType;
 import top.gabin.oa.web.dao.LeaveDao;
 import top.gabin.oa.web.dto.LeaveImportDTO;
 import top.gabin.oa.web.dto.LeaveDTO;
-import top.gabin.oa.web.dto.AttendanceWorkFlowDTO;
 import top.gabin.oa.web.entity.*;
 import top.gabin.oa.web.service.criteria.CriteriaCondition;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
@@ -27,7 +24,6 @@ import java.util.*;
  */
 @Service("leaveService")
 public class LeaveServiceImpl implements LeaveService {
-    private static final Logger logger = LoggerFactory.getLogger(LeaveService.class);
     @Resource
     private CriteriaQueryService queryService;
     @Resource(name = "leaveDao")
@@ -121,9 +117,7 @@ public class LeaveServiceImpl implements LeaveService {
             leave.setEmployee(employee);
             leaveList.add(leave);
         }
-        for (Leave leave : leaveList) {
-            leaveDao.saveOrUpdate(leave);
-        }
+        batchInsert(leaveList);
     }
 
     @Transactional("transactionManager")
@@ -159,103 +153,4 @@ public class LeaveServiceImpl implements LeaveService {
         return leaveGroup;
     }
 
-    @Override
-    public Map<Long, Map<Long, List<AttendanceWorkFlowDTO>>> workFlow(Map<Long, Map<Long, List<Attendance>>> attendanceGroup, Map<Long, List<Leave>> leaveGroup) {
-        Map<Long, Map<Long, List<AttendanceWorkFlowDTO>>> leaveWorkFlowGroup = new HashMap<Long, Map<Long, List<AttendanceWorkFlowDTO>>>();
-        for (Long key : attendanceGroup.keySet()) {
-            Map<Long, List<AttendanceWorkFlowDTO>>  LeaveWorkFlowGroup = leaveWorkFlowGroup.get(key);
-            if (LeaveWorkFlowGroup == null || LeaveWorkFlowGroup.isEmpty()) {
-                LeaveWorkFlowGroup = new HashMap<Long, List<AttendanceWorkFlowDTO>>();
-            }
-            Map<Long, List<Attendance>> employeeGroup = attendanceGroup.get(key);
-            for (Long key0 : employeeGroup.keySet()) {
-                List<AttendanceWorkFlowDTO> attendanceWorkFlowDTOList = LeaveWorkFlowGroup.get(key0);
-                if (attendanceWorkFlowDTOList == null || attendanceWorkFlowDTOList.isEmpty()) {
-                    attendanceWorkFlowDTOList = new ArrayList<AttendanceWorkFlowDTO>();
-                }
-                List<Attendance> attendances = employeeGroup.get(key0);
-                for (Attendance attendance : attendances) {
-                    AttendanceWorkFlowDTO attendanceWorkFlowDTO = new AttendanceWorkFlowDTO();
-                    attendanceWorkFlowDTO.setAttendance(attendance);
-                    Long id = attendance.getEmployee().getId();
-                    String workDateFormat = TimeUtils.format(attendance.getWorkDate(), "yyyy-MM-dd");
-                    // 上午应打卡时间
-                    Date amNeedFit = TimeUtils.parseDate(workDateFormat + " 09:00:00");
-                    Date pmNeedFit = TimeUtils.parseDate(workDateFormat + " 18:00:00");
-                    // 获取当天的请假记录
-                    if (leaveGroup.containsKey(id)) {
-                        List<Leave> leaveList = leaveGroup.get(id);
-                        if (leaveList != null) {
-                            // 获取请假时长
-                            Date tmpBeginDate = amNeedFit;
-                            Date tmpEndDate = pmNeedFit;
-                            List<Leave> tmpLeaveList = new ArrayList<Leave>();
-                            for (Leave leave : leaveList) {
-                                Date beginDate = leave.getBeginDate();
-                                Date endDate = leave.getEndDate();
-                                if (TimeUtils.isBetween(tmpBeginDate, beginDate, endDate) || TimeUtils.isBetween(tmpEndDate, beginDate, endDate)) {
-                                    tmpLeaveList.add(leave);
-                                    attendanceWorkFlowDTO.getLeaveList().add(leave);
-                                }
-                            }
-                            if (!tmpLeaveList.isEmpty()) {
-                                Collections.sort(tmpLeaveList, new Comparator<Leave>() {
-                                    @Override
-                                    public int compare(Leave o1, Leave o2) {
-                                        return (int) (o1.getBeginDate().getTime() - o2.getBeginDate().getTime());
-                                    }
-                                });
-                                for (Leave leave : tmpLeaveList) {
-                                    Date beginDate = leave.getBeginDate();
-                                    Date endDate = leave.getEndDate();
-                                    long delayTimes = 0;
-                                    if (TimeUtils.beforeOrEqual(beginDate, tmpBeginDate) && TimeUtils.afterOrEqual(endDate, tmpEndDate)) {
-                                        attendanceWorkFlowDTO.setLeaveTimes(75 * 6L);
-                                        attendanceWorkFlowDTO.setNotNeedFit(true);
-                                    } else if (TimeUtils.beforeOrEqual(beginDate, tmpBeginDate)) { // 请假开始时间在上午需要打卡的时刻或之前
-                                        // 请假结束时间在上午需要打卡之后
-                                        if (endDate.after(tmpBeginDate)) {
-                                            // 如果请假结束时间在下午需要打卡之前
-                                            if (endDate.before(tmpEndDate)) {
-                                                tmpBeginDate = endDate;
-                                            }
-                                        }
-                                        delayTimes = (endDate.getTime() - TimeUtils.parseDate(workDateFormat + " 09:00:00").getTime()) / 1000 / 60;
-                                    } else if (TimeUtils.afterOrEqual(endDate, tmpEndDate)) { // 请假结束时间在下午需要打卡的时刻或之后
-                                        // 请假开始时间在上午需要打卡之前
-                                        if (beginDate.before(tmpEndDate)) {
-                                            if (beginDate.after(tmpBeginDate)) {
-                                                tmpEndDate = beginDate;
-                                            }
-                                        }
-                                        delayTimes = (TimeUtils.parseDate(workDateFormat + " 18:00:00").getTime() - beginDate.getTime()) / 1000 / 60;
-                                    } else {
-                                        delayTimes = (endDate.getTime() - beginDate.getTime()) / 1000 / 60;
-                                    }
-                                    if (tmpBeginDate.getTime() == TimeUtils.parseDate(workDateFormat + " 12:00:00").getTime()) {
-                                        tmpBeginDate =  TimeUtils.parseDate(workDateFormat + " 13:30:00");
-                                    }
-                                    attendanceWorkFlowDTO.setAmNeedFitTime(tmpBeginDate);
-                                    if (tmpEndDate.getTime() == TimeUtils.parseDate(workDateFormat + " 13:30:00").getTime()) {
-                                        tmpEndDate =  TimeUtils.parseDate(workDateFormat + " 12:00:00");
-                                    }
-                                    attendanceWorkFlowDTO.setPmNeedFitTime(tmpEndDate);
-                                    if (!attendanceWorkFlowDTO.isNotNeedFit()) {
-                                        if (TimeUtils.beforeOrEqual(beginDate, TimeUtils.parseDate(workDateFormat + " 12:00:00")) &&  TimeUtils.afterOrEqual(endDate, TimeUtils.parseDate(workDateFormat + " 13:30:00"))) {
-                                            delayTimes = delayTimes - 90;
-                                        }
-                                        attendanceWorkFlowDTO.setLeaveTimes(delayTimes);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    attendanceWorkFlowDTOList.add(attendanceWorkFlowDTO);
-                }
-                LeaveWorkFlowGroup.put(key0, attendanceWorkFlowDTOList);
-            }
-            leaveWorkFlowGroup.put(key, LeaveWorkFlowGroup);
-        }
-        return leaveWorkFlowGroup;
-    }
 }
