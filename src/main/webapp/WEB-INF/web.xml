@@ -8,7 +8,7 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
 			/WEB-INF/applicationContext-datasource.xml
-			<!--/WEB-INF/applicationContext-servlet.xml-->
+			/WEB-INF/applicationContext-flow.xml
 			/WEB-INF/applicationContext-security.xml
 			/WEB-INF/applicationContext.xml
 		</param-value>

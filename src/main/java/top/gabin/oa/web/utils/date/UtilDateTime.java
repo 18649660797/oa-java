@@ -1466,13 +1466,6 @@ public class UtilDateTime {
         return plusInteger(date, Calendar.DAY_OF_MONTH, plusWeek);
     }
 
-    public static void main(String[] args) {
-        Date date=new Date();
-        System.out.println(date);
-        System.out.println(UtilDateTime.plusDay(date, 1));
-    }
-
-
     public static Date addInteger(Date date, int dateType, int amount) {
         if (date != null) {
             Calendar calendar = Calendar.getInstance();

@@ -4,6 +4,7 @@
  */
 package top.gabin.oa.web.dto.attendance;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ public class EmployeeAnalysisResult {
     // 员工id
     private Long id;
     // 每一天的考勤
-    private List<AnalysisResult> analysisResultList;
+    private List<AnalysisResult> analysisResultList = new ArrayList<AnalysisResult>();
     // 迟到次数
     private int delaySeconds;
     // 已经上班乐捐上限
@@ -71,4 +72,11 @@ public class EmployeeAnalysisResult {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public void add(AnalysisResult analysisResult) {
+        if (analysisResult != null) {
+            analysisResultList.add(analysisResult);
+        }
+    }
+
 }

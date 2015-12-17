@@ -1,8 +1,6 @@
 package top.gabin.oa.web.interceptor;
 
 import freemarker.ext.beans.BeansWrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -15,7 +13,6 @@ import java.lang.reflect.Method;
 
 public class InitializeInterceptor implements HandlerInterceptor {
 
-    private static final Logger logger = LoggerFactory.getLogger(InitializeInterceptor.class);
     @Autowired
     private FreeMarkerConfigurer cfg;
 

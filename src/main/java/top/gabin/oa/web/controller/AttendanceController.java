@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import top.gabin.oa.web.dto.AttendanceDTO;
 import top.gabin.oa.web.dto.AttendanceImportDTO;
 import top.gabin.oa.web.dto.PageDTO;
+import top.gabin.oa.web.dto.attendance.DepartmentAnalysisResult;
 import top.gabin.oa.web.entity.Attendance;
 import top.gabin.oa.web.entity.AttendanceImpl;
 import top.gabin.oa.web.entity.Department;
@@ -25,6 +26,7 @@ import top.gabin.oa.web.service.DepartmentService;
 import top.gabin.oa.web.service.criteria.CriteriaCondition;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
 import top.gabin.oa.web.service.criteria.CriteriaQueryUtils;
+import top.gabin.oa.web.service.flow.attendance.execute.Execute;
 import top.gabin.oa.web.utils.RenderUtils;
 import top.gabin.oa.web.utils.date.TimeUtils;
 import top.gabin.oa.web.utils.excel.ImportExcel;
@@ -48,6 +50,8 @@ public class AttendanceController {
     private DepartmentService departmentService;
     @Resource(name = "attendanceService")
     private AttendanceService attendanceService;
+    @Resource(name = "attendanceWorkFlow")
+    private Execute execute;
     private static int maxSize = 10 * 1024 * 1024;
     private String dir = "attendance";
 
@@ -166,7 +170,8 @@ public class AttendanceController {
     public void analysis(String month, HttpServletResponse response) {
         try {
             response.setHeader("Content-disposition", "attachment; filename=" + month +".xls");
-            HSSFWorkbook hssfWorkbook = attendanceService.buildAnalysisExcel(month);
+            List<DepartmentAnalysisResult> data = execute.execute(month);
+            HSSFWorkbook hssfWorkbook = attendanceService.buildAnalysisExcel(data);
             OutputStream bufferedOutputStream = new BufferedOutputStream(response.getOutputStream());
             hssfWorkbook.write(bufferedOutputStream);
             bufferedOutputStream.flush();

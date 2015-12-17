@@ -53,6 +53,13 @@ public class AnalysisResult {
     // 备注
     private String remark;
 
+    public AnalysisResult() {
+    }
+
+    public AnalysisResult(Attendance attendance) {
+        this.attendance = attendance;
+    }
+
     public String getRemark() {
         return remark;
     }
@@ -196,4 +203,9 @@ public class AnalysisResult {
     public void setDayOfWeek(String dayOfWeek) {
         this.dayOfWeek = dayOfWeek;
     }
+
+    public void add(Leave leave) {
+        leaveList.add(leave);
+    }
+
 }

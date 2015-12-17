@@ -5,13 +5,14 @@ import top.gabin.oa.web.dto.AttendanceDTO;
 import top.gabin.oa.web.dto.AttendanceImportDTO;
 import top.gabin.oa.web.dto.attendance.DepartmentAnalysisResult;
 import top.gabin.oa.web.entity.Attendance;
+import top.gabin.oa.web.service.flow.attendance.data.DataBuilder;
 
 import java.util.List;
 
 /**
  * @author linjiabin  on  15/12/15
  */
-public interface AttendanceService {
+public interface AttendanceService extends DataBuilder {
     boolean importAttendance(List<AttendanceImportDTO> attendanceImportDTOList);
     void clearMonth(String month);
     void batchDelete(String ids);
@@ -32,39 +33,15 @@ public interface AttendanceService {
      */
     int getFineMoneyBasicOfLeaveEarly();
 
-    /**
-     * 根据月份组装需要处理的考勤数据
-     * @param month 格式：12-01
-     * @return
-     */
-    List<DepartmentAnalysisResult> buildAnalysisDataByMonth(String month);
+    int getLeaveEarlyLimit();
+
+    int getDelayLimit();
 
     /**
-     * 处理昨日晚卡的数据
-     * @param departmentAnalysisResultList
+     * 导出分析数据的excel
+     * @param data
      * @return
      */
-    List<DepartmentAnalysisResult> yesterdayWorkDelayWorkFlow(List<DepartmentAnalysisResult> departmentAnalysisResultList);
-
-    /**
-     * 处理考勤规则数据
-     * @param departmentAnalysisResultList
-     * @return
-     */
-    List<DepartmentAnalysisResult> dealRuleWorkFlow(List<DepartmentAnalysisResult> departmentAnalysisResultList);
-
-    /**
-     * 分析月份的考勤数据
-     * @param month
-     * @return
-     */
-    List<DepartmentAnalysisResult> analysisDataByMonth(String month);
-
-    /**
-     * 导出指定月份的分析数据的excel
-     * @param month
-     * @return
-     */
-    HSSFWorkbook buildAnalysisExcel(String month);
+    HSSFWorkbook buildAnalysisExcel(List<DepartmentAnalysisResult> data);
 
 }
