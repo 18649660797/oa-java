@@ -31,7 +31,7 @@ public class LeaveWorkFlow extends AbstractAnalysisWorkFlow {
                 for (AnalysisResult analysisResult : employeeAnalysisResult.getAnalysisResultList()) {
                     Attendance attendance = analysisResult.getAttendance();
                     analysisResult.setAttendance(attendance);
-                    String workDateFormat = attendance.getWorkDateFormat();
+                    String workDateFormat = TimeUtils.format(attendance.getWorkDate(), "yyyy-MM-dd");
                     // 上午应打卡时间
                     Date amNeedFit = TimeUtils.parseDate(workDateFormat + " 09:00:00");
                     Date pmNeedFit = TimeUtils.parseDate(workDateFormat + " 18:00:00");
@@ -73,6 +73,9 @@ public class LeaveWorkFlow extends AbstractAnalysisWorkFlow {
                                 delayTimes = TimeUtils.getMinutes(TimeUtils.parseDate(workDateFormat + " 18:00:00"), beginDate);
                             } else {
                                 delayTimes = TimeUtils.getMinutes(endDate, beginDate);
+                            }
+                            if (attendance.getEmployee().getId() == 562) {
+                                System.out.println();
                             }
                             if (tmpBeginDate.getTime() == TimeUtils.parseDate(workDateFormat + " 12:00:00").getTime()) {
                                 tmpBeginDate = TimeUtils.parseDate(workDateFormat + " 13:30:00");

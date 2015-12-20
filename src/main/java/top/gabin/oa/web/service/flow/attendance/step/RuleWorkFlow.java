@@ -35,10 +35,9 @@ public class RuleWorkFlow extends AbstractAnalysisWorkFlow {
                     }
                     String workDateFormat = attendance.getWorkDateFormat();
                     String amTime = attendance.getAmTime();
-                    String format = "yyyy-MM-dd hh:mm";
-                    Date amDate = StringUtils.isBlank(amTime) ? null : TimeUtils.parseDate(workDateFormat + " " + amTime, format);
+                    Date amDate = StringUtils.isBlank(amTime) ? null : TimeUtils.parseDate(workDateFormat + " " + amTime + ":00");
                     String pmTime = attendance.getPmTime();
-                    Date pmDate = StringUtils.isBlank(pmTime) ? null : TimeUtils.parseDate(workDateFormat + " " + pmTime, format);
+                    Date pmDate = StringUtils.isBlank(pmTime) ? null : TimeUtils.parseDate(workDateFormat + " " + pmTime + ":00");
                     if (amDate == null && pmDate == null && !analysisResult.isLeaveDay()) {
                         analysisResult.setWorkBad(true);
                     }
@@ -74,6 +73,9 @@ public class RuleWorkFlow extends AbstractAnalysisWorkFlow {
                         }
                         // 如果早退
                         if (pmDate != null && pmNeedFitTime != null && pmDate.before(pmNeedFitTime)) {
+                            if (attendance.getEmployee().getId() == 562) {
+                                System.out.println();
+                            }
                             int goQuickSeconds = employeeAnalysisResult.getLeaveEarlySeconds();
                             if (goQuickSeconds < attendanceService.getLeaveEarlyLimit()) {
                                 analysisResult.setImpunityLeaveEarly(true);

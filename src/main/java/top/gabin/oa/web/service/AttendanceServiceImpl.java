@@ -473,8 +473,8 @@ public class AttendanceServiceImpl implements AttendanceService {
                         }
                     }
                 }
+                i++;
             }
-            i++;
         }
         return workbook;
     }
@@ -510,6 +510,11 @@ public class AttendanceServiceImpl implements AttendanceService {
         HSSFCellStyle cellStyle = workbook.createCellStyle();
         cellStyle.setFillForegroundColor(HSSFColor.SKY_BLUE.index);
         cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        //生成标题字体
+        HSSFFont font = workbook.createFont();
+        font.setColor(HSSFColor.VIOLET.index);
+        //字体应用
+        cellStyle.setFont(font);
         return cellStyle;
     }
 
