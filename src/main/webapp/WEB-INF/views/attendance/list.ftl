@@ -30,9 +30,9 @@
             </div>
             <ul class="panel-content">
                 <li>
-                    <label class="control-text">迟到：</label><input style="width:20px;" id="delay" type="checkbox" name="gt_a:am_time" value="09:00" />
-                    <label class="control-text">早退：</label><input style="width:20px;" id="early" type="checkbox" name="lt_a:pm_time" value="18:00" />
-                    <label class="control-text">迟到15分钟内：</label><input style="width:20px;" type="checkbox" id="delay15min" name="between_a:am_time" value="09:00,09:15" />
+                    <label class="control-text">迟到：</label><input style="width:20px;" id="delay" type="checkbox" name="gt_amTime" value="09:00" />
+                    <label class="control-text">早退：</label><input style="width:20px;" id="early" type="checkbox" name="lt_pmTime" value="18:00" />
+                    <label class="control-text">迟到15分钟内：</label><input style="width:20px;" type="checkbox" id="delay15min" name="between_amTime" value="09:01,09:15" />
                     <button type="submit" class="button button-primary">查询>></button>
                 </li>
             </ul>
@@ -112,7 +112,7 @@
                             var result = "";
                             var arr= val.split(":");
                             if (arr[0] > 21 || (arr[0] == 21 && arr[1] >= 30)) {
-                                return "<label style='color:red;'>" + val + "</label>";
+                                return "<label style='color:green;'>" + val + "</label>";
                             }
                             return val;
                         }},
@@ -414,9 +414,9 @@
                     var obj = form.serializeToObject();
                     obj.start = 0; //返回第一页
                     var lastParams = store.get("lastParams");
-                    lastParams["between_a:am_time"] = "";
-                    lastParams["gt_a:am_time"] = "";
-                    lastParams["lt_a:pm_time"] = "";
+                    lastParams["between_amTime"] = "";
+                    lastParams["gt_amTime"] = "";
+                    lastParams["lt_pmTime"] = "";
                     store.set("lastParams", lastParams);
                     store.load(obj);
                     return false;
