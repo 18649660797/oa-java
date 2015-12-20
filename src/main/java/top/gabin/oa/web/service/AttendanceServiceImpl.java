@@ -19,6 +19,7 @@ import top.gabin.oa.web.dto.AttendanceImportDTO;
 import top.gabin.oa.web.dto.attendance.AnalysisResult;
 import top.gabin.oa.web.dto.attendance.DepartmentAnalysisResult;
 import top.gabin.oa.web.dto.attendance.EmployeeAnalysisResult;
+import top.gabin.oa.web.dto.business.AttendanceBasicRuleConfig;
 import top.gabin.oa.web.entity.*;
 import top.gabin.oa.web.service.criteria.CriteriaCondition;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
@@ -41,6 +42,8 @@ public class AttendanceServiceImpl implements AttendanceService {
     private EmployeeService employeeService;
     @Resource(name = "attendanceDao")
     private AttendanceDao attendanceDao;
+    @Resource(name = "businessService")
+    private BusinessService businessService;
     @Resource
     private CriteriaQueryService queryService;
 
@@ -198,10 +201,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         // 1、获取指定月份所有的考勤
         Map<String, Object> conditions = new HashMap<String, Object>();
         CriteriaCondition criteriaCondition = new CriteriaCondition(conditions);
-        if (StringUtils.isNotBlank(month)) {
-            conditions.put("ge_workDate", month + "-01 00:00:00");
-            conditions.put("le_workDate", month + "-31 00:00:00");
-        }
+        conditions.put("bw_workDateFormat", month);
         criteriaCondition.setSort("workDate asc");
         List<AttendanceImpl> attendanceList = queryService.query(AttendanceImpl.class, criteriaCondition);
         // 2、根据员工分组考勤数据
@@ -245,8 +245,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         Map<String, Object> conditions = new HashMap<String, Object>();
         CriteriaCondition criteriaCondition = new CriteriaCondition(conditions);
         if (StringUtils.isNotBlank(month)) {
-            conditions.put("ge_workDate", month + "-01 00:00:00");
-            conditions.put("le_workDate", month + "-31 00:00:00");
+            conditions.put("bw_workDateFormat", month);
         }
         criteriaCondition.setSort("workDate asc");
         List<AttendanceImpl> attendanceList = queryService.query(AttendanceImpl.class, criteriaCondition);
@@ -255,11 +254,15 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     public List<DepartmentAnalysisResult> buildAnalysisData(String month) {
+
         List<DepartmentAnalysisResult> departmentAnalysisResultList = new ArrayList<DepartmentAnalysisResult>();
         Map<Long, DepartmentAnalysisResult> departmentAnalysisResultMap = new HashMap<Long, DepartmentAnalysisResult>();
         Map<Long, EmployeeAnalysisResult> employeeAnalysisResultMap = new HashMap<Long, EmployeeAnalysisResult>();
         // 1、获取指定月份所有的考勤
         List<AttendanceImpl> attendanceList = findAttendanceByMonth(month);
+        AttendanceBasicRuleConfig attendanceBasicRule = businessService.getAttendanceBasicRule();
+        String workFit = attendanceBasicRule.getWorkFit();
+        String leaveFit = attendanceBasicRule.getLeaveFit();
         // 2、根据员工分组考勤数据
         for (Attendance attendance : attendanceList) {
             Long departmentId, employeeId;
@@ -280,8 +283,8 @@ public class AttendanceServiceImpl implements AttendanceService {
             }
             AnalysisResult analysisResult = new AnalysisResult(attendance);
             String workDateFormat = attendance.getWorkDateFormat();
-            analysisResult.setWorkFit(TimeUtils.parseDate(workDateFormat + " 09:00:03"));
-            analysisResult.setLeaveFit(TimeUtils.parseDate(workDateFormat + " 18:00:00"));
+            analysisResult.setWorkFit(TimeUtils.parseDate(workDateFormat + " " + workFit));
+            analysisResult.setLeaveFit(TimeUtils.parseDate(workDateFormat + " " + leaveFit));
             employeeAnalysisResult.add(analysisResult);
         }
         Map<Long, List<Leave>> leaveEmployeeMap = leaveService.getLeaveGroup(month);
@@ -302,8 +305,9 @@ public class AttendanceServiceImpl implements AttendanceService {
         if (leaveList != null) {
             Attendance attendance = analysisResult.getAttendance();
             String workDateFormat = attendance.getWorkDateFormat();
-            Date amNeedFit = TimeUtils.parseDate(workDateFormat + " 09:00:00");
-            Date pmNeedFit = TimeUtils.parseDate(workDateFormat + " 18:00:00");
+            AttendanceBasicRuleConfig attendanceBasicRule = businessService.getAttendanceBasicRule();
+            Date amNeedFit = TimeUtils.parseDate(workDateFormat + " " + attendanceBasicRule.getWorkFit());
+            Date pmNeedFit = TimeUtils.parseDate(workDateFormat + " " + attendanceBasicRule.getLeaveFit());
             // 获取请假时长
             Date tmpBeginDate = amNeedFit;
             Date tmpEndDate = pmNeedFit;
