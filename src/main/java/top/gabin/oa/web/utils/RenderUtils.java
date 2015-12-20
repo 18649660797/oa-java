@@ -3,10 +3,13 @@ package top.gabin.oa.web.utils;
 import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.ui.Model;
-import org.springframework.web.servlet.ModelAndView;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import top.gabin.oa.web.dto.PageDTO;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -144,37 +147,19 @@ public class RenderUtils {
     }
 
     /**
-     * 缥 Model 中填充 参数
-     *
-     * @param modelAttrs
-     * @param model
-     * @return
+     * 导出excel
+     * @param response
+     * @param workbook
+     * @param fileName
+     * @throws IOException
      */
-    public static Model fillModel(Map<String, Object> modelAttrs, Model model) {
-        if (modelAttrs == null || model == null) {
-            return model;
-        }
-        for (String key : modelAttrs.keySet()) {
-            model.addAttribute(key, modelAttrs.get(key));
-        }
-        return model;
-    }
-
-    /**
-     * 给 ModelAndView 中 填充参数
-     *
-     * @param modelAttrs
-     * @param model
-     * @return
-     */
-    public static ModelAndView fillModel(Map<String, Object> modelAttrs, ModelAndView model) {
-        if (modelAttrs == null || model == null) {
-            return model;
-        }
-        for (String key : modelAttrs.keySet()) {
-            model.addObject(key, modelAttrs.get(key));
-        }
-        return model;
+    public static void renderExcel(HttpServletResponse response, HSSFWorkbook workbook, String fileName) throws IOException {
+        response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+        response.setHeader("Content-disposition", "attachment; filename=" + fileName +".xls");
+        OutputStream bufferedOutputStream = new BufferedOutputStream(response.getOutputStream());
+        workbook.write(bufferedOutputStream);
+        bufferedOutputStream.flush();
+        bufferedOutputStream.close();
     }
 
     /**

@@ -33,11 +33,12 @@ public class RuleWorkFlow extends AbstractAnalysisWorkFlow {
                     if (468 == attendance.getEmployee().getId()) {
                         System.out.println();
                     }
-                    Date workDate = attendance.getWorkDate();
+                    String workDateFormat = attendance.getWorkDateFormat();
                     String amTime = attendance.getAmTime();
-                    Date amDate = StringUtils.isBlank(amTime) ? null : TimeUtils.parseDate(TimeUtils.format(workDate, "yyyy-MM-dd " + amTime + ":00"));
+                    String format = "yyyy-MM-dd hh:mm";
+                    Date amDate = StringUtils.isBlank(amTime) ? null : TimeUtils.parseDate(workDateFormat + " " + amTime, format);
                     String pmTime = attendance.getPmTime();
-                    Date pmDate = StringUtils.isBlank(pmTime) ? null : TimeUtils.parseDate(TimeUtils.format(workDate, "yyyy-MM-dd " + pmTime + ":00"));
+                    Date pmDate = StringUtils.isBlank(pmTime) ? null : TimeUtils.parseDate(workDateFormat + " " + pmTime, format);
                     if (amDate == null && pmDate == null && !analysisResult.isLeaveDay()) {
                         analysisResult.setWorkBad(true);
                     }

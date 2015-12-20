@@ -4,7 +4,6 @@
  */
 package top.gabin.oa.web.controller;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.stereotype.Controller;
@@ -16,16 +15,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import top.gabin.oa.web.dto.AttendanceDTO;
 import top.gabin.oa.web.dto.AttendanceImportDTO;
-import top.gabin.oa.web.dto.PageDTO;
 import top.gabin.oa.web.dto.attendance.DepartmentAnalysisResult;
 import top.gabin.oa.web.entity.Attendance;
 import top.gabin.oa.web.entity.AttendanceImpl;
 import top.gabin.oa.web.entity.Department;
 import top.gabin.oa.web.service.AttendanceService;
 import top.gabin.oa.web.service.DepartmentService;
-import top.gabin.oa.web.service.criteria.CriteriaCondition;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
-import top.gabin.oa.web.service.criteria.CriteriaQueryUtils;
 import top.gabin.oa.web.service.flow.attendance.execute.Execute;
 import top.gabin.oa.web.utils.RenderUtils;
 import top.gabin.oa.web.utils.date.TimeUtils;
@@ -34,8 +30,6 @@ import top.gabin.oa.web.utils.excel.ImportExcel;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedOutputStream;
-import java.io.OutputStream;
 import java.util.*;
 
 /**
@@ -73,15 +67,7 @@ public class AttendanceController {
 
     @RequestMapping(value = "grid", method = RequestMethod.GET)
     public @ResponseBody Map<String, Object> grid(HttpServletRequest request) {
-        CriteriaCondition criteriaCondition = CriteriaQueryUtils.parseCondition(request);
-        Map<String, Object> conditions = criteriaCondition.getConditions();
-        String workDate = request.getParameter("workDate");
-        if (StringUtils.isNotBlank(workDate)) {
-            conditions.put("ge_workDate", workDate + "-01 00:00:00");
-            conditions.put("le_workDate", workDate + "-31 00:00:00");
-        }
-        PageDTO<AttendanceImpl> attendancePageDTO = queryService.queryPage(AttendanceImpl.class, criteriaCondition);
-        return RenderUtils.filterPageDataResult(attendancePageDTO, "id,workDate,amTime,pmTime,employee.name employee,employee.department.name department,yesterdayPm yesterday,status.label status");
+        return queryService.queryPage(AttendanceImpl.class, request, "id,workDate,amTime,pmTime,employee.name employee,employee.department.name department,yesterdayPm yesterday,status.label status");
     }
 
     @RequestMapping(value = "save", method = RequestMethod.POST)
@@ -166,16 +152,12 @@ public class AttendanceController {
         return RenderUtils.SUCCESS_RESULT;
     }
 
-    @RequestMapping(value = "analysis", method = RequestMethod.GET, produces="application/vnd.ms-excel;charset=UTF-8")
+    @RequestMapping(value = "analysis", method = RequestMethod.GET)
     public void analysis(String month, HttpServletResponse response) {
         try {
-            response.setHeader("Content-disposition", "attachment; filename=" + month +".xls");
             List<DepartmentAnalysisResult> data = execute.execute(month);
             HSSFWorkbook hssfWorkbook = attendanceService.buildAnalysisExcel(data);
-            OutputStream bufferedOutputStream = new BufferedOutputStream(response.getOutputStream());
-            hssfWorkbook.write(bufferedOutputStream);
-            bufferedOutputStream.flush();
-            bufferedOutputStream.close();
+            RenderUtils.renderExcel(response, hssfWorkbook, "analysis_" + month);
         } catch (Exception e) {
             throw new RuntimeException("导出Excel文件出错", e);
         }

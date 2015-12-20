@@ -41,6 +41,18 @@ public class AttendanceImpl implements Attendance {
     @ManyToOne(targetEntity = EmployeeImpl.class)
     @JoinColumn(name = "employee_id")
     private Employee employee;
+    @Column(name = "work_date_format")
+    private String workDateFormat;
+
+    @Override
+    public String getWorkDateFormat() {
+        return workDateFormat;
+    }
+
+    @Override
+    public void setWorkDateFormat(String workDateFormat) {
+        this.workDateFormat = workDateFormat;
+    }
 
     @Override
     public Long getId() {

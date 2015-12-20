@@ -10,6 +10,10 @@ import java.util.Date;
  * @author linjiabin  on  15/12/15
  */
 public interface Attendance {
+    String getWorkDateFormat();
+
+    void setWorkDateFormat(String workDateFormat);
+
     Long getId();
 
     void setId(Long id);

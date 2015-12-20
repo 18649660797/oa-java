@@ -28,7 +28,7 @@ public class AttendanceDaoImpl extends CommonBaseDaoImpl<Attendance, top.gabin.o
 
     @Override
     public Attendance findYesterday(Attendance attendance) {
-        Query query = em.createNativeQuery("select * from edy_attendance where employee_id=" + attendance.getEmployee().getId() + " and work_date='" + TimeUtils.format(DateUtils.addDays(attendance.getWorkDate(), -1)) + "'", AttendanceImpl.class);
+        Query query = em.createNativeQuery("select * from edy_attendance where employee_id=" + attendance.getEmployee().getId() + " and work_date_format='" + TimeUtils.format(DateUtils.addDays(attendance.getWorkDate(), -1), "yyyy-MM-dd") + "'", AttendanceImpl.class);
         List resultList = query.getResultList();
         return resultList == null || resultList.isEmpty() ? null : (Attendance)resultList.get(0);
     }

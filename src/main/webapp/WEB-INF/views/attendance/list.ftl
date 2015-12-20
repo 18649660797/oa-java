@@ -6,10 +6,11 @@
 <body>
     <div class="row">
         <form id="J_FORM" class="form-panel" action="data" method="post" style="margin-bottom:0;">
+            <input type="hidden" name="sort" value="employee.id asc,workDate asc"/>
             <div class="panel-title">
             <span>
                 <label>考勤月：</label>
-                <input type="text" id="J_Month" name="workDate" value="">
+                <input type="text" id="J_Month" name="bw_workDateFormat" value="">
 
                 <label>打卡日期：</label><input name="ge_workDate" type="text" class="calendar" /> <label>至</label> <input name="le_workDate" type="text" class="calendar" />
 
@@ -177,6 +178,7 @@
                                         },
                                         mask:true,
                                         success: function() {
+                                            edy.loading();
                                             top.$.ajaxFileUpload({
                                                 url : '/attendance/import',
                                                 secureuri: false,
@@ -184,10 +186,12 @@
                                                 dataType : 'json',
                                                 method : 'post',
                                                 success: function (data) {
+                                                    edy.loaded();
                                                     edy.alert("导入成功！");
                                                     reload();
                                                 },
                                                 error: function (data, status, e) {
+                                                    edy.loaded();
                                                     //edy.alert("导入失败！");
                                                     reload();
                                                 }

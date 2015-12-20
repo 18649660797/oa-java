@@ -85,7 +85,9 @@ public class AttendanceServiceImpl implements AttendanceService {
                     }
                 }
             }
-            attendance.setWorkDate(TimeUtils.parseDate(dto.getWorkDate(), "yyyy-MM-dd"));
+            String workDate = dto.getWorkDate();
+            attendance.setWorkDateFormat(workDate);
+            attendance.setWorkDate(TimeUtils.parseDate(workDate, "yyyy-MM-dd"));
             String departmentName = dto.getDepartment();
             Employee employee;
             if (cacheEmployee.containsKey(realName)) {
@@ -166,8 +168,10 @@ public class AttendanceServiceImpl implements AttendanceService {
             if (attendanceDTO.getAmTime() != null) {
                 attendance.setAmTime(attendanceDTO.getAmTime());
             }
-            if (attendanceDTO.getWorkDate() != null) {
-                attendance.setWorkDate(TimeUtils.parseDate(attendanceDTO.getWorkDate()));
+            String workDate = attendanceDTO.getWorkDate();
+            if (workDate != null) {
+                attendance.setWorkDateFormat(workDate);
+                attendance.setWorkDate(TimeUtils.parseDate(workDate));
             }
             attendanceDao.saveOrUpdate(attendance);
         }
@@ -275,8 +279,9 @@ public class AttendanceServiceImpl implements AttendanceService {
                 departmentAnalysisResult.add(employeeAnalysisResult);
             }
             AnalysisResult analysisResult = new AnalysisResult(attendance);
-            analysisResult.setWorkFit(TimeUtils.parseDate(TimeUtils.format(attendance.getWorkDate(), "yyyy-MM-dd 09:00:03")));
-            analysisResult.setLeaveFit(TimeUtils.parseDate(TimeUtils.format(attendance.getWorkDate(), "yyyy-MM-dd 18:00:00")));
+            String workDateFormat = attendance.getWorkDateFormat();
+            analysisResult.setWorkFit(TimeUtils.parseDate(workDateFormat + " 09:00:03"));
+            analysisResult.setLeaveFit(TimeUtils.parseDate(workDateFormat + " 18:00:00"));
             employeeAnalysisResult.add(analysisResult);
         }
         Map<Long, List<Leave>> leaveEmployeeMap = leaveService.getLeaveGroup(month);
@@ -296,7 +301,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     private void fillLeave(AnalysisResult analysisResult, List<Leave> leaveList) {
         if (leaveList != null) {
             Attendance attendance = analysisResult.getAttendance();
-            String workDateFormat = TimeUtils.format(attendance.getWorkDate(), "yyyy-MM-dd");
+            String workDateFormat = attendance.getWorkDateFormat();
             Date amNeedFit = TimeUtils.parseDate(workDateFormat + " 09:00:00");
             Date pmNeedFit = TimeUtils.parseDate(workDateFormat + " 18:00:00");
             // 获取请假时长
@@ -371,7 +376,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                     // 填充周几
                     setValue(row1, 2, TimeUtils.getDay(workDate));
                     // 填充日期
-                    String workDateFormat = TimeUtils.format(attendance.getWorkDate(), "yyyy-MM-dd");
+                    String workDateFormat = attendance.getWorkDateFormat();
                     setValue(row1, 3, workDateFormat);
                     // 填充上午打卡时间
                     setValue(row1, 4, attendance.getAmTime());

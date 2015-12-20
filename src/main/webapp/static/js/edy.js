@@ -34,5 +34,15 @@
     edy.getSuggestGridHeight = function() {
         return $("body").height() - $(".row:first-child").height();
     };
+    edy.fullMask = new BUI.Mask.LoadMask({
+        el : 'body',
+        msg : 'loading'
+    });
+    edy.loading = function() {
+        this.fullMask.show();
+    };
+    edy.loaded = function() {
+        this.fullMask.hide();
+    };
     w.edy = edy;
 } (window, jQuery));

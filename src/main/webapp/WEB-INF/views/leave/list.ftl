@@ -148,6 +148,7 @@
                                         },
                                         mask:true,
                                         success: function() {
+                                            edy.loading();
                                             top.$.ajaxFileUpload({
                                                 url : '/leave/import',
                                                 secureuri: false,
@@ -155,10 +156,12 @@
                                                 dataType : 'json',
                                                 method : 'post',
                                                 success: function (data) {
+                                                    edy.loaded();
                                                     edy.alert("导入成功！");
                                                     reload();
                                                 },
                                                 error: function (data, status, e) {
+                                                    edy.loaded();
                                                     edy.alert("导入失败！");
                                                 }
                                             });

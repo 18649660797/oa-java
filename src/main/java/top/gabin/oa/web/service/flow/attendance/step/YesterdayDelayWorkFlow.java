@@ -35,9 +35,8 @@ public class YesterdayDelayWorkFlow extends AbstractAnalysisWorkFlow {
                         Date pmDate = TimeUtils.parseDate("2015-01-01 " + pmTime + ":00");
                         if (TimeUtils.afterOrEqual(pmDate, TimeUtils.parseDate("2015-01-01 21:30:00"))) {
                             Date amNeedFitTime = analysisResult.getWorkFit();
-                            Date workDate = attendance.getWorkDate();
-                            String format = TimeUtils.format(workDate, "yyyy-MM-dd 10:00:00");
-                            Date date = TimeUtils.parseDate(format);
+                            String workDateFormat = attendance.getWorkDateFormat();
+                            Date date = TimeUtils.parseDate(workDateFormat + " 10:00:00");
                             if (amNeedFitTime == null || amNeedFitTime.before(date)) {
                                 analysisResult.setWorkFit(date);
                                 analysisResult.setYesterdayWorkDelay(true);
