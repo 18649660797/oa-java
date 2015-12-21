@@ -38,12 +38,18 @@
         },{
             id:'attendance',
             menu:[{
-                text:'考勤管理',
+                text:'部门人员',
                 items:[
                     {id:'department-menu',text:'部门管理',href:'/department/list'},
-                    {id:'employee-menu',text:'员工管理',href:'/employee/list'},
+                    {id:'employee-menu',text:'员工管理',href:'/employee/list'}
+                ]
+            },
+            {
+                text:'数据规则',
+                items:[
                     {id:'attendance-menu',text:'考勤数据',href:'/attendance/list'},
-                    {id:'exception-menu',text:'行政登记',href:'/leave/list'}
+                    {id:'exception-menu',text:'行政登记',href:'/leave/list'},
+                    {id:'basic-rule-menu',text:'基础配置',href:'/attendance/rule/basic'}
                 ]
             }]
         }];

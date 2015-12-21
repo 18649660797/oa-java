@@ -12,4 +12,6 @@ import top.gabin.oa.web.entity.BusinessTypeImpl;
  */
 public interface BusinessTypeDao extends CommonBaseDao<BusinessType, BusinessTypeImpl> {
     BusinessType findByKey(String name);
+    BusinessType findByKeyNotCache(String name);
+    BusinessType merge(BusinessType businessType);
 }

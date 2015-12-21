@@ -17,16 +17,20 @@ import java.util.List;
 @Table(name = "edy_business_type")
 public class BusinessTypeImpl implements BusinessType, Serializable {
     @Id
+    @TableGenerator(name = "business_type_sequences", table = "edy_sequences", pkColumnName = "sequence_name",
+            valueColumnName = "sequence_next_hi_value", initialValue = 20, allocationSize = 50)
+    @GeneratedValue(generator = "business_type_sequences", strategy = GenerationType.TABLE)
+    @Column(name = "id")
     private Long id;
     @Column(name = "label")
     private String label;
-    @Column(name = "key")
+    @Column(name = "type_key")
     private String key;
     @Column(name = "status")
     private Integer status;
-    @Column(name = "show")
+    @Column(name = "is_show")
     private boolean show = false;
-    @OneToMany(targetEntity = BusinessConfigImpl.class, mappedBy = "businessType")
+    @OneToMany(targetEntity = BusinessConfigImpl.class, mappedBy = "businessType", fetch = FetchType.EAGER)
     private List<BusinessConfig> businessConfigList;
 
     @Override

@@ -5,11 +5,14 @@
 package top.gabin.oa.web.service.flow.attendance.step;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import top.gabin.oa.web.dto.attendance.AnalysisResult;
 import top.gabin.oa.web.dto.attendance.DepartmentAnalysisResult;
 import top.gabin.oa.web.dto.attendance.EmployeeAnalysisResult;
+import top.gabin.oa.web.dto.business.AttendanceBasicRuleConfig;
 import top.gabin.oa.web.entity.Attendance;
 import top.gabin.oa.web.service.AttendanceService;
+import top.gabin.oa.web.service.BusinessService;
 import top.gabin.oa.web.utils.date.TimeUtils;
 
 import javax.annotation.Resource;
@@ -22,10 +25,14 @@ import java.util.List;
 public class RuleWorkFlow extends AbstractAnalysisWorkFlow {
     @Resource(name = "attendanceService")
     private AttendanceService attendanceService;
+    @Resource(name = "businessService")
+    private BusinessService businessService;
     @Override
     public List<DepartmentAnalysisResult> analysis(List<DepartmentAnalysisResult> departmentAnalysisResultList) {
         int fineMoneyBasicOfDelay = attendanceService.getFineMoneyBasicOfDelay();
         int fineMoneyBasicOfLeaveEarly = attendanceService.getFineMoneyBasicOfLeaveEarly();
+        AttendanceBasicRuleConfig attendanceBasicRule = businessService.getAttendanceBasicRule();
+        Integer workFitOffset = attendanceBasicRule.getWorkFitOffset();
         for (DepartmentAnalysisResult departmentAnalysisResult : departmentAnalysisResultList) {
             for (EmployeeAnalysisResult employeeAnalysisResult : departmentAnalysisResult.getEmployeeAnalysisResultList()) {
                 for (AnalysisResult analysisResult : employeeAnalysisResult.getAnalysisResultList()) {
@@ -43,12 +50,15 @@ public class RuleWorkFlow extends AbstractAnalysisWorkFlow {
                     }
                     if (!analysisResult.isLeaveDay()) {
                         Date amNeedFitTime = analysisResult.getWorkFit();
+                        if (workFitOffset != null && workFitOffset > 0) {
+                            amNeedFitTime = DateUtils.addMinutes(amNeedFitTime, workFitOffset);
+                        }
                         Date pmNeedFitTime = analysisResult.getLeaveFit();
                         String remark = "";
                         // 如果迟到
                         if (amDate != null && amNeedFitTime != null && amDate.after(amNeedFitTime)) {
                             int delaySeconds = employeeAnalysisResult.getDelaySeconds();
-                            long minutes = TimeUtils.getMinutes(amDate, amNeedFitTime);
+                            long minutes = TimeUtils.getMinutes(amDate, amNeedFitTime) + workFitOffset;
                             analysisResult.setWorkDelayMinutes((int) minutes);
                             // 十五分钟内
                             if (minutes <= 15 && delaySeconds < attendanceService.getDelayLimit()) {

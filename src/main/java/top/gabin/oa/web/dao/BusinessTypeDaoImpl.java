@@ -5,6 +5,7 @@
 package top.gabin.oa.web.dao;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
@@ -36,10 +37,29 @@ public class BusinessTypeDaoImpl extends CommonBaseDaoImpl<BusinessType, Busines
         return null;
     }
 
-    @CachePut(value = "configCache", key = "#t.getKey()")
     @Override
-    public void persist(BusinessType t) {
-        super.persist(t);
+    public BusinessType findByKeyNotCache(String name) {
+        if (StringUtils.isNotBlank(name)) {
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+            CriteriaQuery<BusinessTypeImpl> query = criteriaBuilder.createQuery(BusinessTypeImpl.class);
+            Root<BusinessTypeImpl> from = query.from(BusinessTypeImpl.class);
+            query.select(from);
+            query.where(criteriaBuilder.equal(from.get("key"), name));
+            TypedQuery<BusinessTypeImpl> typeTypedQuery = em.createQuery(query);
+            return typeTypedQuery.getSingleResult();
+        }
+        return null;
+    }
+
+    @Override
+    public BusinessType saveOrUpdate(BusinessType businessType) {
+        return super.saveOrUpdate(businessType);
+    }
+
+    @CachePut(value = "configCache", key = "#businessType.getKey()")
+    @Override
+    public BusinessType merge(BusinessType businessType) {
+        return em.merge(businessType);
     }
 
 }

@@ -20,10 +20,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Class description
- *
- *
- *
  * @author linjiabin  on  15/12/17
  */
 public class LeaveWorkFlow extends AbstractAnalysisWorkFlow {
@@ -52,7 +48,6 @@ public class LeaveWorkFlow extends AbstractAnalysisWorkFlow {
                                 return (int) (o1.getBeginDate().getTime() - o2.getBeginDate().getTime());
                             }
                         });
-                        // 获取请假时长
                         Date tmpBeginDate = amNeedFit;
                         Date tmpEndDate = pmNeedFit;
                         for (Leave leave : leaveList) {

@@ -14,16 +14,20 @@ import java.io.Serializable;
 @Table(name = "edy_business_config")
 public class BusinessConfigImpl implements BusinessConfig, Serializable {
     @Id
+    @TableGenerator(name = "business_config_sequences", table = "edy_sequences", pkColumnName = "sequence_name",
+            valueColumnName = "sequence_next_hi_value", initialValue = 20, allocationSize = 50)
+    @GeneratedValue(generator = "business_config_sequences", strategy = GenerationType.TABLE)
+    @Column(name = "id")
     private Long id;
     @Column(name = "label")
     private String label;
-    @Column(name = "key")
+    @Column(name = "config_key")
     private String key;
-    @Column(name = "value")
+    @Column(name = "config_value")
     private String value;
     @Column(name = "required")
     private boolean required = false;
-    @Column(name = "desc")
+    @Column(name = "description")
     private String desc;
     @ManyToOne(targetEntity = BusinessTypeImpl.class)
     @JoinColumn(name = "type_id")

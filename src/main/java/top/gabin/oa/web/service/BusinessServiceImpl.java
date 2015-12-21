@@ -4,13 +4,16 @@
  */
 package top.gabin.oa.web.service;
 
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import top.gabin.oa.web.constant.BusinessConfigs;
 import top.gabin.oa.web.constant.BusinessTypes;
 import top.gabin.oa.web.dao.BusinessTypeDao;
+import top.gabin.oa.web.dto.AttendanceBasicRuleConfigForm;
 import top.gabin.oa.web.dto.business.AttendanceBasicRuleConfig;
+import top.gabin.oa.web.dto.business.AttendanceBasicRuleConfigImpl;
+import top.gabin.oa.web.entity.BusinessConfig;
 import top.gabin.oa.web.entity.BusinessType;
 
 import javax.annotation.Resource;
@@ -22,11 +25,12 @@ import javax.annotation.Resource;
 public class BusinessServiceImpl implements BusinessService {
     @Resource(name = "businessTypeDao")
     private BusinessTypeDao businessTypeDao;
-    @Transactional("transactionManager")
 
+
+    @Transactional("transactionManager")
     @Override
     public void saveBusiness(BusinessType businessType) {
-        businessTypeDao.persist(businessType);
+        businessTypeDao.saveOrUpdate(businessType);
     }
 
     @Override
@@ -40,7 +44,32 @@ public class BusinessServiceImpl implements BusinessService {
     @Override
     public AttendanceBasicRuleConfig getAttendanceBasicRule() {
         BusinessType business = getBusiness(BusinessTypes.ATTENDANCE);
-        return new AttendanceBasicRuleConfig(business);
+        return new AttendanceBasicRuleConfigImpl(business);
+    }
+
+    @Transactional("transactionManager")
+    @Override
+    public void setAttendanceBasicRule(AttendanceBasicRuleConfigForm form) {
+        BusinessType business = businessTypeDao.findByKeyNotCache(BusinessTypes.ATTENDANCE.getKey());
+        for (BusinessConfig businessConfig : business.getBusinessConfigList()) {
+            if (businessConfig.getKey().equals(BusinessConfigs.WORK_FIT.getKey())) {
+                businessConfig.setValue(form.getWorkFit());
+            }
+            if (businessConfig.getKey().equals(BusinessConfigs.LEAVE_FIT.getKey())) {
+                businessConfig.setValue(form.getLeaveFit());
+            }
+            if (businessConfig.getKey().equals(BusinessConfigs.REST_BEGIN.getKey())) {
+                businessConfig.setValue(form.getResetBegin());
+            }
+            if (businessConfig.getKey().equals(BusinessConfigs.REST_END.getKey())) {
+                businessConfig.setValue(form.getResetEnd());
+            }
+            if (businessConfig.getKey().equals(BusinessConfigs.WORK_FIT_OFFSET.getKey())) {
+                businessConfig.setValue(form.getWorkFitOffset().toString());
+            }
+
+        }
+        businessTypeDao.merge(business);
     }
 
 }

@@ -389,33 +389,41 @@ public class AttendanceServiceImpl implements AttendanceService {
                     if (AttendanceStatus.LEAVE.equals(attendance.getStatus())) {
                         row1.getCell(2).setCellStyle(getBlueFontStyle(workbook));
                     } else {
+                        HSSFCellStyle workFitStyle = null;
+                        HSSFCellStyle leaveFitStyle = null;
                         if (analysisResult.isYesterdayWorkDelay()) {
-                            row1.getCell(4).setCellStyle(getGreenFillStyle(workbook));
+                            workFitStyle = getGreenFillStyle(workbook);
                         }
                         if (analysisResult.isWorkBad()) {
                             setValue(row1, 12, 7.5);
-                            row1.getCell(4).setCellStyle(getYellowFillStyle(workbook));
-                            row1.getCell(5).setCellStyle(getYellowFillStyle(workbook));
+                            workFitStyle = getYellowFillStyle(workbook);
+                            leaveFitStyle = getYellowFillStyle(workbook);
                         }
                         if (analysisResult.isImpunityWorkDelay()) {
-                            row1.getCell(4).setCellStyle(getBlueFillStyle(workbook));
+                            workFitStyle = getBlueFillStyle(workbook);
                         } else {
                             // 迟到
                             int amMinutes = analysisResult.getWorkDelayMinutes();
                             if (amMinutes > 0) {
                                 setValue(row1, 10, amMinutes);
-                                row1.getCell(4).setCellStyle(getYellowFillStyle(workbook));
+                                workFitStyle = getYellowFillStyle(workbook);
                             }
                         }
+                        if (workFitStyle != null) {
+                            row1.getCell(4).setCellStyle(workFitStyle);
+                        }
                         if (analysisResult.isImpunityLeaveEarly()) {
-                            row1.getCell(5).setCellStyle(getBlueFillStyle(workbook));
+                            leaveFitStyle = getBlueFillStyle(workbook);
                         } else {
                             // 早退
                             int pmMinutes = analysisResult.getLeaveEarlyMinutes();
                             if (pmMinutes > 0) {
                                 setValue(row1, 11, pmMinutes);
-                                row1.getCell(5).setCellStyle(getYellowFillStyle(workbook));
+                                leaveFitStyle = getYellowFillStyle(workbook);
                             }
+                        }
+                        if (leaveFitStyle != null) {
+                            row1.getCell(5).setCellStyle(leaveFitStyle);
                         }
                         List<Leave> leaveList = analysisResult.getLeaveList();
                         String remark = StringUtils.isBlank(analysisResult.getRemark()) ? "" : analysisResult.getRemark();
@@ -492,8 +500,12 @@ public class AttendanceServiceImpl implements AttendanceService {
         cell.setCellValue(content);
     }
 
+    private static HSSFCellStyle headFillStyle;
 
     private static HSSFCellStyle getHeadFontStyle(HSSFWorkbook workbook) {
+        if (headFillStyle != null) {
+            return headFillStyle;
+        }
         HSSFCellStyle cellStyle = workbook.createCellStyle();
         cellStyle.setFillForegroundColor(HSSFColor.SKY_BLUE.index);
         cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
@@ -502,38 +514,46 @@ public class AttendanceServiceImpl implements AttendanceService {
         cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
         cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
         cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-        //生成标题字体
-        HSSFFont font = workbook.createFont();
-        font.setColor(HSSFColor.VIOLET.index);
-        //字体应用
-        cellStyle.setFont(font);
+        headFillStyle = cellStyle;
         return cellStyle;
     }
 
+    private static HSSFCellStyle blueFillStyle;
+
     private static HSSFCellStyle getBlueFillStyle(HSSFWorkbook workbook) {
+        if (blueFillStyle != null) {
+            return blueFillStyle;
+        }
         HSSFCellStyle cellStyle = workbook.createCellStyle();
         cellStyle.setFillForegroundColor(HSSFColor.SKY_BLUE.index);
         cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-        //生成标题字体
-        HSSFFont font = workbook.createFont();
-        font.setColor(HSSFColor.VIOLET.index);
-        //字体应用
-        cellStyle.setFont(font);
+        blueFillStyle = cellStyle;
         return cellStyle;
     }
 
+    private static HSSFCellStyle greenFillStyle;
+
     private static HSSFCellStyle getGreenFillStyle(HSSFWorkbook workbook) {
+        if (greenFillStyle != null) {
+            return greenFillStyle;
+        }
         HSSFCellStyle cellStyle = workbook.createCellStyle();
-        cellStyle.setFillForegroundColor(HSSFColor.GREEN.index);
+        cellStyle.setFillForegroundColor(HSSFColor.SEA_GREEN.index);
         cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
         cellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
         cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
         cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        greenFillStyle = cellStyle;
         return cellStyle;
     }
 
+    private static HSSFCellStyle yellowFillStyle;
+
     private static HSSFCellStyle getYellowFillStyle(HSSFWorkbook workbook) {
+        if (yellowFillStyle != null) {
+            return yellowFillStyle;
+        }
         HSSFCellStyle cellStyle = workbook.createCellStyle();
         cellStyle.setFillForegroundColor(HSSFColor.YELLOW.index);
         cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
@@ -542,15 +562,21 @@ public class AttendanceServiceImpl implements AttendanceService {
         cellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
         cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
         cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        yellowFillStyle = cellStyle;
         return cellStyle;
     }
+
+    private static HSSFFont _font;
 
     private static HSSFCellStyle getBlueFontStyle(HSSFWorkbook workbook) {
         HSSFCellStyle cellStyle = workbook.createCellStyle();
         cellStyle.setFillForegroundColor(HSSFColor.BLACK.index);
         //生成标题字体
-        HSSFFont font = workbook.createFont();
-        font.setColor(HSSFColor.BLUE.index);
+        if (_font == null) {
+            _font = workbook.createFont();
+            _font.setColor(HSSFColor.BLUE.index);
+        }
+        HSSFFont font = _font;
         //字体应用
         cellStyle.setFont(font);
         return cellStyle;
