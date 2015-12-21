@@ -9,13 +9,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import top.gabin.oa.web.constant.BusinessTypes;
 import top.gabin.oa.web.dto.AttendanceBasicRuleConfigForm;
 import top.gabin.oa.web.dto.business.AttendanceBasicRuleConfig;
+import top.gabin.oa.web.entity.AttendanceRuleImpl;
 import top.gabin.oa.web.service.BusinessService;
+import top.gabin.oa.web.service.criteria.CriteriaQueryService;
 import top.gabin.oa.web.utils.RenderUtils;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -25,7 +27,8 @@ import java.util.Map;
 @RequestMapping("/attendance/rule")
 public class RuleController {
     private String dir = "attendance/rule";
-
+    @Resource(name = "criteriaQueryService")
+    private CriteriaQueryService queryService;
     @Resource(name = "businessService")
     private BusinessService businessService;
 
@@ -34,6 +37,16 @@ public class RuleController {
         AttendanceBasicRuleConfig attendanceBasicRule = businessService.getAttendanceBasicRule();
         model.addAttribute("rule", attendanceBasicRule);
         return dir + "/basic";
+    }
+
+    @RequestMapping("/list")
+    public String list() {
+        return dir + "/list";
+    }
+
+    @RequestMapping(value = "grid", method = RequestMethod.GET)
+    public @ResponseBody Map<String, Object> grid(HttpServletRequest request) {
+        return queryService.queryPage(AttendanceRuleImpl.class, request, "id,beginDate,endDate,name,status.label status,type.label type,attendanceRuleDetailMap");
     }
 
     @RequestMapping(value = "/basic/save", method = RequestMethod.POST)

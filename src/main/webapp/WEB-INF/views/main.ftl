@@ -51,6 +51,12 @@
                     {id:'exception-menu',text:'行政登记',href:'/leave/list'},
                     {id:'basic-rule-menu',text:'基础配置',href:'/attendance/rule/basic'}
                 ]
+            },
+            {
+                text:'高级规则',
+                items:[
+                    {id:'high-rule-menu',text:'特殊规则',href:'/attendance/rule/list'}
+                ]
             }]
         }];
         new PageUtil.MainPage({

@@ -24,6 +24,7 @@ import top.gabin.oa.web.entity.*;
 import top.gabin.oa.web.service.criteria.CriteriaCondition;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
 import top.gabin.oa.web.utils.date.TimeUtils;
+import top.gabin.oa.web.utils.mvel.MvelUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -44,6 +45,8 @@ public class AttendanceServiceImpl implements AttendanceService {
     private AttendanceDao attendanceDao;
     @Resource(name = "businessService")
     private BusinessService businessService;
+    @Resource(name = "attendanceRuleService")
+    private AttendanceRuleService attendanceRuleService;
     @Resource
     private CriteriaQueryService queryService;
 
@@ -254,7 +257,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     public List<DepartmentAnalysisResult> buildAnalysisData(String month) {
-
+        List<AttendanceRuleImpl> rules = attendanceRuleService.findRulesByMonth(month);
         List<DepartmentAnalysisResult> departmentAnalysisResultList = new ArrayList<DepartmentAnalysisResult>();
         Map<Long, DepartmentAnalysisResult> departmentAnalysisResultMap = new HashMap<Long, DepartmentAnalysisResult>();
         Map<Long, EmployeeAnalysisResult> employeeAnalysisResultMap = new HashMap<Long, EmployeeAnalysisResult>();
@@ -282,6 +285,19 @@ public class AttendanceServiceImpl implements AttendanceService {
                 departmentAnalysisResult.add(employeeAnalysisResult);
             }
             AnalysisResult analysisResult = new AnalysisResult(attendance);
+            if (rules != null && !rules.isEmpty()) {
+                for (AttendanceRule rule : rules) {
+                    Map<String, AttendanceRuleDetail> attendanceRuleDetailMap = rule.getAttendanceRuleDetailMap();
+                    for (String key : attendanceRuleDetailMap.keySet()) {
+                        AttendanceRuleDetail attendanceRuleDetail = attendanceRuleDetailMap.get(key);
+                        Map<String, Object> vars = new HashMap<String, Object>();
+                        vars.put("attendance", attendance);
+                        if (MvelUtils.eval(attendanceRuleDetail.getRule(), vars)) {
+                            analysisResult.getAttendanceRuleList().add(rule);
+                        }
+                    }
+                }
+            }
             String workDateFormat = attendance.getWorkDateFormat();
             analysisResult.setWorkFit(TimeUtils.parseDate(workDateFormat + " " + workFit));
             analysisResult.setLeaveFit(TimeUtils.parseDate(workDateFormat + " " + leaveFit));
@@ -488,6 +504,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                 i++;
             }
         }
+        _font = null;
         return workbook;
     }
 
@@ -500,12 +517,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         cell.setCellValue(content);
     }
 
-    private static HSSFCellStyle headFillStyle;
-
     private static HSSFCellStyle getHeadFontStyle(HSSFWorkbook workbook) {
-        if (headFillStyle != null) {
-            return headFillStyle;
-        }
         HSSFCellStyle cellStyle = workbook.createCellStyle();
         cellStyle.setFillForegroundColor(HSSFColor.SKY_BLUE.index);
         cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
@@ -514,29 +526,17 @@ public class AttendanceServiceImpl implements AttendanceService {
         cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
         cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
         cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-        headFillStyle = cellStyle;
         return cellStyle;
     }
 
-    private static HSSFCellStyle blueFillStyle;
-
     private static HSSFCellStyle getBlueFillStyle(HSSFWorkbook workbook) {
-        if (blueFillStyle != null) {
-            return blueFillStyle;
-        }
         HSSFCellStyle cellStyle = workbook.createCellStyle();
         cellStyle.setFillForegroundColor(HSSFColor.SKY_BLUE.index);
         cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-        blueFillStyle = cellStyle;
         return cellStyle;
     }
 
-    private static HSSFCellStyle greenFillStyle;
-
     private static HSSFCellStyle getGreenFillStyle(HSSFWorkbook workbook) {
-        if (greenFillStyle != null) {
-            return greenFillStyle;
-        }
         HSSFCellStyle cellStyle = workbook.createCellStyle();
         cellStyle.setFillForegroundColor(HSSFColor.SEA_GREEN.index);
         cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
@@ -544,16 +544,10 @@ public class AttendanceServiceImpl implements AttendanceService {
         cellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
         cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
         cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
-        greenFillStyle = cellStyle;
         return cellStyle;
     }
 
-    private static HSSFCellStyle yellowFillStyle;
-
     private static HSSFCellStyle getYellowFillStyle(HSSFWorkbook workbook) {
-        if (yellowFillStyle != null) {
-            return yellowFillStyle;
-        }
         HSSFCellStyle cellStyle = workbook.createCellStyle();
         cellStyle.setFillForegroundColor(HSSFColor.YELLOW.index);
         cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
@@ -562,7 +556,6 @@ public class AttendanceServiceImpl implements AttendanceService {
         cellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
         cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
         cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
-        yellowFillStyle = cellStyle;
         return cellStyle;
     }
 

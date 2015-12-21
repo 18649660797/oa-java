@@ -5,6 +5,7 @@
 package top.gabin.oa.web.dto.attendance;
 
 import top.gabin.oa.web.entity.Attendance;
+import top.gabin.oa.web.entity.AttendanceRule;
 import top.gabin.oa.web.entity.Leave;
 
 import java.util.ArrayList;
@@ -52,8 +53,18 @@ public class AnalysisResult {
     private boolean workBad;
     // 备注
     private String remark;
+    // 考勤高级规则
+    private List<AttendanceRule> attendanceRuleList = new ArrayList<AttendanceRule>();
 
     public AnalysisResult() {
+    }
+
+    public List<AttendanceRule> getAttendanceRuleList() {
+        return attendanceRuleList;
+    }
+
+    public void setAttendanceRuleList(List<AttendanceRule> attendanceRuleList) {
+        this.attendanceRuleList = attendanceRuleList;
     }
 
     public AnalysisResult(Attendance attendance) {
@@ -121,6 +132,9 @@ public class AnalysisResult {
     }
 
     public void setLeaveFit(Date leaveFit) {
+        if (attendance.getEmployee().getId() == 552 && attendance.getWorkDateFormat().equals("2015-11-09")) {
+            System.out.println();
+        }
         this.leaveFit = leaveFit;
     }
 

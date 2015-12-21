@@ -37,10 +37,10 @@ public class RuleWorkFlow extends AbstractAnalysisWorkFlow {
             for (EmployeeAnalysisResult employeeAnalysisResult : departmentAnalysisResult.getEmployeeAnalysisResultList()) {
                 for (AnalysisResult analysisResult : employeeAnalysisResult.getAnalysisResultList()) {
                     Attendance attendance = analysisResult.getAttendance();
-                    if (468 == attendance.getEmployee().getId()) {
+                    String workDateFormat = attendance.getWorkDateFormat();
+                    if (552 == attendance.getEmployee().getId() && workDateFormat.equals("2015-11-09")) {
                         System.out.println();
                     }
-                    String workDateFormat = attendance.getWorkDateFormat();
                     String amTime = attendance.getAmTime();
                     Date amDate = StringUtils.isBlank(amTime) ? null : TimeUtils.parseDate(workDateFormat + " " + amTime + ":00");
                     String pmTime = attendance.getPmTime();

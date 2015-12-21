@@ -9,11 +9,15 @@
         <property name="dataBuilder" ref="attendanceService"></property>
         <property name="analysisStepList">
             <list>
+                <ref bean="highRuleWorkFlow"></ref>
                 <ref bean="leaveWorkFlow"></ref>
                 <ref bean="yesterdayDelayWorkFlow"></ref>
                 <ref bean="ruleWorkFlow"></ref>
             </list>
         </property>
+    </bean>
+    <bean id="highRuleWorkFlow" class="top.gabin.oa.web.service.flow.attendance.step.HighRuleWorkFlow">
+        <property name="order" value="500" ></property>
     </bean>
     <bean id="leaveWorkFlow" class="top.gabin.oa.web.service.flow.attendance.step.LeaveWorkFlow">
         <property name="order" value="1000" ></property>
@@ -22,6 +26,6 @@
         <property name="order" value="2000" ></property>
     </bean>
     <bean id="ruleWorkFlow" class="top.gabin.oa.web.service.flow.attendance.step.RuleWorkFlow">
-        <property name="order" value="3000" ></property>
+        <property name="order" value="4000" ></property>
     </bean>
 </beans>

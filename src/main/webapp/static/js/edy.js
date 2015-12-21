@@ -23,6 +23,13 @@
             return true;
         }
     };
+    edy.grid = {
+        format: {
+            renderStatus: function(val, row) {
+                return val && val.label || val || "";
+            }
+        }
+    }
     edy.rendererHelp = {
         createLink: function(href, text) {
             return "<a href='{0}'>{1}</a>".replace("{0}", href || "").replace("{1}", text || "");
