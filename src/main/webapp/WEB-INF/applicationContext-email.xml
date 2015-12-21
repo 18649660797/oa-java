@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="smtp.163.com"></property>
+        <property name="username" value="18649660797@163.com"></property>
+        <property name="password" value="edopsheczllgjlhc"></property>
+    </bean>
+    <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean"></bean>
+
+    <bean id="mailUtil" class="top.gabin.oa.web.utils.mail.MailUtil">
+        <property name="javaMailSender" ref="mailSender"></property>
+        <property name="velocityEngine" ref="velocityEngine"></property>
+    </bean>
+</beans>

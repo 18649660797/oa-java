@@ -10,6 +10,7 @@
 			/WEB-INF/applicationContext-datasource.xml
 			/WEB-INF/applicationContext-flow.xml
 			/WEB-INF/applicationContext-security.xml
+			/WEB-INF/applicationContext-email.xml
 			/WEB-INF/applicationContext.xml
 			/WEB-INF/ehcache-application.xml
 		</param-value>
