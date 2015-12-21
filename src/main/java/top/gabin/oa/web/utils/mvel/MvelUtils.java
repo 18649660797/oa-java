@@ -5,6 +5,7 @@
 package top.gabin.oa.web.utils.mvel;
 
 import org.mvel2.MVEL;
+import top.gabin.oa.web.entity.AttendanceRule;
 
 import java.util.Map;
 
@@ -17,4 +18,17 @@ public class MvelUtils {
         Boolean result = (Boolean) MVEL.eval(expression, vars);
         return result;
     }
+
+    public static String eval(AttendanceRule attendanceRule) {
+        long beginTime = attendanceRule.getBeginDate().getTime();
+        long endTime = attendanceRule.getEndDate().getTime();
+        switch (attendanceRule.getType()) {
+            case WORK_FIT:
+            case LEAVE_FIT:
+                return "attendance.workDate.getTime() <= " + endTime + "&&" + "attendance.workDate.getTime() >= " + beginTime;
+        }
+        return "";
+    }
+
+
 }

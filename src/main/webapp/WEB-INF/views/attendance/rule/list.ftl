@@ -8,9 +8,20 @@
         <form id="J_FORM" class="form-panel" action="data" method="post" style="margin-bottom:0;">
             <div class="panel-title">
             <span>
-                <#--<label>考勤月：</label>-->
-                <#--<input type="text" id="J_Month" name="bw_workDateFormat" value="">-->
-
+                <label>名称：</label>
+                <input type="text" name="like_name" value="">
+                <label>状态：</label>
+                <select name="eq_status">
+                    <option value="">全部</option>
+                    <option value="1">启用</option>
+                    <option value="0">关闭</option>
+                </select>
+                <label>类型：</label>
+                <select name="eq_type" style="width: 100x;">
+                    <option value="">全部</option>
+                    <option value="0">上班打卡时间设置</option>
+                    <option value="1">下班打卡时间设置</option>
+                </select>
             </span>
             </div>
             <ul class="panel-content">
@@ -36,9 +47,10 @@
                 var Grid = Grid,
                     Store = Data.Store,
                     columns = [
-                        {title: 'id', dataIndex: 'id', width: 60, renderer: function(val, row) {
+                        {title: '操作', dataIndex: 'id', width: 60, renderer: function(val, row) {
                             return edy.rendererHelp.createJavaScriptLink("edit", val, "编辑");
                         }},
+                        {title: 'id', dataIndex: 'id', width: 60},
                         {title: '名称', dataIndex: 'name', width: 150},
                         {title: '状态', dataIndex: 'status', width: 80},
                         {title: '类型', dataIndex: 'type', width: 150},
@@ -68,6 +80,25 @@
                             text : '<i class="icon-plus"></i>新增',
                             listeners : {
                                 'click' : edit
+                            }
+                        },{
+                            btnCls : 'button button-small',
+                            text : '<i class="icon-remove"></i>删除',
+                            listeners : {
+                                'click' : function() {
+                                    var ids = getSelections();
+                                    if (!ids) {
+                                        return edy.alert("至少选择一个记录");
+                                    }
+                                    edy.confirm("确认要删除选中的规则?", function() {
+                                        $.post("/attendance/rule/delete", {ids: ids}, function(data) {
+                                            if (edy.ajaxHelp.handleAjax(data)) {
+                                                edy.alert("删除成功！");
+                                                reload();
+                                            }
+                                        });
+                                    });
+                                }
                             }
                         }]
                     },
@@ -102,12 +133,12 @@
             function edit () {
                 var id = $(this).attr("data-edit");
                 var dialog = new top.BUI.Overlay.Dialog({
-                    title: (id && '编辑' || '新增') + '请假登记',
-                    width:800,
-                    height:350,
+                    title: (id && '编辑' || '新增') + '高级考勤规则',
+                    width:500,
+                    height:400,
                     closeAction: "destroy",
                     loader : {
-                        url : '/attendance/edit',
+                        url : '/attendance/rule/edit',
                         autoLoad : false, //不自动加载
                         lazyLoad : false
                     },

@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import top.gabin.oa.web.dto.AttendanceBasicRuleConfigForm;
 import top.gabin.oa.web.dto.business.AttendanceBasicRuleConfig;
+import top.gabin.oa.web.dto.form.EditAttendanceRuleForm;
 import top.gabin.oa.web.entity.AttendanceRuleImpl;
+import top.gabin.oa.web.service.AttendanceRuleService;
 import top.gabin.oa.web.service.BusinessService;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
 import top.gabin.oa.web.utils.RenderUtils;
@@ -31,6 +33,8 @@ public class RuleController {
     private CriteriaQueryService queryService;
     @Resource(name = "businessService")
     private BusinessService businessService;
+    @Resource(name = "attendanceRuleService")
+    private AttendanceRuleService attendanceRuleService;
 
     @RequestMapping("/basic")
     public String basic(Model model) {
@@ -52,6 +56,26 @@ public class RuleController {
     @RequestMapping(value = "/basic/save", method = RequestMethod.POST)
     public @ResponseBody Map<String, Object> saveBasic(AttendanceBasicRuleConfigForm form) {
         businessService.setAttendanceBasicRule(form);
+        return RenderUtils.SUCCESS_RESULT;
+    }
+
+    @RequestMapping(value = "/edit", method = RequestMethod.GET)
+    public String saveRule(Model model, Long id) {
+        if (id != null) {
+            model.addAttribute("entity", attendanceRuleService.findById(id));
+        }
+        return dir + "/edit";
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Object> delete(String ids) {
+        attendanceRuleService.batchDelete(ids);
+        return RenderUtils.SUCCESS_RESULT;
+    }
+
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Object> saveRule(EditAttendanceRuleForm form) {
+        attendanceRuleService.setAttendanceRule(form);
         return RenderUtils.SUCCESS_RESULT;
     }
 

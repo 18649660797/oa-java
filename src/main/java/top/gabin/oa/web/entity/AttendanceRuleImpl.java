@@ -9,6 +9,7 @@ import top.gabin.oa.web.constant.ConfigStatus;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -37,7 +38,7 @@ public class AttendanceRuleImpl implements AttendanceRule {
     @ManyToMany(targetEntity = AttendanceRuleDetailImpl.class)
     @JoinTable(name = "edy_attendance_rule_detail_xref", joinColumns = @JoinColumn(name = "detail_id"), inverseJoinColumns = @JoinColumn(name = "rule_id"))
     @MapKeyColumn(name = "map_key")
-    private Map<String, AttendanceRuleDetail> attendanceRuleDetailMap;
+    private Map<String, AttendanceRuleDetail> attendanceRuleDetailMap = new HashMap<String, AttendanceRuleDetail>();
 
     @Override
     public Map<String, AttendanceRuleDetail> getAttendanceRuleDetailMap() {

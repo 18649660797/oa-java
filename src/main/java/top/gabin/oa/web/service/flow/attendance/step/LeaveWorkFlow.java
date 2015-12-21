@@ -37,8 +37,8 @@ public class LeaveWorkFlow extends AbstractAnalysisWorkFlow {
                     analysisResult.setAttendance(attendance);
                     String workDateFormat = TimeUtils.format(attendance.getWorkDate(), "yyyy-MM-dd");
                     // 上午应打卡时间
-                    Date amNeedFit = TimeUtils.parseDate(workDateFormat + " " + workFit);
-                    Date pmNeedFit = TimeUtils.parseDate(workDateFormat + " " + leaveFit);
+                    Date amNeedFit = analysisResult.getWorkFit() == null ? TimeUtils.parseDate(workDateFormat + " " + workFit) : analysisResult.getWorkFit();
+                    Date pmNeedFit = analysisResult.getLeaveFit() == null ? TimeUtils.parseDate(workDateFormat + " " + leaveFit) : analysisResult.getLeaveFit();
                     // 获取当天的请假记录
                     List<Leave> leaveList = analysisResult.getLeaveList();
                     if (leaveList != null && !leaveList.isEmpty()) {

@@ -11,7 +11,7 @@ CREATE TABLE `edy_attendance_rule` (
 CREATE TABLE `edy_attendance_rule_detail` (
   `id` bigint(20) NOT NULL,
   `rule` text NOT NULL,
-  `limit` int(11) DEFAULT NULL,
+  `limits` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 CREATE TABLE `edy_attendance_rule_detail_xref` (

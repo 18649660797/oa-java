@@ -20,7 +20,7 @@ public class AttendanceRuleDetailImpl implements AttendanceRuleDetail {
     private Long id;
     @Column(name = "rule")
     private String rule;
-    @Column(name = "limit")
+    @Column(name = "limits")
     private Integer limit;
 
     @Override
