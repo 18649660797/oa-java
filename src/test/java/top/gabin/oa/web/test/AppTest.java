@@ -28,6 +28,8 @@ public class AppTest extends BaseTest {
     @Test
     public void testFind() {
         Long count = queryService.count(EmployeeImpl.class, new CriteriaCondition());
+        Long a = null;
+        a.equals(1);
         assert count >= 0;
         logger.info("employeeSize:" + count);
     }
