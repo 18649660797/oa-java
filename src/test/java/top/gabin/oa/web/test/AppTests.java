@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2015 云智盛世
- * Created with AppTest.
+ * Created with AppTests.
  */
 package top.gabin.oa.web.test;
 
@@ -20,8 +20,8 @@ import javax.annotation.Resource;
  *
  * @author linjiabin  on  15/12/23
  */
-public class AppTest extends BaseTest {
-    private static final Logger logger = LoggerFactory.getLogger(AppTest.class);
+public class AppTests extends BaseTest {
+    private static final Logger logger = LoggerFactory.getLogger(AppTests.class);
     @Resource
     private CriteriaQueryService queryService;
 
