@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * 高级规则处理
  * @author linjiabin  on  15/12/21
  */
 public class HighRuleWorkFlow extends AbstractAnalysisWorkFlow {

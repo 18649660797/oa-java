@@ -44,4 +44,5 @@ public interface AttendanceService extends DataBuilder {
      */
     HSSFWorkbook buildAnalysisExcel(List<DepartmentAnalysisResult> data);
 
+    void batchDeleteByEmployeeIds(String ids);
 }

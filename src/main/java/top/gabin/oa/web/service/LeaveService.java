@@ -28,4 +28,5 @@ public interface LeaveService {
 
     Map<Long,List<Leave>> getLeaveGroup(String month);
 
+    void batchDeleteByEmployeeIds(String ids);
 }

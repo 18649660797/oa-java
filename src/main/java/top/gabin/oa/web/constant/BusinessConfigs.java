@@ -4,10 +4,9 @@
 package top.gabin.oa.web.constant;
 
 /**
- * Class description
- *
- *
- *
+ * ------------------------------
+ * ---------  考勤基础配置  ------
+ * ------------------------------
  * @author linjiabin  on  15/12/20
  */
 public enum  BusinessConfigs {

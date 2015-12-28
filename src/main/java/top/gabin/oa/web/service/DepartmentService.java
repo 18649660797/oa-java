@@ -7,8 +7,6 @@ import top.gabin.oa.web.entity.Department;
 import java.util.List;
 
 /**
- * Class description
- *
  * @author linjiabin  on  15/12/13
  */
 public interface DepartmentService {

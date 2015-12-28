@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * 常规迟到、早退、旷工处理
  * @author linjiabin  on  15/12/17
  */
 public class RuleWorkFlow extends AbstractAnalysisWorkFlow {

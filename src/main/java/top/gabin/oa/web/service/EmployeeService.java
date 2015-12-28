@@ -7,8 +7,6 @@ import top.gabin.oa.web.entity.Employee;
 import java.util.List;
 
 /**
- * Class description
- *
  * @author linjiabin  on  15/12/14
  */
 public interface EmployeeService {

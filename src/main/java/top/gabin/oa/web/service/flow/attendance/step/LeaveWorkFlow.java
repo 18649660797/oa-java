@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * 请假处理
  * @author linjiabin  on  15/12/17
  */
 public class LeaveWorkFlow extends AbstractAnalysisWorkFlow {

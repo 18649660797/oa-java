@@ -1,6 +1,9 @@
 package top.gabin.oa.web.constant;
 
 /**
+ * ------------------------------
+ * ---------  考勤状态  ----------
+ * ------------------------------
  * @author linjiabin  on  15/12/15
  */
 public enum AttendanceStatus {

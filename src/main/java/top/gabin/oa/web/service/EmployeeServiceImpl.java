@@ -32,6 +32,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeDao employeeDao;
     @Resource(name = "departmentService")
     private DepartmentService departmentService;
+    @Resource(name = "leaveService")
+    private LeaveService leaveService;
+    @Resource(name = "attendanceService")
+    private AttendanceService attendanceService;
     @Resource
     private CriteriaQueryService queryService;
 
@@ -69,9 +73,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 cache.put(realName, 1);
             }
         }
-        for (Employee employee : employees) {
-            employeeDao.saveOrUpdate(employee);
-        }
+        batchInsert(employees);
         return true;
     }
 
@@ -79,6 +81,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void batchDelete(String ids) {
         if (StringUtils.isNotBlank(ids)) {
+            leaveService.batchDeleteByEmployeeIds(ids);
+            attendanceService.batchDeleteByEmployeeIds(ids);
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("in_id", ids);
             CriteriaCondition condition = new CriteriaCondition();

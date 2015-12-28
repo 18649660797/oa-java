@@ -15,10 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Class description
- *
- *
- *
+ * 昨日晚上9点半后打卡，隔天早上十点打卡，暂时不作为配置
  * @author linjiabin  on  15/12/17
  */
 public class YesterdayDelayWorkFlow extends AbstractAnalysisWorkFlow {

@@ -1,8 +1,9 @@
 package top.gabin.oa.web.constant;
 
 /**
- * Class description
- *
+ * ------------------------------
+ * ---------  考勤规则  ----------
+ * ------------------------------
  * @author linjiabin  on  15/12/21
  */
 public enum AttendanceRuleType {

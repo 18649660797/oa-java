@@ -153,4 +153,15 @@ public class LeaveServiceImpl implements LeaveService {
         return leaveGroup;
     }
 
+    @Transactional("transactionManager")
+    @Override
+    public void batchDeleteByEmployeeIds(String ids) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("in_employee.id", ids);
+        CriteriaCondition criteriaCondition = new CriteriaCondition(params);
+        List<LeaveImpl> leaveList = queryService.query(LeaveImpl.class, criteriaCondition);
+        for (Leave leave : leaveList) {
+            leaveDao.delete(leave);
+        }
+    }
 }

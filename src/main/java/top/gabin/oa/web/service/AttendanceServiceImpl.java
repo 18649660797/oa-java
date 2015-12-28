@@ -575,4 +575,21 @@ public class AttendanceServiceImpl implements AttendanceService {
         return cellStyle;
     }
 
+    @Transactional("transactionManager")
+    @Override
+    public void batchDeleteByEmployeeIds(String ids) {
+        if (StringUtils.isNotBlank(ids)) {
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("in_employee.id", ids);
+            CriteriaCondition condition = new CriteriaCondition();
+            condition.setConditions(params);
+            List<AttendanceImpl> attendanceList = queryService.query(AttendanceImpl.class, condition);
+            if (attendanceList == null) {
+                return;
+            }
+            for (Attendance attendance : attendanceList) {
+                attendanceDao.delete(attendance);
+            }
+        }
+    }
 }
