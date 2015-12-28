@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * －－－－－－－－－－－－－－－－－－
+ * －－－－ 部门controller类－－－－
+ * －－－－－－－－－－－－－－－－－－
  * @author linjiabin  on  15/12/13
  */
 @Controller
@@ -41,7 +44,6 @@ public class DepartmentController {
     private DepartmentService departmentService;
 
     private String dir = "department";
-    private static int maxSize = 10 * 1024 * 1024;
 
     @RequestMapping(value = "list", method = RequestMethod.GET)
     public String list() {
@@ -88,34 +90,12 @@ public class DepartmentController {
     }
 
     @RequestMapping(value = "import", method = RequestMethod.POST)
-    public @ResponseBody Map productImport(@RequestParam("csvFile") MultipartFile file, HttpServletRequest request) {
+    public @ResponseBody Map productImport(@RequestParam("csvFile") MultipartFile file) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
-        if (file.isEmpty()) {
-            resultMap.put("message", "请选择文件!");
-            return resultMap;
-        }
-        if (file.getSize() > maxSize) {
-            resultMap.put("message", "上传文件大小超过限制。");
-            return resultMap;
-        }
         try {
             ImportExcel importExcel = new ImportExcel(file, 3, 0);
             List<AttendanceImportDTO> dataList = importExcel.getDataList(AttendanceImportDTO.class);
-            Map<String, Integer> cache = new HashMap<String, Integer>();
-            List<Department> departmentList = new ArrayList<Department>();
-            for (AttendanceImportDTO dto : dataList) {
-                String departmentName = dto.getDepartment();
-                if (StringUtils.isBlank(departmentName)) {
-                    continue;
-                }
-                if (!cache.containsKey(departmentName)) {
-                    DepartmentImpl department = new DepartmentImpl();
-                    department.setName(departmentName);
-                    departmentList.add(department);
-                    cache.put(dto.getDepartment(), 1);
-                }
-            }
-            departmentService.batchSave(departmentList);
+            departmentService.batchSave(dataList);
             resultMap.put("result", "success");
         } catch (Exception e) {
             e.printStackTrace();

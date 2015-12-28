@@ -5,11 +5,11 @@
 package top.gabin.oa.web.utils.date;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 
 /**
  * @author linjiabin  on  15/12/14
@@ -104,4 +104,17 @@ public class TimeUtils {
         return (a1.getTime() - b1.getTime()) / 1000 / 60;
     }
 
+    public static List<Map<String, Object>> getDays(Date start, Date end) {
+        List<Map<String, Object>> dateArr = new ArrayList<Map<String, Object>>();
+        while (start.before(end)) {
+            String date = TimeUtils.format(start, "yyyy-MM-dd");
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("id", date);
+            map.put("value", date);
+            map.put("text", date);
+            dateArr.add(map);
+            start = DateUtils.addDays(start, 1);
+        }
+        return dateArr;
+    }
 }

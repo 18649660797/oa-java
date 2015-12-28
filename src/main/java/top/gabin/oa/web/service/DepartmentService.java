@@ -1,5 +1,6 @@
 package top.gabin.oa.web.service;
 
+import top.gabin.oa.web.dto.AttendanceImportDTO;
 import top.gabin.oa.web.dto.DepartmentDTO;
 import top.gabin.oa.web.entity.Department;
 
@@ -18,5 +19,5 @@ public interface DepartmentService {
     List<Department> findAll();
     void batchDelete(String ids);
     Department findByName(String name);
-    void batchSave(List<Department> departmentList);
+    void batchSave(List<AttendanceImportDTO> departmentList);
 }

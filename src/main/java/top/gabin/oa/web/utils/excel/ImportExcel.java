@@ -25,7 +25,7 @@ import java.util.*;
 public class ImportExcel {
 
 	private static Logger log = LoggerFactory.getLogger(ImportExcel.class);
-
+	private static int maxSize = 10 * 1024 * 1024;
 	/**
 	 * 工作薄对象
 	 */
@@ -102,6 +102,12 @@ public class ImportExcel {
 	public ImportExcel(MultipartFile multipartFile, int headerNum, int sheetIndex)
 			throws InvalidFormatException, IOException {
 		this(multipartFile.getOriginalFilename(), multipartFile.getInputStream(), headerNum, sheetIndex);
+		if (multipartFile.isEmpty()) {
+			throw new InvalidFormatException("文件不存在！");
+		}
+		if (multipartFile.getSize() > maxSize) {
+			throw new InvalidFormatException("上传文件大小超过限制！");
+		}
 	}
 
 	/**

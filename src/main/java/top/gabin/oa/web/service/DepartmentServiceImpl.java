@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.gabin.oa.web.dao.DepartmentDao;
+import top.gabin.oa.web.dto.AttendanceImportDTO;
 import top.gabin.oa.web.dto.DepartmentDTO;
 import top.gabin.oa.web.entity.Department;
 import top.gabin.oa.web.entity.DepartmentImpl;
@@ -15,6 +16,7 @@ import top.gabin.oa.web.service.criteria.CriteriaCondition;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,7 +90,21 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Transactional("transactionManager")
     @Override
-    public void batchSave(List<Department> departmentList) {
+    public void batchSave(List<AttendanceImportDTO> dataList) {
+        Map<String, Integer> cache = new HashMap<String, Integer>();
+        List<Department> departmentList = new ArrayList<Department>();
+        for (AttendanceImportDTO dto : dataList) {
+            String departmentName = dto.getDepartment();
+            if (StringUtils.isBlank(departmentName)) {
+                continue;
+            }
+            if (!cache.containsKey(departmentName)) {
+                DepartmentImpl department = new DepartmentImpl();
+                department.setName(departmentName);
+                departmentList.add(department);
+                cache.put(dto.getDepartment(), 1);
+            }
+        }
         if (departmentList != null) {
             for (Department department : departmentList) {
                 departmentDao.saveOrUpdate(department);

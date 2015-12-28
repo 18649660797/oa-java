@@ -1,5 +1,4 @@
 /**
- * Copyright (c) 2015 云智盛世
  * Created with BusinessConfigs.
  */
 package top.gabin.oa.web.constant;

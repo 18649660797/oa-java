@@ -28,6 +28,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * －－－－－－－－－－－－－－－－－－
+ * －－－－－请假Controller类－－－－
+ * －－－－－－－－－－－－－－－－－－
  * @author linjiabin  on  15/12/14
  */
 @Controller
@@ -42,7 +45,6 @@ public class LeaveController {
     private DepartmentService departmentService;
 
     private String dir = "leave";
-    private static int maxSize = 10 * 1024 * 1024;
 
     @RequestMapping("/list")
     public String list(Model model) {
@@ -82,26 +84,16 @@ public class LeaveController {
     }
 
     @RequestMapping(value = "import", method = RequestMethod.POST)
-    public @ResponseBody Map productImport(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
-        Map<String, Object> resultMap = new HashMap<String, Object>();
-        if (file.isEmpty()) {
-            resultMap.put("message", "请选择文件!");
-            return resultMap;
-        }
-        if (file.getSize() > maxSize) {
-            resultMap.put("message", "上传文件大小超过限制。");
-            return resultMap;
-        }
+    public @ResponseBody Map productImport(@RequestParam("file") MultipartFile file) {
         try {
             ImportExcel importExcel = new ImportExcel(file, 3, 0);
             List<LeaveImportDTO> dataList = importExcel.getDataList(LeaveImportDTO.class);
             leaveService.importLeave(dataList);
-            resultMap.put("result", "success");
+            return RenderUtils.SUCCESS_RESULT;
         } catch (Exception e) {
             e.printStackTrace();
-            resultMap.put("message", "导入数据有异常!");
+            return RenderUtils.getFailMap("导入数据有异常");
         }
-        return resultMap;
     }
 
     @RequestMapping(value = "dropView", method = RequestMethod.GET)

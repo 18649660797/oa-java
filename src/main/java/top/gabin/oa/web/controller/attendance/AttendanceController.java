@@ -33,6 +33,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
+ * -------------------------------
+ * --------- 考勤 Controller------
+ * -------------------------------
  * @author linjiabin  on  15/12/14
  */
 @Controller
@@ -46,7 +49,6 @@ public class AttendanceController {
     private AttendanceService attendanceService;
     @Resource(name = "attendanceWorkFlow")
     private Execute execute;
-    private static int maxSize = 10 * 1024 * 1024;
     private String dir = "attendance";
 
     @RequestMapping("/list")
@@ -90,25 +92,15 @@ public class AttendanceController {
 
     @RequestMapping(value = "import", method = RequestMethod.POST)
     public @ResponseBody Map productImport(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
-        Map<String, Object> resultMap = new HashMap<String, Object>();
-        if (file.isEmpty()) {
-            resultMap.put("message", "请选择文件!");
-            return resultMap;
-        }
-        if (file.getSize() > maxSize) {
-            resultMap.put("message", "上传文件大小超过限制。");
-            return resultMap;
-        }
         try {
             ImportExcel importExcel = new ImportExcel(file, 3, 0);
             List<AttendanceImportDTO> dataList = importExcel.getDataList(AttendanceImportDTO.class);
             attendanceService.importAttendance(dataList);
-            resultMap.put("result", "success");
+            return RenderUtils.SUCCESS_RESULT;
         } catch (Exception e) {
             e.printStackTrace();
-            resultMap.put("message", "导入数据有异常!");
+            return RenderUtils.getFailMap("导入数据有异常!");
         }
-        return resultMap;
     }
 
 
@@ -127,17 +119,7 @@ public class AttendanceController {
     public @ResponseBody List getDays(String month) {
         Date start = TimeUtils.parseDate(month + "-01", "yyyy-MM-dd");
         Date end = DateUtils.addMonths(start, 1);
-        List<Map<String, Object>> dateArr = new ArrayList<Map<String, Object>>();
-        while(start.before(end)) {
-            String date = TimeUtils.format(start, "yyyy-MM-dd");
-            Map<String, Object> map = new HashMap<String, Object>();
-            map.put("id", date);
-            map.put("value", date);
-            map.put("text", date);
-            dateArr.add(map);
-            start = DateUtils.addDays(start, 1);
-        }
-        return dateArr;
+        return TimeUtils.getDays(start, end);
     }
 
     @RequestMapping(value = "unsetDays", method = RequestMethod.POST)

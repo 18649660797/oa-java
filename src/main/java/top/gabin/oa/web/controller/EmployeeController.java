@@ -44,7 +44,6 @@ public class EmployeeController {
     @Resource(name = "departmentService")
     private DepartmentService departmentService;
     private String dir = "employee";
-    private static int maxSize = 10 * 1024 * 1024;
 
     @RequestMapping(value = "list", method = RequestMethod.GET)
     public String list(Model model) {
@@ -75,25 +74,15 @@ public class EmployeeController {
 
     @RequestMapping(value = "import", method = RequestMethod.POST)
     public @ResponseBody Map productImport(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
-        Map<String, Object> resultMap = new HashMap<String, Object>();
-        if (file.isEmpty()) {
-            resultMap.put("message", "请选择文件!");
-            return resultMap;
-        }
-        if (file.getSize() > maxSize) {
-            resultMap.put("message", "上传文件大小超过限制。");
-            return resultMap;
-        }
         try {
             ImportExcel importExcel = new ImportExcel(file, 3, 0);
             List<AttendanceImportDTO> dataList = importExcel.getDataList(AttendanceImportDTO.class);
             employeeService.importEmployee(dataList);
-            resultMap.put("result", "success");
+            return RenderUtils.SUCCESS_RESULT;
         } catch (Exception e) {
             e.printStackTrace();
-            resultMap.put("message", "导入数据有异常!");
+            return RenderUtils.getFailMap("导入数据有异常!");
         }
-        return resultMap;
     }
 
     @RequestMapping(value = "delete", method = RequestMethod.POST)
