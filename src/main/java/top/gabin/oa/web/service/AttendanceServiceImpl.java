@@ -497,8 +497,8 @@ public class AttendanceServiceImpl implements AttendanceService {
                                     }
                                 }
                             }
-                            setValue(row1, 9, remark);
                         }
+                        setValue(row1, 9, remark);
                     }
                 }
                 i++;

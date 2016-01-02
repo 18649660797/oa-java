@@ -90,6 +90,10 @@
                     }
                 });
                 var now = new Date(), year = now.getFullYear(), month = now.getMonth();
+                if (month == 0) {
+                    month = 12;
+                    year--;
+                }
                 inputEl.val(year + "-" + (month < 10 ? "0" + month : month));
                 var Grid = BUI.Grid,
                         Data = BUI.Data;
