@@ -7,6 +7,7 @@ package top.gabin.oa.web.service.flow.attendance.step;
 import top.gabin.oa.web.dto.attendance.AnalysisResult;
 import top.gabin.oa.web.dto.attendance.DepartmentAnalysisResult;
 import top.gabin.oa.web.dto.attendance.EmployeeAnalysisResult;
+import top.gabin.oa.web.dto.attendance.LeaveResult;
 import top.gabin.oa.web.dto.business.AttendanceBasicRuleConfig;
 import top.gabin.oa.web.entity.Attendance;
 import top.gabin.oa.web.entity.Leave;
@@ -41,22 +42,27 @@ public class LeaveWorkFlow extends AbstractAnalysisWorkFlow {
                     Date amNeedFit = analysisResult.getWorkFit() == null ? TimeUtils.parseDate(workDateFormat + " " + workFit) : analysisResult.getWorkFit();
                     Date pmNeedFit = analysisResult.getLeaveFit() == null ? TimeUtils.parseDate(workDateFormat + " " + leaveFit) : analysisResult.getLeaveFit();
                     // 获取当天的请假记录
-                    List<Leave> leaveList = analysisResult.getLeaveList();
-                    if (leaveList != null && !leaveList.isEmpty()) {
-                        Collections.sort(leaveList, new Comparator<Leave>() {
+                    List<LeaveResult> leaveResultList = analysisResult.getLeaveList();
+                    if (leaveResultList != null && !leaveResultList.isEmpty()) {
+                        Collections.sort(leaveResultList, new Comparator<LeaveResult>() {
                             @Override
-                            public int compare(Leave o1, Leave o2) {
-                                return (int) (o1.getBeginDate().getTime() - o2.getBeginDate().getTime());
+                            public int compare(LeaveResult o1, LeaveResult o2) {
+                                return (int) (o1.getLeave().getBeginDate().getTime() - o2.getLeave().getBeginDate().getTime());
                             }
                         });
                         Date tmpBeginDate = amNeedFit;
                         Date tmpEndDate = pmNeedFit;
-                        for (Leave leave : leaveList) {
+                        for (LeaveResult leaveResult : leaveResultList) {
+                            if (attendance.getEmployee().getId() == 675) {
+                                System.out.println("*****************************************");
+                                System.out.println("*****************************************");
+                            }
+                            Leave leave = leaveResult.getLeave();
                             Date beginDate = leave.getBeginDate();
                             Date endDate = leave.getEndDate();
                             long delayTimes = 0;
                             if (TimeUtils.beforeOrEqual(beginDate, tmpBeginDate) && TimeUtils.afterOrEqual(endDate, tmpEndDate)) {
-                                analysisResult.setLeaveMinutes(450);
+                                delayTimes = 450l - analysisResult.getLeaveMinutes();
                                 analysisResult.setIsLeaveDay(true);
                             } else if (TimeUtils.beforeOrEqual(beginDate, tmpBeginDate)) { // 请假开始时间在上午需要打卡的时刻或之前
                                 // 请假结束时间在上午需要打卡之后
@@ -78,9 +84,6 @@ public class LeaveWorkFlow extends AbstractAnalysisWorkFlow {
                             } else {
                                 delayTimes = TimeUtils.getMinutes(endDate, beginDate);
                             }
-                            if (attendance.getEmployee().getId() == 562) {
-                                System.out.println();
-                            }
                             String restBegin = attendanceBasicRule.getRestBegin();
                             String restEnd = attendanceBasicRule.getRestEnd();
                             if (tmpBeginDate.getTime() == TimeUtils.parseDate(workDateFormat + " " + restBegin).getTime()) {
@@ -95,8 +98,9 @@ public class LeaveWorkFlow extends AbstractAnalysisWorkFlow {
                                 if (TimeUtils.beforeOrEqual(beginDate, TimeUtils.parseDate(workDateFormat + " " + restBegin)) && TimeUtils.afterOrEqual(endDate, TimeUtils.parseDate(workDateFormat + " " + restEnd))) {
                                     delayTimes = delayTimes - 90;
                                 }
-                                analysisResult.setLeaveMinutes((int) delayTimes);
                             }
+                            leaveResult.setLeaveMinutes((int) delayTimes);
+                            analysisResult.setLeaveMinutes((int) delayTimes + analysisResult.getLeaveMinutes());
                         }
                     }
                 }

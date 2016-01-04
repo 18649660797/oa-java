@@ -19,6 +19,7 @@ import top.gabin.oa.web.dto.AttendanceImportDTO;
 import top.gabin.oa.web.dto.attendance.AnalysisResult;
 import top.gabin.oa.web.dto.attendance.DepartmentAnalysisResult;
 import top.gabin.oa.web.dto.attendance.EmployeeAnalysisResult;
+import top.gabin.oa.web.dto.attendance.LeaveResult;
 import top.gabin.oa.web.dto.business.AttendanceBasicRuleConfig;
 import top.gabin.oa.web.entity.*;
 import top.gabin.oa.web.service.criteria.CriteriaCondition;
@@ -331,7 +332,8 @@ public class AttendanceServiceImpl implements AttendanceService {
                 Date beginDate = leave.getBeginDate();
                 Date endDate = leave.getEndDate();
                 if (TimeUtils.isBetween(tmpBeginDate, beginDate, endDate) || TimeUtils.isBetween(tmpEndDate, beginDate, endDate)) {
-                    analysisResult.add(leave);
+                    LeaveResult leaveResult = new LeaveResult(leave);
+                    analysisResult.add(leaveResult);
                 }
             }
 
@@ -441,61 +443,33 @@ public class AttendanceServiceImpl implements AttendanceService {
                         if (leaveFitStyle != null) {
                             row1.getCell(5).setCellStyle(leaveFitStyle);
                         }
-                        List<Leave> leaveList = analysisResult.getLeaveList();
+                        List<LeaveResult> leaveList = analysisResult.getLeaveList();
                         String remark = StringUtils.isBlank(analysisResult.getRemark()) ? "" : analysisResult.getRemark();
-                        if (leaveList != null && leaveList.size() > 0) {
-                            if (leaveList.size() == 1) {
-                                Leave leave = leaveList.get(0);
-                                long minutes = analysisResult.getLeaveMinutes();
-                                int hours =  (int) minutes / 60;
-                                int minute =  (int) minutes % 60;
-                                String times = hours + "小时" + minute + "分";
-                                switch (leave.getType()) {
-                                    case NORMAL_LEAVE:
-                                        setValue(row1, 6, times);
-                                        break;
-                                    case SICK_LEAVE:
-                                        setValue(row1, 7, times);
-                                        break;
-                                    case OFF_LEAVE:
-                                        setValue(row1, 8, times);
-                                        break;
-                                    case OUT_LEAVE:
-                                    case FUNERAL_LEAVE:
-                                    case YEAR_LEAVE:
-                                    case MATERNITY_LEAVE:
-                                    case MARRY_LEAVE:
-                                        remark += leave.getType().getLabel() + times;
-                                        break;
-                                }
-                            } else {
-                                row1.createCell(6);
-                                row1.createCell(7);
-                                row1.createCell(8);
-                                for (Leave leave : leaveList) {
-                                    long minutes = TimeUtils.getMinutes(leave.getEndDate(), leave.getBeginDate());
-                                    int hours =  (int) minutes / 60;
-                                    int minute =  (int) minutes % 60;
-                                    String times = hours + "小时" + minute + "分";
-                                    switch (leave.getType()) {
-                                        case NORMAL_LEAVE:
-                                            setValue(row1, 6, times);
-                                            break;
-                                        case SICK_LEAVE:
-                                            setValue(row1, 7, times);
-                                            break;
-                                        case OFF_LEAVE:
-                                            setValue(row1, 8, times);
-                                            break;
-                                        case OUT_LEAVE:
-                                        case FUNERAL_LEAVE:
-                                        case YEAR_LEAVE:
-                                        case MATERNITY_LEAVE:
-                                        case MARRY_LEAVE:
-                                            remark += leave.getType().getLabel() + times;
-                                            break;
-                                    }
-                                }
+                        row1.createCell(6);
+                        row1.createCell(7);
+                        row1.createCell(8);
+                        for (LeaveResult leaveResult : leaveList) {
+                            long minutes = leaveResult.getLeaveMinutes();
+                            double hours =  minutes / 60D;
+                            String times = hours + "h";
+                            Leave leave = leaveResult.getLeave();
+                            switch (leave.getType()) {
+                                case NORMAL_LEAVE:
+                                    setValue(row1, 6, times);
+                                    break;
+                                case SICK_LEAVE:
+                                    setValue(row1, 7, times);
+                                    break;
+                                case OFF_LEAVE:
+                                    setValue(row1, 8, times);
+                                    break;
+                                case OUT_LEAVE:
+                                case FUNERAL_LEAVE:
+                                case YEAR_LEAVE:
+                                case MATERNITY_LEAVE:
+                                case MARRY_LEAVE:
+                                    remark += leave.getType().getLabel() + times;
+                                    break;
                             }
                         }
                         setValue(row1, 9, remark);

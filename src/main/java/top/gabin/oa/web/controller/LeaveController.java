@@ -86,7 +86,7 @@ public class LeaveController {
     @RequestMapping(value = "import", method = RequestMethod.POST)
     public @ResponseBody Map productImport(@RequestParam("file") MultipartFile file) {
         try {
-            ImportExcel importExcel = new ImportExcel(file, 3, 0);
+            ImportExcel importExcel = new ImportExcel(file, 0, 0);
             List<LeaveImportDTO> dataList = importExcel.getDataList(LeaveImportDTO.class);
             leaveService.importLeave(dataList);
             return RenderUtils.SUCCESS_RESULT;

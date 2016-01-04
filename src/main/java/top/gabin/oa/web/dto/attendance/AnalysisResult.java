@@ -20,7 +20,7 @@ public class AnalysisResult {
     // 原始的考勤，用于工作流中获取数据
     private Attendance attendance;
     // 当天的请假
-    private List<Leave> leaveList = new ArrayList<Leave>();
+    private List<LeaveResult> leaveList = new ArrayList<LeaveResult>();
     // 上班需要打卡的时间
     private Date workFit;
     // 下班需要打卡的时间
@@ -111,11 +111,11 @@ public class AnalysisResult {
         this.attendance = attendance;
     }
 
-    public List<Leave> getLeaveList() {
+    public List<LeaveResult> getLeaveList() {
         return leaveList;
     }
 
-    public void setLeaveList(List<Leave> leaveList) {
+    public void setLeaveList(List<LeaveResult> leaveList) {
         this.leaveList = leaveList;
     }
 
@@ -218,7 +218,7 @@ public class AnalysisResult {
         this.dayOfWeek = dayOfWeek;
     }
 
-    public void add(Leave leave) {
+    public void add(LeaveResult leave) {
         leaveList.add(leave);
     }
 
