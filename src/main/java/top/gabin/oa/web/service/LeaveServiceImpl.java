@@ -133,7 +133,7 @@ public class LeaveServiceImpl implements LeaveService {
         CriteriaCondition criteriaCondition = new CriteriaCondition(conditions);
         if (StringUtils.isNotBlank(month)) {
             conditions.put("ge_beginDate", month + "-01 00:00:00");
-            conditions.put("le_beginDate", month + "-31 00:00:00");
+            conditions.put("le_beginDate", month + "-31 23:59:59");
         }
         List<LeaveImpl> attendanceList = queryService.query(LeaveImpl.class, criteriaCondition);
         if (attendanceList == null) {
