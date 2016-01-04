@@ -83,9 +83,10 @@ public class RuleWorkFlow extends AbstractAnalysisWorkFlow {
                             employeeAnalysisResult.setDelaySeconds(delaySeconds + 1);
                         }
                         // 如果早退
-                        if (pmDate != null && pmNeedFitTime != null && pmDate.before(pmNeedFitTime)) {
-                            if (attendance.getEmployee().getId() == 562) {
-                                System.out.println();
+                        if ((amDate != null && pmDate == null) || (pmDate != null && pmNeedFitTime != null && pmDate.before(pmNeedFitTime))) {
+                            if (pmDate != null && pmNeedFitTime != null) {
+                                long minutes = TimeUtils.getMinutes(pmNeedFitTime, pmDate);
+                                analysisResult.setLeaveEarlyMinutes((int) minutes);
                             }
                             int goQuickSeconds = employeeAnalysisResult.getLeaveEarlySeconds();
                             if (goQuickSeconds < attendanceService.getLeaveEarlyLimit()) {
@@ -98,8 +99,6 @@ public class RuleWorkFlow extends AbstractAnalysisWorkFlow {
                                 employeeAnalysisResult.setLeaveEarlyMoney(pmMoney);
                                 remark += "早退乐捐" + pmMoney + "元;";
                             }
-                            long minutes = TimeUtils.getMinutes(pmNeedFitTime, pmDate);
-                            analysisResult.setLeaveEarlyMinutes((int) minutes);
                             employeeAnalysisResult.setLeaveEarlySeconds(goQuickSeconds + 1);
                         }
                         analysisResult.setRemark(remark);
