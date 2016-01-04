@@ -69,7 +69,7 @@ public class RuleWorkFlow extends AbstractAnalysisWorkFlow {
                                 int amMoney = employeeAnalysisResult.getDelayMoney();
                                 if (minutes <= 30) {
                                     amMoney += fineMoneyBasicOfDelay;
-                                    remark += "迟到扣除" + amMoney + "元工资;";
+                                    remark += "迟到乐捐" + amMoney + "元;";
                                 } else if (minutes > 30 && minutes <= 60) {
                                     remark +=  "迟到扣除1h工资;";
                                 } else if (minutes > 60 && minutes <= 180) {
@@ -96,7 +96,7 @@ public class RuleWorkFlow extends AbstractAnalysisWorkFlow {
                                 pmMoney += fineMoneyBasicOfLeaveEarly;
                                 analysisResult.setFineLeaveEarly(pmMoney);
                                 employeeAnalysisResult.setLeaveEarlyMoney(pmMoney);
-                                remark += "早退扣除" + pmMoney + "元工资;";
+                                remark += "早退乐捐" + pmMoney + "元;";
                             }
                             long minutes = TimeUtils.getMinutes(pmNeedFitTime, pmDate);
                             analysisResult.setLeaveEarlyMinutes((int) minutes);
