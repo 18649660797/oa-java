@@ -64,6 +64,7 @@ public class RuleWorkFlow extends AbstractAnalysisWorkFlow {
                             // 十五分钟内
                             if (minutes <= 15 && delaySeconds < attendanceService.getDelayLimit()) {
                                 analysisResult.setImpunityWorkDelay(true);
+                                employeeAnalysisResult.setDelaySeconds(delaySeconds + 1);
                             } else {
                                 // 如果超过15分钟
                                 int amMoney = employeeAnalysisResult.getDelayMoney();
@@ -80,7 +81,6 @@ public class RuleWorkFlow extends AbstractAnalysisWorkFlow {
                                 analysisResult.setLightFineWorkDelay(amMoney);
                                 employeeAnalysisResult.setDelayMoney(amMoney);
                             }
-                            employeeAnalysisResult.setDelaySeconds(delaySeconds + 1);
                         }
                         // 如果早退
                         if ((amDate != null && pmDate == null) || (pmDate != null && pmNeedFitTime != null && pmDate.before(pmNeedFitTime))) {
@@ -91,6 +91,7 @@ public class RuleWorkFlow extends AbstractAnalysisWorkFlow {
                             int goQuickSeconds = employeeAnalysisResult.getLeaveEarlySeconds();
                             if (goQuickSeconds < attendanceService.getLeaveEarlyLimit()) {
                                 analysisResult.setImpunityLeaveEarly(true);
+                                employeeAnalysisResult.setLeaveEarlySeconds(goQuickSeconds + 1);
                                 remark += "下班补卡;";
                             } else {
                                 int pmMoney = employeeAnalysisResult.getLeaveEarlyMoney();
@@ -99,7 +100,6 @@ public class RuleWorkFlow extends AbstractAnalysisWorkFlow {
                                 employeeAnalysisResult.setLeaveEarlyMoney(pmMoney);
                                 remark += "早退乐捐" + pmMoney + "元;";
                             }
-                            employeeAnalysisResult.setLeaveEarlySeconds(goQuickSeconds + 1);
                         }
                         analysisResult.setRemark(remark);
                     }
