@@ -331,7 +331,8 @@ public class AttendanceServiceImpl implements AttendanceService {
             for (Leave leave : leaveList) {
                 Date beginDate = leave.getBeginDate();
                 Date endDate = leave.getEndDate();
-                if (TimeUtils.isBetween(tmpBeginDate, beginDate, endDate) || TimeUtils.isBetween(tmpEndDate, beginDate, endDate)) {
+                // 请假日匹配
+                if (TimeUtils.isBetween(tmpBeginDate, beginDate, endDate) || TimeUtils.isBetween(tmpEndDate, beginDate, endDate) || (beginDate.getTime() > tmpBeginDate.getTime() && endDate.getTime() < tmpEndDate.getTime())) {
                     LeaveResult leaveResult = new LeaveResult(leave);
                     analysisResult.add(leaveResult);
                 }

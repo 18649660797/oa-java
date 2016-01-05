@@ -43,9 +43,10 @@
             var Grid = Grid,
                 Store = Data.Store,
                 columns = [
-                    {title: 'id', dataIndex: 'id', width: 60, renderer: function(val, row) {
+                    {title: '操作', dataIndex: 'id', width: 60, renderer: function(val, row) {
                         return edy.rendererHelp.createJavaScriptLink("edit", val, "编辑");
                     }},
+                    {title: 'id', dataIndex: 'id', width: 60},
                     {title: '姓名', dataIndex: 'name', width: 60},
                     {title: '考勤号', dataIndex: 'attendanceCN', width: 60},
                     {title: '部门', dataIndex: 'department', width: 100}

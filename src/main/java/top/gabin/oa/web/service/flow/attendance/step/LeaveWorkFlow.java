@@ -53,9 +53,8 @@ public class LeaveWorkFlow extends AbstractAnalysisWorkFlow {
                         Date tmpBeginDate = amNeedFit;
                         Date tmpEndDate = pmNeedFit;
                         for (LeaveResult leaveResult : leaveResultList) {
-                            if (attendance.getEmployee().getId() == 675) {
-                                System.out.println("*****************************************");
-                                System.out.println("*****************************************");
+                            if (attendance.getEmployee().getId() == 704) {
+                                System.out.println("");
                             }
                             Leave leave = leaveResult.getLeave();
                             Date beginDate = leave.getBeginDate();
