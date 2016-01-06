@@ -4,7 +4,6 @@
  */
 package top.gabin.oa.web.controller;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,11 +11,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import top.gabin.oa.web.dao.DepartmentDao;
-import top.gabin.oa.web.dto.AdminDTO;
 import top.gabin.oa.web.dto.AttendanceImportDTO;
 import top.gabin.oa.web.dto.DepartmentDTO;
-import top.gabin.oa.web.entity.*;
+import top.gabin.oa.web.entity.Department;
+import top.gabin.oa.web.entity.DepartmentImpl;
 import top.gabin.oa.web.service.DepartmentService;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
 import top.gabin.oa.web.utils.RenderUtils;
@@ -24,7 +22,6 @@ import top.gabin.oa.web.utils.excel.ImportExcel;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

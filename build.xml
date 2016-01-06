@@ -37,7 +37,6 @@
             <jvmarg value="-Druntime.environment=${runtime.environment}" />
             <jvmarg value="-Dfile.encoding=UTF-8" />
             <arg value="compile"/>
-            <jvmarg value="-Xbootclasspath/p:/var/folders/sf/h0kd4bzn2jsg1ydqjf59v6f80000gn/T//rebelboot.jar" />
             <arg value="war:exploded"/>
             <arg value="jetty:run"/>
             <arg value="-nsu"/>
