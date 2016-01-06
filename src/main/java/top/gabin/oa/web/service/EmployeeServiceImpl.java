@@ -161,4 +161,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         return queryService.singleQuery(EmployeeImpl.class, criteriaCondition);
     }
 
+    @Override
+    public Map<String, Long> findAllNameMapId() {
+        return employeeDao.findAllNameMapId();
+    }
 }

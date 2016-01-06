@@ -157,8 +157,11 @@
                                                 method : 'post',
                                                 success: function (data) {
                                                     edy.loaded();
-                                                    edy.alert("导入成功！");
-                                                    reload();
+                                                    var w = top.window.open("/leave/preview");
+                                                    w.onunload = function() {
+                                                        edy.alert("导入成功！");
+                                                        reload();
+                                                    }
                                                 },
                                                 error: function (data, status, e) {
                                                     edy.loaded();

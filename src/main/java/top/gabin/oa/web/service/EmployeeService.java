@@ -5,6 +5,7 @@ import top.gabin.oa.web.dto.EmployeeDTO;
 import top.gabin.oa.web.entity.Employee;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author linjiabin  on  15/12/14
@@ -19,4 +20,5 @@ public interface EmployeeService {
     void merge(Employee employee);
     void persist(Employee employee);
     Employee findByAttendanceCN(String attendanceCN);
+    Map<String, Long> findAllNameMapId();
 }
