@@ -1,6 +1,7 @@
 package top.gabin.oa.web.service;
 
 import top.gabin.oa.web.dto.SimpleTreeDTO;
+import top.gabin.oa.web.entity.Permission;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -10,4 +11,5 @@ import java.util.List;
  */
 public interface PermissionService {
     List<SimpleTreeDTO> getPermissionTreeData(HttpServletRequest request);
+    List<Permission> findAll();
 }

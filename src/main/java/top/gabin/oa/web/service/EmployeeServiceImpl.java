@@ -36,8 +36,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     private LeaveService leaveService;
     @Resource(name = "attendanceService")
     private AttendanceService attendanceService;
-    @Resource
-    private CriteriaQueryService queryService;
+    @Resource(name = "criteriaQueryService")
+    private CriteriaQueryService criteriaQueryService;
 
     @Transactional("transactionManager")
     @Override
@@ -87,7 +87,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             params.put("in_id", ids);
             CriteriaCondition condition = new CriteriaCondition();
             condition.setConditions(params);
-            List<EmployeeImpl> employeeList = queryService.query(EmployeeImpl.class, condition);
+            List<EmployeeImpl> employeeList = criteriaQueryService.query(EmployeeImpl.class, condition);
             if (employeeList == null) {
                 return;
             }
@@ -113,7 +113,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("eq_name", name);
         CriteriaCondition criteriaCondition = new CriteriaCondition(params);
-        return queryService.singleQuery(EmployeeImpl.class, criteriaCondition);
+        return criteriaQueryService.singleQuery(EmployeeImpl.class, criteriaCondition);
     }
 
     @Transactional("transactionManager")
@@ -158,7 +158,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("eq_attendanceCN", attendanceCN);
         CriteriaCondition criteriaCondition = new CriteriaCondition(params);
-        return queryService.singleQuery(EmployeeImpl.class, criteriaCondition);
+        return criteriaQueryService.singleQuery(EmployeeImpl.class, criteriaCondition);
     }
 
     @Override

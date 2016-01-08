@@ -32,15 +32,15 @@ public class AttendanceRuleServiceImpl implements AttendanceRuleService {
     private AttendanceRuleDao attendanceRuleDao;
     @Resource(name = "attendanceRuleDetailDao")
     private AttendanceRuleDetailDao attendanceRuleDetailDao;
-    @Resource
-    private CriteriaQueryService queryService;
+    @Resource(name = "criteriaQueryService")
+    private CriteriaQueryService criteriaQueryService;
     @Override
     public List<AttendanceRuleImpl> findRulesByMonth(String month) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("ge_beginDate", month + "-01 00:00:00");
         params.put("le_endDate", month + "-31 23:59:59");
         CriteriaCondition criteriaCondition = new CriteriaCondition(params);
-        return queryService.query(AttendanceRuleImpl.class, criteriaCondition);
+        return criteriaQueryService.query(AttendanceRuleImpl.class, criteriaCondition);
     }
 
     @Transactional("transactionManager")
@@ -91,7 +91,7 @@ public class AttendanceRuleServiceImpl implements AttendanceRuleService {
             params.put("in_id", ids);
             CriteriaCondition condition = new CriteriaCondition();
             condition.setConditions(params);
-            List<AttendanceRuleImpl> attendanceRuleList = queryService.query(AttendanceRuleImpl.class, condition);
+            List<AttendanceRuleImpl> attendanceRuleList = criteriaQueryService.query(AttendanceRuleImpl.class, condition);
             if (attendanceRuleList == null) {
                 return;
             }

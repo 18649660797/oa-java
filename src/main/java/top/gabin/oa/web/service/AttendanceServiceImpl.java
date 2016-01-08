@@ -48,8 +48,8 @@ public class AttendanceServiceImpl implements AttendanceService {
     private BusinessService businessService;
     @Resource(name = "attendanceRuleService")
     private AttendanceRuleService attendanceRuleService;
-    @Resource
-    private CriteriaQueryService queryService;
+    @Resource(name = "criteriaQueryService")
+    private CriteriaQueryService criteriaQueryService;
 
     @Override
     @Transactional("transactionManager")
@@ -146,7 +146,7 @@ public class AttendanceServiceImpl implements AttendanceService {
             params.put("in_id", ids);
             CriteriaCondition condition = new CriteriaCondition();
             condition.setConditions(params);
-            List<AttendanceImpl> attendanceList = queryService.query(AttendanceImpl.class, condition);
+            List<AttendanceImpl> attendanceList = criteriaQueryService.query(AttendanceImpl.class, condition);
             if (attendanceList == null) {
                 return;
             }
@@ -207,7 +207,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         CriteriaCondition criteriaCondition = new CriteriaCondition(conditions);
         conditions.put("bw_workDateFormat", month);
         criteriaCondition.setSort("workDate asc");
-        List<AttendanceImpl> attendanceList = queryService.query(AttendanceImpl.class, criteriaCondition);
+        List<AttendanceImpl> attendanceList = criteriaQueryService.query(AttendanceImpl.class, criteriaCondition);
         // 2、根据员工分组考勤数据
         Map<Long, Map<Long, List<Attendance>>> departmentGroup = new HashMap<Long, Map<Long, List<Attendance>>>();
         for (Attendance attendance : attendanceList) {
@@ -252,7 +252,7 @@ public class AttendanceServiceImpl implements AttendanceService {
             conditions.put("bw_workDateFormat", month);
         }
         criteriaCondition.setSort("workDate asc");
-        List<AttendanceImpl> attendanceList = queryService.query(AttendanceImpl.class, criteriaCondition);
+        List<AttendanceImpl> attendanceList = criteriaQueryService.query(AttendanceImpl.class, criteriaCondition);
         return attendanceList;
     }
 
@@ -558,7 +558,7 @@ public class AttendanceServiceImpl implements AttendanceService {
             params.put("in_employee.id", ids);
             CriteriaCondition condition = new CriteriaCondition();
             condition.setConditions(params);
-            List<AttendanceImpl> attendanceList = queryService.query(AttendanceImpl.class, condition);
+            List<AttendanceImpl> attendanceList = criteriaQueryService.query(AttendanceImpl.class, condition);
             if (attendanceList == null) {
                 return;
             }

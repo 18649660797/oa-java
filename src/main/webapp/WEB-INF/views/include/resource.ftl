@@ -1,3 +1,4 @@
+<#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="/static/resources/bui/css/bs3/bui-min.css"/>

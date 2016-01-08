@@ -34,7 +34,7 @@ import java.util.Map;
 @RequestMapping("/admin")
 public class AdminController {
     @Resource(name = "criteriaQueryService")
-    private CriteriaQueryService queryService;
+    private CriteriaQueryService criteriaQueryService;
     @Resource(name = "adminService")
     private AdminService adminService;
     private String dir = "admin";
@@ -60,7 +60,7 @@ public class AdminController {
 
     @RequestMapping(value = "grid", method = RequestMethod.GET)
     public @ResponseBody Map<String, Object> grid(HttpServletRequest request) {
-        return queryService.queryPage(AdminImpl.class, request, "id,name");
+        return criteriaQueryService.queryPage(AdminImpl.class, request, "id,name");
     }
 
     @RequestMapping(value = "save", method = RequestMethod.POST)

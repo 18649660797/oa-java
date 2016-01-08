@@ -28,8 +28,8 @@ import java.util.Map;
 public class DepartmentServiceImpl implements DepartmentService {
     @Resource(name = "departmentDao")
     private DepartmentDao departmentDao;
-    @Resource
-    private CriteriaQueryService queryService;
+    @Resource(name = "criteriaQueryService")
+    private CriteriaQueryService criteriaQueryService;
 
     @Transactional("transactionManager")
     @Override
@@ -70,7 +70,7 @@ public class DepartmentServiceImpl implements DepartmentService {
             params.put("in_id", ids);
             CriteriaCondition condition = new CriteriaCondition();
             condition.setConditions(params);
-            List<DepartmentImpl> departmentList = queryService.query(DepartmentImpl.class, condition);
+            List<DepartmentImpl> departmentList = criteriaQueryService.query(DepartmentImpl.class, condition);
             if (departmentList == null) {
                 return;
             }
@@ -85,7 +85,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("eq_name", name);
         CriteriaCondition criteriaCondition = new CriteriaCondition(params);
-        return queryService.singleQuery(DepartmentImpl.class, criteriaCondition);
+        return criteriaQueryService.singleQuery(DepartmentImpl.class, criteriaCondition);
     }
 
     @Transactional("transactionManager")

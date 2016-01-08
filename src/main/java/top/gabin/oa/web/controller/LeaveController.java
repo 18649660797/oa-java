@@ -40,7 +40,7 @@ import java.util.Map;
 public class LeaveController {
 
     @Resource(name = "criteriaQueryService")
-    private CriteriaQueryService queryService;
+    private CriteriaQueryService criteriaQueryService;
     @Resource(name = "leaveService")
     private LeaveService leaveService;
     @Resource(name = "departmentService")
@@ -68,7 +68,7 @@ public class LeaveController {
 
     @RequestMapping(value = "grid", method = RequestMethod.GET)
     public @ResponseBody Map<String, Object> grid(HttpServletRequest request) {
-        return queryService.queryPage(LeaveImpl.class, request, "id,beginDate,endDate,type.label type,employee.name realName,employee.department.name department,remark");
+        return criteriaQueryService.queryPage(LeaveImpl.class, request, "id,beginDate,endDate,type.label type,employee.name realName,employee.department.name department,remark");
     }
 
     @RequestMapping(value = "save", method = RequestMethod.POST)

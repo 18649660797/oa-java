@@ -9,14 +9,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import top.gabin.oa.web.dao.EmployeeDao;
 import top.gabin.oa.web.dto.AttendanceImportDTO;
-import top.gabin.oa.web.dto.DepartmentDTO;
 import top.gabin.oa.web.dto.EmployeeDTO;
 import top.gabin.oa.web.entity.*;
 import top.gabin.oa.web.service.DepartmentService;
 import top.gabin.oa.web.service.EmployeeService;
-import top.gabin.oa.web.service.EmployeeServiceImpl;
 import top.gabin.oa.web.service.criteria.CriteriaCondition;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
 import top.gabin.oa.web.service.criteria.CriteriaQueryUtils;
@@ -27,7 +24,6 @@ import top.gabin.oa.web.utils.json.JsonUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +34,7 @@ import java.util.Map;
 @RequestMapping("/employee")
 public class EmployeeController {
     @Resource(name = "criteriaQueryService")
-    private CriteriaQueryService queryService;
+    private CriteriaQueryService criteriaQueryService;
     @Resource(name = "employeeService")
     private EmployeeService employeeService;
     @Resource(name = "departmentService")
@@ -64,7 +60,7 @@ public class EmployeeController {
 
     @RequestMapping(value = "grid", method = RequestMethod.GET)
     public @ResponseBody Map<String, Object> grid(HttpServletRequest request) {
-        return queryService.queryPage(EmployeeImpl.class, request, "id,name,attendanceCN,department.name department");
+        return criteriaQueryService.queryPage(EmployeeImpl.class, request, "id,name,attendanceCN,department.name department");
     }
 
     @RequestMapping(value = "importView", method = RequestMethod.GET)
@@ -103,7 +99,7 @@ public class EmployeeController {
         if (StringUtils.isNotBlank(name)) {
             criteriaCondition.getConditions().put("like_name", name);
         }
-        List<EmployeeImpl> query = queryService.query(EmployeeImpl.class, criteriaCondition);
+        List<EmployeeImpl> query = criteriaQueryService.query(EmployeeImpl.class, criteriaCondition);
         List<Map> list = RenderUtils.filterPageData(query, key);
         List<String> names = new ArrayList<String>();
         for (Map map : list) {

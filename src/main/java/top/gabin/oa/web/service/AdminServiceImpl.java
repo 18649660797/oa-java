@@ -31,8 +31,8 @@ public class AdminServiceImpl implements AdminService {
     private AdminDao adminDao;
     @Resource(name = "blPasswordEncoder")
     protected PasswordEncoder passwordEncoder;
-    @Resource
-    private CriteriaQueryService queryService;
+    @Resource(name = "criteriaQueryService")
+    private CriteriaQueryService criteriaQueryService;
     @Override
     public Admin findById(Long id) {
         return adminDao.findById(id);
@@ -43,7 +43,7 @@ public class AdminServiceImpl implements AdminService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("eq_name", name);
         CriteriaCondition criteriaCondition = new CriteriaCondition(params);
-        return queryService.singleQuery(AdminImpl.class, criteriaCondition);
+        return criteriaQueryService.singleQuery(AdminImpl.class, criteriaCondition);
     }
 
     @Transactional("transactionManager")
@@ -62,7 +62,7 @@ public class AdminServiceImpl implements AdminService {
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("in_id", adminDTO.getGroups());
             criteriaCondition.setConditions(params);
-            List<PermissionImpl> permissionList = queryService.query(PermissionImpl.class, criteriaCondition);
+            List<PermissionImpl> permissionList = criteriaQueryService.query(PermissionImpl.class, criteriaCondition);
             admin.getPermissionList().clear();
             admin.getPermissionList().addAll(permissionList);
             adminDao.saveOrUpdate(admin);
@@ -78,7 +78,7 @@ public class AdminServiceImpl implements AdminService {
             params.put("in_id", ids);
             CriteriaCondition condition = new CriteriaCondition();
             condition.setConditions(params);
-            List<AdminImpl> adminList = queryService.query(AdminImpl.class, condition);
+            List<AdminImpl> adminList = criteriaQueryService.query(AdminImpl.class, condition);
             if (adminList == null) {
                 return;
             }

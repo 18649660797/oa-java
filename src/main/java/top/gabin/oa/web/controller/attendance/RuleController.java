@@ -30,7 +30,7 @@ import java.util.Map;
 public class RuleController {
     private String dir = "attendance/rule";
     @Resource(name = "criteriaQueryService")
-    private CriteriaQueryService queryService;
+    private CriteriaQueryService criteriaQueryService;
     @Resource(name = "businessService")
     private BusinessService businessService;
     @Resource(name = "attendanceRuleService")
@@ -50,7 +50,7 @@ public class RuleController {
 
     @RequestMapping(value = "grid", method = RequestMethod.GET)
     public @ResponseBody Map<String, Object> grid(HttpServletRequest request) {
-        return queryService.queryPage(AttendanceRuleImpl.class, request, "id,beginDate,endDate,name,status.label status,type.label type,attendanceRuleDetailMap");
+        return criteriaQueryService.queryPage(AttendanceRuleImpl.class, request, "id,beginDate,endDate,name,status.label status,type.label type,attendanceRuleDetailMap");
     }
 
     @RequestMapping(value = "/basic/save", method = RequestMethod.POST)

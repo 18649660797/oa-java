@@ -42,7 +42,7 @@ import java.util.*;
 @RequestMapping("/attendance")
 public class AttendanceController {
     @Resource(name = "criteriaQueryService")
-    private CriteriaQueryService queryService;
+    private CriteriaQueryService criteriaQueryService;
     @Resource(name = "departmentService")
     private DepartmentService departmentService;
     @Resource(name = "attendanceService")
@@ -69,7 +69,7 @@ public class AttendanceController {
 
     @RequestMapping(value = "grid", method = RequestMethod.GET)
     public @ResponseBody Map<String, Object> grid(HttpServletRequest request) {
-        return queryService.queryPage(AttendanceImpl.class, request, "id,workDate,amTime,pmTime,employee.name employee,employee.department.name department,yesterdayPm yesterday,status.label status");
+        return criteriaQueryService.queryPage(AttendanceImpl.class, request, "id,workDate,amTime,pmTime,employee.name employee,employee.department.name department,yesterdayPm yesterday,status.label status");
     }
 
     @RequestMapping(value = "save", method = RequestMethod.POST)

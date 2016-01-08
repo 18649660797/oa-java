@@ -24,13 +24,13 @@ import java.util.List;
 @Service("permissionService")
 public class PermissionServiceImpl implements PermissionService {
 
-    @Resource
-    private CriteriaQueryService queryService;
+    @Resource(name = "criteriaQueryService")
+    private CriteriaQueryService criteriaQueryService;
 
     @Override
     public List<SimpleTreeDTO> getPermissionTreeData(HttpServletRequest request) {
         CriteriaCondition criteriaCondition = CriteriaQueryUtils.parseCondition(request);
-        PageDTO<PermissionImpl> permissionPageDTO = queryService.queryPage(PermissionImpl.class, criteriaCondition);
+        PageDTO<PermissionImpl> permissionPageDTO = criteriaQueryService.queryPage(PermissionImpl.class, criteriaCondition);
         List<SimpleTreeDTO> list = new ArrayList<SimpleTreeDTO>();
         for (Permission permission : permissionPageDTO.getContent()) {
             SimpleTreeDTO dto = new SimpleTreeDTO();
@@ -42,4 +42,10 @@ public class PermissionServiceImpl implements PermissionService {
         }
         return list;
     }
+
+    @Override
+    public List<Permission> findAll() {
+        return null;
+    }
+
 }

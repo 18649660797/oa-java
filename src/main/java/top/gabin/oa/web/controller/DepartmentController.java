@@ -36,7 +36,7 @@ import java.util.Map;
 @RequestMapping("/department")
 public class DepartmentController {
     @Resource(name = "criteriaQueryService")
-    private CriteriaQueryService queryService;
+    private CriteriaQueryService criteriaQueryService;
     @Resource(name = "departmentService")
     private DepartmentService departmentService;
 
@@ -57,7 +57,7 @@ public class DepartmentController {
 
     @RequestMapping(value = "grid", method = RequestMethod.GET)
     public @ResponseBody Map<String, Object> grid(HttpServletRequest request) {
-        return queryService.queryPage(DepartmentImpl.class, request, "id,name");
+        return criteriaQueryService.queryPage(DepartmentImpl.class, request, "id,name");
     }
 
     @RequestMapping(value = "save", method = RequestMethod.POST)

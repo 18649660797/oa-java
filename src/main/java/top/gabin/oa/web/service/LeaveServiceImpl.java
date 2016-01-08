@@ -24,8 +24,8 @@ import java.util.*;
  */
 @Service("leaveService")
 public class LeaveServiceImpl implements LeaveService {
-    @Resource
-    private CriteriaQueryService queryService;
+    @Resource(name = "criteriaQueryService")
+    private CriteriaQueryService criteriaQueryService;
     @Resource(name = "leaveDao")
     private LeaveDao leaveDao;
     @Resource(name = "employeeService")
@@ -37,7 +37,7 @@ public class LeaveServiceImpl implements LeaveService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("in_id", ids);
         CriteriaCondition criteriaCondition = new CriteriaCondition(params);
-        List<LeaveImpl> leaveList = queryService.query(LeaveImpl.class, criteriaCondition);
+        List<LeaveImpl> leaveList = criteriaQueryService.query(LeaveImpl.class, criteriaCondition);
         for (Leave leave : leaveList) {
             leaveDao.delete(leave);
         }
@@ -135,7 +135,7 @@ public class LeaveServiceImpl implements LeaveService {
             conditions.put("ge_beginDate", month + "-01 00:00:00");
             conditions.put("le_beginDate", month + "-31 23:59:59");
         }
-        List<LeaveImpl> attendanceList = queryService.query(LeaveImpl.class, criteriaCondition);
+        List<LeaveImpl> attendanceList = criteriaQueryService.query(LeaveImpl.class, criteriaCondition);
         if (attendanceList == null) {
             return leaveGroup;
         }
@@ -159,7 +159,7 @@ public class LeaveServiceImpl implements LeaveService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("in_employee.id", ids);
         CriteriaCondition criteriaCondition = new CriteriaCondition(params);
-        List<LeaveImpl> leaveList = queryService.query(LeaveImpl.class, criteriaCondition);
+        List<LeaveImpl> leaveList = criteriaQueryService.query(LeaveImpl.class, criteriaCondition);
         for (Leave leave : leaveList) {
             leaveDao.delete(leave);
         }

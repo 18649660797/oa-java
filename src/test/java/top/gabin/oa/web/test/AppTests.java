@@ -22,12 +22,12 @@ import javax.annotation.Resource;
  */
 public class AppTests extends BaseTest {
     private static final Logger logger = LoggerFactory.getLogger(AppTests.class);
-    @Resource
-    private CriteriaQueryService queryService;
+    @Resource(name = "criteriaQueryService")
+    private CriteriaQueryService criteriaQueryService;
 
     @Test
     public void testFind() {
-        Long count = queryService.count(EmployeeImpl.class, new CriteriaCondition());
+        Long count = criteriaQueryService.count(EmployeeImpl.class, new CriteriaCondition());
         assert count >= 0;
         logger.info("employeeSize:" + count);
     }
