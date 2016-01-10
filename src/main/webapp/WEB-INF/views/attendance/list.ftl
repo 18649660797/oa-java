@@ -168,7 +168,7 @@
                     tbar:{ //添加、删除
                         items : [{
                             btnCls : 'button button-small',
-                            text : '<i class="icon-plus"></i>导入考勤数据',
+                            text : '<i class="icon-plus"></i>导入数据',
                             listeners : {
                                 'click' : function() {
                                     var dialog = new top.BUI.Overlay.Dialog({
@@ -211,7 +211,7 @@
                         },
                         {
                             btnCls : 'button button-small',
-                            text : '<i class="icon-remove"></i>清空月份考勤',
+                            text : '<i class="icon-remove"></i>清空数据',
                             listeners : {
                                 'click' : function() {
                                     var dialog = new top.BUI.Overlay.Dialog({
@@ -237,7 +237,7 @@
                         },
                         {
                             btnCls : 'button button-small',
-                            text : '<i class="icon-remove"></i>批量设置节假日',
+                            text : '<i class="icon-remove"></i>设置节假日',
                             listeners : {
                                 'click' : function() {
                                     var Select = BUI.Select, select, month = $("#J_Month").val(), calendar;
@@ -317,7 +317,7 @@
                         },
                         {
                             btnCls : 'button button-small',
-                            text : '<i class="icon-remove"></i>批量设置工作日',
+                            text : '<i class="icon-remove"></i>设置工作日',
                             listeners : {
                                 'click' : function() {
                                     var Select = BUI.Select, select, month = $("#J_Month").val(), calendar;
@@ -396,7 +396,7 @@
                             }
                         },{
                             btnCls : 'button button-small',
-                            text : '<i class="icon-plus"></i>导出分析数据',
+                            text : '<i class="icon-plus"></i>分析数据',
                             listeners : {
                                 'click' : function() {
                                     var Select = BUI.Select, select, month = $("#J_Month").val(), calendar;

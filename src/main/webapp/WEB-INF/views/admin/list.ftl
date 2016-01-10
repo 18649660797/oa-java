@@ -155,7 +155,7 @@
                 var dialog = new top.BUI.Overlay.Dialog({
                     title: (id && '编辑' || '新增') + '管理员',
                     width:800,
-                    height:400,
+                    height:600,
                     closeAction: "destroy",
                     loader : {
                         url : '/admin/edit',

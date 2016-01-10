@@ -85,8 +85,8 @@
             //由于这个树，不显示根节点，所以可以不指定根节点
             tree = new BUI.Tree.TreeList({
                 render : '#t1',
-                width: 200,
-                height: 200,
+                width: 500,
+                height: 450,
                 store : store,
                 showLine : true, //显示连接线
                 checkType: 'all', //checkType:勾选模式，提供了4中，all,onlyLeaf,none,custom

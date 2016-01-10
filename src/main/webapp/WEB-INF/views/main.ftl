@@ -15,10 +15,8 @@
 <div class="content">
     <div class="dl-main-nav">
         <ul id="J_Nav"  class="nav-list ks-clear">
-            <#--<@security.authorize ifAnyGranted="permission_admin">-->
-            <li class="nav-item dl-selected"><div class="nav-item-inner nav-storage">权限</div></li>
-            <#--</@security.authorize>-->
-            <li class="nav-item"><div class="nav-item-inner nav-inventory">考勤</div></li>
+            <#--<li class="nav-item dl-selected"><div class="nav-item-inner nav-storage">权限</div></li>-->
+            <#--<li class="nav-item"><div class="nav-item-inner nav-inventory">考勤</div></li>-->
         </ul>
     </div>
     <ul id="J_NavContent" class="dl-tab-conten">
@@ -28,45 +26,43 @@
 </div>
 <script>
     BUI.use('common/main',function(){
-        var config = [
-        <#--<@security.authorize ifAnyGranted="permission_admin">-->
-        {
-            id:'permission',
-            menu:[{
-                text:'权限管理',
-                items:[
-                    {id:'admin-menu',text:'管理员设置',href:'/admin/list'}
-                ]
+        $.post("/permission/menus", {}, function(data) {
+            var config = [];
+            var nav = $("#J_Nav");
+            for (var i = 0; i < data.length; i++) {
+                var one = data[i];
+                nav.append('<li class="nav-item dl-selected"><div class="nav-item-inner nav-storage">' + one.name + '</div></li>');
+                var configItem = {
+                    id: one.id,
+                    menu: (function(childs2) {
+                        var result2 = [];
+                        for (var j = 0; j < childs2.length; j++) {
+                            var one2 = childs2[j];
+                            result2.push({
+                                text: one2.name,
+                                items: (function(childs3) {
+                                    var result3 = [];
+                                    for (var k = 0; k < childs3.length; k++) {
+                                        var one3 = childs3[k];
+                                        result3.push({
+                                            id: one3.id,
+                                            text: one3.name,
+                                            href: one3.url
+                                        });
+                                    }
+                                    return result3;
+                                } (one2.childMenus))
+                            });
+                        }
+                        return result2;
+                    } (one.childMenus))
+                };
+                config.push(configItem);
             }
-            ]
-        },
-        <#--</@security.authorize>-->
-        {
-            id:'attendance',
-            menu:[{
-                text:'部门人员',
-                items:[
-                    {id:'department-menu',text:'部门管理',href:'/department/list'},
-                    {id:'employee-menu',text:'员工管理',href:'/employee/list'}
-                ]
-            },
-            {
-                text:'数据规则',
-                items:[
-                    {id:'attendance-menu',text:'考勤数据',href:'/attendance/list'},
-                    {id:'exception-menu',text:'行政登记',href:'/leave/list'},
-                    {id:'basic-rule-menu',text:'基础配置',href:'/attendance/rule/basic'}
-                ]
-            },
-            {
-                text:'高级规则',
-                items:[
-                    {id:'high-rule-menu',text:'特殊规则',href:'/attendance/rule/list'}
-                ]
-            }]
-        }];
-        new PageUtil.MainPage({
-            modulesConfig : config
+            console.log(config);
+            new PageUtil.MainPage({
+                modulesConfig : config
+            });
         });
     });
 
