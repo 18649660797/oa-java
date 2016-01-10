@@ -105,6 +105,4 @@ http://www.springframework.org/schema/security/spring-security-3.1.xsd">
             </list>
         </property>
     </bean>
-    <!-- 全局安全切面 -->
-    <security:global-method-security jsr250-annotations="enabled" />
 </beans>
