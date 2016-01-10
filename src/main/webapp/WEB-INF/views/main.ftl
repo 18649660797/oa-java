@@ -15,7 +15,9 @@
 <div class="content">
     <div class="dl-main-nav">
         <ul id="J_Nav"  class="nav-list ks-clear">
+            <#--<@security.authorize ifAnyGranted="permission_admin">-->
             <li class="nav-item dl-selected"><div class="nav-item-inner nav-storage">权限</div></li>
+            <#--</@security.authorize>-->
             <li class="nav-item"><div class="nav-item-inner nav-inventory">考勤</div></li>
         </ul>
     </div>
@@ -26,7 +28,9 @@
 </div>
 <script>
     BUI.use('common/main',function(){
-        var config = [{
+        var config = [
+        <#--<@security.authorize ifAnyGranted="permission_admin">-->
+        {
             id:'permission',
             menu:[{
                 text:'权限管理',
@@ -35,7 +39,9 @@
                 ]
             }
             ]
-        },{
+        },
+        <#--</@security.authorize>-->
+        {
             id:'attendance',
             menu:[{
                 text:'部门人员',

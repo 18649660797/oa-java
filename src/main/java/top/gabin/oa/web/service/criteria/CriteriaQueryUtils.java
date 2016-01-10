@@ -31,21 +31,22 @@ public class CriteriaQueryUtils {
         CriteriaCondition condition = new CriteriaCondition();
         Map params = buildPageQueryMap(request, other);
         condition.setConditions(params);
-        condition.setDistinct("true".equals(request.getParameter("distinct")));
-        condition.setSort(request.getParameter("sort"));
-        String limitStr = request.getParameter("limit");
-        if (StringUtils.isNotBlank(limitStr) && StringUtils.isNumeric(limitStr)) {
-            condition.setLimit(Integer.parseInt(limitStr));
+        if (request != null) {
+            condition.setDistinct("true".equals(request.getParameter("distinct")));
+            condition.setSort(request.getParameter("sort"));
+            String limitStr = request.getParameter("limit");
+            if (StringUtils.isNotBlank(limitStr) && StringUtils.isNumeric(limitStr)) {
+                condition.setLimit(Integer.parseInt(limitStr));
+            }
+            String startStr = request.getParameter("start");
+            if (StringUtils.isNotBlank(startStr) && StringUtils.isNumeric(startStr)) {
+                condition.setStart(Integer.parseInt(startStr));
+            }
+            String targetPath = request.getParameter("targetPath");
+            if (StringUtils.isNotBlank(targetPath)) {
+                condition.setTargetPath(targetPath);
+            }
         }
-        String startStr = request.getParameter("start");
-        if (StringUtils.isNotBlank(startStr) && StringUtils.isNumeric(startStr)) {
-            condition.setStart(Integer.parseInt(startStr));
-        }
-        String targetPath = request.getParameter("targetPath");
-        if (StringUtils.isNotBlank(targetPath)) {
-            condition.setTargetPath(targetPath);
-        }
-        condition.setDistinct(Boolean.valueOf(request.getParameter("distinct")));
         return condition;
     }
 

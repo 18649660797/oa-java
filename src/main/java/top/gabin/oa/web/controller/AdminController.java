@@ -19,6 +19,7 @@ import top.gabin.oa.web.service.criteria.CriteriaQueryService;
 import top.gabin.oa.web.utils.RenderUtils;
 
 import javax.annotation.Resource;
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ public class AdminController {
     private AdminService adminService;
     private String dir = "admin";
 
+    @RolesAllowed({"permission_admin"})
     @RequestMapping(value = "list", method = RequestMethod.GET)
     public String list() {
         return dir + "/list";

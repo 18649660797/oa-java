@@ -12,6 +12,7 @@ import top.gabin.oa.web.entity.PermissionImpl;
 import top.gabin.oa.web.service.criteria.CriteriaCondition;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
 import top.gabin.oa.web.service.criteria.CriteriaQueryUtils;
+import top.gabin.oa.web.service.criteria.simple.QueryService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +27,8 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Resource(name = "criteriaQueryService")
     private CriteriaQueryService criteriaQueryService;
+    @Resource(name = "queryService")
+    private QueryService queryService;
 
     @Override
     public List<SimpleTreeDTO> getPermissionTreeData(HttpServletRequest request) {
@@ -45,7 +48,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public List<Permission> findAll() {
-        return null;
+        return queryService.query(Permission.class, PermissionImpl.class, null);
     }
 
 }

@@ -17,7 +17,9 @@
 
     <bean id="openEntityManagerInViewFilter" class="org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter"/>
 
-    <bean id="blPreSecurityFilterChain" class="org.springframework.security.web.FilterChainProxy">
+    <bean id="hiddenHttpMethodFilter" class="org.springframework.web.filter.HiddenHttpMethodFilter"/>
+
+    <bean id="preSecurityFilterChain" class="org.springframework.security.web.FilterChainProxy">
         <sec:filter-chain-map request-matcher="ant">
             <sec:filter-chain pattern="/**" filters="openEntityManagerInViewFilter"/>
         </sec:filter-chain-map>
@@ -26,6 +28,12 @@
     <bean id="blRestPreSecurityFilterChain" class="org.springframework.security.web.FilterChainProxy">
         <sec:filter-chain-map request-matcher="ant">
             <sec:filter-chain pattern="/api/**" filters="openEntityManagerInViewFilter"/>
+        </sec:filter-chain-map>
+    </bean>
+
+    <bean id="postSecurityFilterChain" class="org.springframework.security.web.FilterChainProxy">
+        <sec:filter-chain-map request-matcher="ant">
+            <sec:filter-chain pattern="/**" filters="hiddenHttpMethodFilter"/>
         </sec:filter-chain-map>
     </bean>
 </beans>

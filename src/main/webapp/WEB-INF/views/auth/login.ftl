@@ -6,7 +6,7 @@
 </head>
 <body class="login-page">
 <div class="login-box">
-    <form id="J_Form" action="/j_spring_security_check" method="post" class="form-horizontal">
+    <form id="J_Form" action="/j_admin_login" method="post" class="form-horizontal">
         <input style="display: none;" checked type="checkbox" name="_spring_security_remember_me">
         <div class="control-group">
             <label class="control-label">用户名：</label>

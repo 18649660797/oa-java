@@ -47,6 +47,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         List<Permission> permissionList;
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        authorities.add(new SimpleGrantedAuthority("permission_default"));
         if (adminUser.getId() == -1) {//全部的权限
             permissionList = permissionService.findAll();
         } else {
