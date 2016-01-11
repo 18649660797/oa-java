@@ -1,3 +1,4 @@
+delete from edy_admin_permission where 1=1;
 delete from edy_permission where id in (1001, 1002, 1003);
 delete from edy_permission where 1=1;
 INSERT INTO `edy_permission` (`id`, `name`, `label`, `pid`)
