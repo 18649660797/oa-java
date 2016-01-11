@@ -1,13 +1,13 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title> OA 管理系统</title>
+    <title> OA </title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <#include "include/resource.ftl"/>
 </head>
 <body>
 <div class="header">
-    <div class="dl-title"><span class="">简单OA 管理系统</span></div>
+    <div class="dl-title"><span class="">edy simple oa </span></div>
     <div class="dl-log">欢迎您，<span class="dl-log-user">${Static["top.gabin.oa.web.utils.AuthUtils"].getCurrentLoginUserName()}</span>
         <a href="/logout" title="退出系统" class="dl-log-quit">[退出]</a>
     </div>
@@ -15,8 +15,11 @@
 <div class="content">
     <div class="dl-main-nav">
         <ul id="J_Nav"  class="nav-list ks-clear">
-            <#--<li class="nav-item dl-selected"><div class="nav-item-inner nav-storage">权限</div></li>-->
-            <#--<li class="nav-item"><div class="nav-item-inner nav-inventory">考勤</div></li>-->
+            <#if menus?? && menus?size gt 0>
+                <#list menus as menu>
+                    <li class="nav-item"><div class="nav-item-inner nav-storage">${(menu.name)!}</div></li>
+                </#list>
+            </#if>
         </ul>
     </div>
     <ul id="J_NavContent" class="dl-tab-conten">
@@ -26,12 +29,47 @@
 </div>
 <script>
     BUI.use('common/main',function(){
+        var config = [
+        <#if menus?? && menus?size gt 0>
+            <#list menus as menu>
+            {
+                id: "${(menu.id)!}",
+                menu: [
+                <#if (menu.childMenus)?? && menu.childMenus?size gt 0>
+                    <#list menu.childMenus as menuSub1>
+                    {
+                        text: "${(menuSub1.name)!}",
+                        items: [
+                            <#if (menuSub1.childMenus)?? && menuSub1.childMenus?size gt 0>
+                                <#list menuSub1.childMenus as menuSub2>
+                                    {
+                                        id: "${(menuSub2.id)!}",
+                                        text: "${(menuSub2.name)!}",
+                                        href: "${(menuSub2.url)!}"
+                                    },
+                                </#list>
+                            </#if>
+                        ]
+                    },
+                    </#list>
+                </#if>
+                ]
+            },
+            </#list>
+        </#if>
+        ];
+        if (config) {
+            new PageUtil.MainPage({
+                modulesConfig : config
+            });
+            return;
+        }
         $.post("/permission/menus", {}, function(data) {
             var config = [];
             var nav = $("#J_Nav");
             for (var i = 0; i < data.length; i++) {
                 var one = data[i];
-                nav.append('<li class="nav-item dl-selected"><div class="nav-item-inner nav-storage">' + one.name + '</div></li>');
+                nav.append('<li class="nav-item"><div class="nav-item-inner nav-storage">' + one.name + '</div></li>');
                 var configItem = {
                     id: one.id,
                     menu: (function(childs2) {
@@ -59,7 +97,6 @@
                 };
                 config.push(configItem);
             }
-            console.log(config);
             new PageUtil.MainPage({
                 modulesConfig : config
             });

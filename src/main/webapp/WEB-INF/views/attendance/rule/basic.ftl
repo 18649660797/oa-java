@@ -8,6 +8,7 @@
     <div class="row">
         <div class="span24">
             <form id="J_Form" class="form-horizontal" method="post" action="/attendance/rule/basic/save">
+                <h2>&nbsp;</h2>
                 <input type="hidden" name="id" value="${(entity.id)!}"/>
                 <div class="control-group">
                     <label class="control-label">上班打卡时间：</label>
