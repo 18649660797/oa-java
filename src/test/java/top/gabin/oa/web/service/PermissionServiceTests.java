@@ -4,13 +4,12 @@
  */
 package top.gabin.oa.web.service;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import top.gabin.oa.BaseTest;
 import top.gabin.oa.web.dto.SimpleTreeDTO;
 import top.gabin.oa.web.entity.Permission;
-import top.gabin.oa.BaseTest;
 
 import javax.annotation.Resource;
 import java.util.List;
