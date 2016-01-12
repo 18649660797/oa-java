@@ -34,6 +34,7 @@ public class PermissionServiceTests extends BaseTest {
         assert treeData != null;
         for (SimpleTreeDTO simpleTreeDTO : treeData) {
             logger.info(simpleTreeDTO.getText());
+            logger.info(simpleTreeDTO.getId());
         }
     }
 
