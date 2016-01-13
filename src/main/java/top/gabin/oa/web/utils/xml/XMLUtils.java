@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-public class XmlUtils {
+public class XMLUtils {
 
 
     /**
