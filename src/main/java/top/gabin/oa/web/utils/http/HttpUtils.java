@@ -6,7 +6,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang3.StringUtils;
-import top.gabin.oa.web.utils.xml.XMLUtils;
+import top.gabin.oa.web.utils.xml.XmlBeanUtils;
 
 import java.io.IOException;
 
@@ -37,7 +37,7 @@ public class HttpUtils {
         if (StringUtils.isBlank(responseText)) {
             return null;
         }
-        return XMLUtils.xml2Bean(clazz, responseText);
+        return XmlBeanUtils.xml2Bean(clazz, responseText);
     }
 
 }
