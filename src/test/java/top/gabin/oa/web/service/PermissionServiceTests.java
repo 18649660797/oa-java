@@ -25,13 +25,13 @@ public class PermissionServiceTests extends BaseTest {
     @Test
     public void findAll() {
         List<Permission> all = permissionService.findAll();
-        assert all.size() == 0;
+        assert !all.isEmpty();
     }
 
     @Test
     public void getPermissionTreeData() {
         List<SimpleTreeDTO> treeData = permissionService.getPermissionTreeData(null);
-        assert treeData != null;
+        assert !treeData.isEmpty();
     }
 
 

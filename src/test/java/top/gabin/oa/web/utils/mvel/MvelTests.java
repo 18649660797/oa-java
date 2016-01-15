@@ -21,7 +21,6 @@ public class MvelTests {
         vars.put("a", 2);
         vars.put("b", 1);
         assert MvelUtils.eval("a > b", vars);
-        logger.info("测试成功");
     }
 
 }
