@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:security="http://www.springframework.org/schema/security"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-http://www.springframework.org/schema/context  
-http://www.springframework.org/schema/context/spring-context-3.1.xsd
-http://www.springframework.org/schema/aop
-   http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
-http://www.springframework.org/schema/security  
-http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+<beans  xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:security="http://www.springframework.org/schema/security"
+        xmlns:aop="http://www.springframework.org/schema/aop"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security-3.2.xsd">
     <security:http pattern="/static/**" security="none" />
-    <security:http pattern="/login**" security="none" />
     <security:http pattern="/favicon.ico" security="none" />
     <security:http auto-config='false' pattern="/**" authentication-manager-ref="authenticationManager" entry-point-ref="adminAuthenticationEntryPoint">
         <!-- All admin URLs will be secured with https -->
@@ -86,23 +82,17 @@ http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 
     <bean id="blPasswordEncoder" class="org.springframework.security.authentication.encoding.Md5PasswordEncoder"></bean>
     <bean id="userDetailsService" class="top.gabin.oa.web.service.security.UserDetailsServiceImpl"></bean>
-    <!--  User details service that authenticates using customer data in the database. -->
-    <!--<security:jdbc-user-service data-source-ref="dataSource"
-                           id="blUserDetailsService"
-                           users-by-username-query="SELECT name,password,TRUE FROM edy_admin WHERE name=?"
-                           authorities-by-username-query="SELECT a.name,c.name from edy_admin a
-                                          JOIN edy_admin_permission b ON a.id = b.admin_id
-                                          JOIN edy_permission c ON b.permission_id = c.id
-                                          WHERE a.name=?" />-->
+
     <aop:config/>
+
     <!-- The access decision manager works in conjunciton with global method security -->
     <bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
-        <property name="decisionVoters">
+        <constructor-arg index="0">
             <list>
                 <bean class="org.springframework.security.access.vote.RoleVoter">
                     <property name="rolePrefix" value="permission_" />
                 </bean>
             </list>
-        </property>
+        </constructor-arg>
     </bean>
 </beans>
