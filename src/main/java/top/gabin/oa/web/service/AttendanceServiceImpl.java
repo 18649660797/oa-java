@@ -93,8 +93,9 @@ public class AttendanceServiceImpl implements AttendanceService {
                 }
             }
             String workDate = dto.getWorkDate();
-            attendance.setWorkDateFormat(workDate);
-            attendance.setWorkDate(TimeUtils.parseDate(workDate, "yyyy-MM-dd"));
+            Date date = TimeUtils.parseDate(workDate, "yyyy-MM-dd");
+            attendance.setWorkDateFormat(TimeUtils.format(date, "yyyy-MM-dd"));
+            attendance.setWorkDate(date);
             String departmentName = dto.getDepartment();
             Employee employee;
             if (cacheEmployee.containsKey(realName)) {
