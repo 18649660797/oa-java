@@ -25,6 +25,8 @@ public class MvelUtils {
         switch (attendanceRule.getType()) {
             case WORK_FIT:
             case LEAVE_FIT:
+            case WORK_UN_FIT:
+            case LEAVE_UN_FIT:
                 return "attendance.workDate.getTime() <= " + endTime + "&&" + "attendance.workDate.getTime() >= " + beginTime;
         }
         return "";

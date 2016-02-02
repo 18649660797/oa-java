@@ -39,15 +39,15 @@ public class RuleWorkFlow extends AbstractAnalysisWorkFlow {
                 for (AnalysisResult analysisResult : employeeAnalysisResult.getAnalysisResultList()) {
                     Attendance attendance = analysisResult.getAttendance();
                     String workDateFormat = attendance.getWorkDateFormat();
-                    if (552 == attendance.getEmployee().getId() && workDateFormat.equals("2015-11-09")) {
-                        System.out.println();
-                    }
                     String amTime = attendance.getAmTime();
                     Date amDate = StringUtils.isBlank(amTime) ? null : TimeUtils.parseDate(workDateFormat + " " + amTime + ":00");
                     String pmTime = attendance.getPmTime();
                     Date pmDate = StringUtils.isBlank(pmTime) ? null : TimeUtils.parseDate(workDateFormat + " " + pmTime + ":00");
                     if (amDate == null && pmDate == null && !analysisResult.isLeaveDay()) {
-                        analysisResult.setWorkBad(true);
+                        // 增加判断是否需要打卡的条件
+                        if (analysisResult.isWorkNeedFit() && analysisResult.isLeaveNeedFit()) {
+                            analysisResult.setWorkBad(true);
+                        }
                     }
                     if (!analysisResult.isLeaveDay()) {
                         Date amNeedFitTime = analysisResult.getWorkFit();
@@ -57,7 +57,7 @@ public class RuleWorkFlow extends AbstractAnalysisWorkFlow {
                         Date pmNeedFitTime = analysisResult.getLeaveFit();
                         String remark = "";
                         // 如果迟到
-                        if (amDate != null && amNeedFitTime != null && amDate.after(amNeedFitTime)) {
+                        if (analysisResult.isWorkNeedFit() && amDate != null && amNeedFitTime != null && amDate.after(amNeedFitTime)) {
                             int delaySeconds = employeeAnalysisResult.getDelaySeconds();
                             long minutes = TimeUtils.getMinutes(amDate, amNeedFitTime) + workFitOffset;
                             analysisResult.setWorkDelayMinutes((int) minutes);
@@ -82,8 +82,11 @@ public class RuleWorkFlow extends AbstractAnalysisWorkFlow {
                                 employeeAnalysisResult.setDelayMoney(amMoney);
                             }
                         }
+                        if (!analysisResult.isWorkNeedFit()) {
+                            remark += "今天上班免打卡";
+                        }
                         // 如果早退
-                        if ((amDate != null && pmDate == null) || (pmDate != null && pmNeedFitTime != null && pmDate.before(pmNeedFitTime))) {
+                        if (analysisResult.isLeaveNeedFit() && ((amDate != null && pmDate == null) || (pmDate != null && pmNeedFitTime != null && pmDate.before(pmNeedFitTime)))) {
                             if (pmDate != null && pmNeedFitTime != null) {
                                 long minutes = TimeUtils.getMinutes(pmNeedFitTime, pmDate);
                                 analysisResult.setLeaveEarlyMinutes((int) minutes);
@@ -100,6 +103,9 @@ public class RuleWorkFlow extends AbstractAnalysisWorkFlow {
                                 employeeAnalysisResult.setLeaveEarlyMoney(pmMoney);
                                 remark += "早退乐捐" + pmMoney + "元;";
                             }
+                        }
+                        if (!analysisResult.isLeaveNeedFit()) {
+                            remark += "今天下班免打卡";
                         }
                         analysisResult.setRemark(remark);
                     }

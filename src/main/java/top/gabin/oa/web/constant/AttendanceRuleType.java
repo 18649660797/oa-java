@@ -8,7 +8,9 @@ package top.gabin.oa.web.constant;
  */
 public enum AttendanceRuleType {
     WORK_FIT("上班打卡时间规则", 0),
-    LEAVE_FIT("下班打卡时间规则", 1)
+    LEAVE_FIT("下班打卡时间规则", 1),
+    WORK_UN_FIT("上班不需要打卡", 2),
+    LEAVE_UN_FIT("下班不需要打卡", 3)
     ;
     private String label;
     private Integer type;

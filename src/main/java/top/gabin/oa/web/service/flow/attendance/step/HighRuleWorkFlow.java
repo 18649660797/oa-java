@@ -41,6 +41,12 @@ public class HighRuleWorkFlow extends AbstractAnalysisWorkFlow {
                             case LEAVE_FIT:
                                 analysisResult.setLeaveFit(TimeUtils.parseDate(workDateFormat + " " + extraData));
                                 break;
+                            case WORK_UN_FIT:
+                                analysisResult.setWorkNeedFit(false);
+                                break;
+                            case LEAVE_UN_FIT:
+                                analysisResult.setLeaveNeedFit(false);
+                                break;
                         }
                     }
                 }

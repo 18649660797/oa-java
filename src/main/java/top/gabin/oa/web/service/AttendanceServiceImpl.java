@@ -429,6 +429,10 @@ public class AttendanceServiceImpl implements AttendanceService {
                                 workFitStyle = getYellowFillStyle(workbook);
                             }
                         }
+                        // 如果下午不需要打卡并且上午没有打卡记录
+                        if (!analysisResult.isLeaveNeedFit() && StringUtils.isBlank(attendance.getAmTime())) {
+                            workFitStyle = getYellowFillStyle(workbook);
+                        }
                         if (workFitStyle != null) {
                             row1.getCell(4).setCellStyle(workFitStyle);
                         }
@@ -441,6 +445,10 @@ public class AttendanceServiceImpl implements AttendanceService {
                                 setValue(row1, 11, pmMinutes);
                                 leaveFitStyle = getYellowFillStyle(workbook);
                             }
+                        }
+                        // 如果上午不需要打卡并且下午没有打卡记录
+                        if (!analysisResult.isWorkNeedFit() && StringUtils.isBlank(attendance.getPmTime())) {
+                            leaveFitStyle = getYellowFillStyle(workbook);
                         }
                         if (leaveFitStyle != null) {
                             row1.getCell(5).setCellStyle(leaveFitStyle);

@@ -23,6 +23,10 @@ public class AnalysisResult {
     private List<LeaveResult> leaveList = new ArrayList<LeaveResult>();
     // 上班需要打卡的时间
     private Date workFit;
+    // 上班需要打卡
+    private boolean workNeedFit = true;
+    // 下班需要打卡
+    private boolean leaveNeedFit = true;
     // 下班需要打卡的时间
     private Date leaveFit;
     // 昨天下午加班
@@ -222,4 +226,19 @@ public class AnalysisResult {
         leaveList.add(leave);
     }
 
+    public boolean isWorkNeedFit() {
+        return workNeedFit;
+    }
+
+    public void setWorkNeedFit(boolean workNeedFit) {
+        this.workNeedFit = workNeedFit;
+    }
+
+    public boolean isLeaveNeedFit() {
+        return leaveNeedFit;
+    }
+
+    public void setLeaveNeedFit(boolean leaveNeedFit) {
+        this.leaveNeedFit = leaveNeedFit;
+    }
 }

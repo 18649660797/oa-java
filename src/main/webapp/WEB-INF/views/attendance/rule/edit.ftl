@@ -18,7 +18,7 @@
                 <div class="control-group">
                     <label class="control-label">状态：</label>
                     <div class="controls">
-                        <select name="status">
+                        <select id="status" name="status">
                             <option value="1">启用</option>
                             <option value="0">关闭</option>
                         </select>
@@ -27,9 +27,11 @@
                 <div class="control-group">
                     <label class="control-label">类型：</label>
                     <div class="controls">
-                        <select name="type">
+                        <select id="type" name="type">
                             <option value="0">上班打卡时间设置</option>
                             <option value="1">下班打卡时间设置</option>
+                            <option value="2">上班不打卡设置</option>
+                            <option value="3">下班不打卡设置</option>
                         </select>
                     </div>
                 </div>
@@ -67,6 +69,8 @@
                 }
             }
         }).render();
+        $("#type").val("${entity.type.type!}");
+        $("#status").val("${entity.status.type!}");
     });
 
 </script>
