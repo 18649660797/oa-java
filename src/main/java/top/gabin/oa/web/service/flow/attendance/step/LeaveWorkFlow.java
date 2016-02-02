@@ -47,15 +47,12 @@ public class LeaveWorkFlow extends AbstractAnalysisWorkFlow {
                         Collections.sort(leaveResultList, new Comparator<LeaveResult>() {
                             @Override
                             public int compare(LeaveResult o1, LeaveResult o2) {
-                                return (int) (o1.getLeave().getBeginDate().getTime() - o2.getLeave().getBeginDate().getTime());
+                                return (int) (o2.getLeave().getBeginDate().getTime() - o1.getLeave().getBeginDate().getTime());
                             }
                         });
                         Date tmpBeginDate = amNeedFit;
                         Date tmpEndDate = pmNeedFit;
                         for (LeaveResult leaveResult : leaveResultList) {
-                            if (attendance.getEmployee().getId() == 704) {
-                                System.out.println("");
-                            }
                             Leave leave = leaveResult.getLeave();
                             Date beginDate = leave.getBeginDate();
                             Date endDate = leave.getEndDate();
@@ -73,13 +70,11 @@ public class LeaveWorkFlow extends AbstractAnalysisWorkFlow {
                                 }
                                 delayTimes = TimeUtils.getMinutes(endDate, TimeUtils.parseDate(workDateFormat + " " + workFit));
                             } else if (TimeUtils.afterOrEqual(endDate, tmpEndDate)) { // 请假结束时间在下午需要打卡的时刻或之后
-                                // 请假开始时间在上午需要打卡之前
-                                if (beginDate.before(tmpEndDate)) {
-                                    if (beginDate.after(tmpBeginDate)) {
-                                        tmpEndDate = beginDate;
-                                    }
+                                delayTimes = TimeUtils.getMinutes(tmpEndDate, beginDate);
+                                // 把需要打卡的时间修改为请假的结束时间
+                                if (beginDate.before(tmpEndDate) && beginDate.after(tmpBeginDate)) {
+                                    tmpEndDate = beginDate;
                                 }
-                                delayTimes = TimeUtils.getMinutes(TimeUtils.parseDate(workDateFormat + " " + leaveFit), beginDate);
                             } else {
                                 delayTimes = TimeUtils.getMinutes(endDate, beginDate);
                             }

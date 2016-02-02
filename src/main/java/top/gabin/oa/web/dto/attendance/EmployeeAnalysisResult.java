@@ -18,11 +18,11 @@ public class EmployeeAnalysisResult {
     private List<AnalysisResult> analysisResultList = new ArrayList<AnalysisResult>();
     // 迟到次数
     private int delaySeconds;
-    // 已经上班乐捐上限
+    // 当月上班乐捐上限
     private int delayMoney;
     // 早退次数
     private int leaveEarlySeconds;
-    // 已经下班乐捐上限
+    // 当月下班乐捐上限
     private int leaveEarlyMoney;
 
     public int getDelayMoney() {

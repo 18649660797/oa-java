@@ -404,51 +404,56 @@ public class AttendanceServiceImpl implements AttendanceService {
                     setValue(row1, 3, workDateFormat);
                     // 填充上午打卡时间
                     setValue(row1, 4, attendance.getAmTime());
-                    // 填充下午打开时间
+                    // 填充下午打卡时间
                     setValue(row1, 5, attendance.getPmTime());
                     if (AttendanceStatus.LEAVE.equals(attendance.getStatus())) {
                         row1.getCell(2).setCellStyle(getBlueFontStyle(workbook));
                     } else {
                         HSSFCellStyle workFitStyle = null;
                         HSSFCellStyle leaveFitStyle = null;
-                        if (analysisResult.isYesterdayWorkDelay()) {
-                            workFitStyle = getGreenFillStyle(workbook);
-                        }
-                        if (analysisResult.isWorkBad()) {
+                        if (analysisResult.isWorkBad()) { // 旷工
                             setValue(row1, 12, 7.5);
                             workFitStyle = getYellowFillStyle(workbook);
                             leaveFitStyle = getYellowFillStyle(workbook);
-                        }
-                        if (analysisResult.isImpunityWorkDelay()) {
-                            workFitStyle = getBlueFillStyle(workbook);
                         } else {
-                            // 迟到
-                            int amMinutes = analysisResult.getWorkDelayMinutes();
-                            if (amMinutes > 0) {
-                                setValue(row1, 10, amMinutes);
+                            // 如果下午不需要打卡并且上午没有打卡记录
+                            if (!analysisResult.isLeaveNeedFit() && StringUtils.isBlank(attendance.getAmTime())) {
                                 workFitStyle = getYellowFillStyle(workbook);
+                            } else if (analysisResult.isImpunityWorkDelay()) {
+                                // 如果在迟到15分钟,每月免罚次数里
+                                workFitStyle = getBlueFillStyle(workbook);
+                            } else {
+                                // 迟到
+                                int amMinutes = analysisResult.getWorkDelayMinutes();
+                                if (amMinutes > 0) {
+                                    setValue(row1, 10, amMinutes);
+                                    workFitStyle = getYellowFillStyle(workbook);
+                                } else {
+                                    // 昨日晚上加班到9点半,隔天早上10点后打卡
+                                    if (analysisResult.isYesterdayWorkDelay()) {
+                                        workFitStyle = getGreenFillStyle(workbook);
+                                    }
+                                }
                             }
-                        }
-                        // 如果下午不需要打卡并且上午没有打卡记录
-                        if (!analysisResult.isLeaveNeedFit() && StringUtils.isBlank(attendance.getAmTime())) {
-                            workFitStyle = getYellowFillStyle(workbook);
+
+                            // 如果上午不需要打卡并且下午没有打卡记录
+                            if (!analysisResult.isWorkNeedFit() && StringUtils.isBlank(attendance.getPmTime())) {
+                                leaveFitStyle = getYellowFillStyle(workbook);
+                            } else if (analysisResult.isImpunityLeaveEarly()) {
+                                // 如果在下班免补卡的次数里
+                                leaveFitStyle = getBlueFillStyle(workbook);
+                            } else {
+                                // 早退
+                                int pmMinutes = analysisResult.getLeaveEarlyMinutes();
+                                if (pmMinutes > 0) {
+                                    setValue(row1, 11, pmMinutes);
+                                    leaveFitStyle = getYellowFillStyle(workbook);
+                                }
+                            }
+
                         }
                         if (workFitStyle != null) {
                             row1.getCell(4).setCellStyle(workFitStyle);
-                        }
-                        if (analysisResult.isImpunityLeaveEarly()) {
-                            leaveFitStyle = getBlueFillStyle(workbook);
-                        } else {
-                            // 早退
-                            int pmMinutes = analysisResult.getLeaveEarlyMinutes();
-                            if (pmMinutes > 0) {
-                                setValue(row1, 11, pmMinutes);
-                                leaveFitStyle = getYellowFillStyle(workbook);
-                            }
-                        }
-                        // 如果上午不需要打卡并且下午没有打卡记录
-                        if (!analysisResult.isWorkNeedFit() && StringUtils.isBlank(attendance.getPmTime())) {
-                            leaveFitStyle = getYellowFillStyle(workbook);
                         }
                         if (leaveFitStyle != null) {
                             row1.getCell(5).setCellStyle(leaveFitStyle);
@@ -458,6 +463,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                         row1.createCell(6);
                         row1.createCell(7);
                         row1.createCell(8);
+                        long normalLeaveTimes = 0, sickLeaveTimes = 0, offLeaveTimes = 0;
                         for (LeaveResult leaveResult : leaveList) {
                             long minutes = leaveResult.getLeaveMinutes();
                             double hours =  minutes / 60D;
@@ -465,13 +471,13 @@ public class AttendanceServiceImpl implements AttendanceService {
                             Leave leave = leaveResult.getLeave();
                             switch (leave.getType()) {
                                 case NORMAL_LEAVE:
-                                    setValue(row1, 6, times);
+                                    normalLeaveTimes += minutes;
                                     break;
                                 case SICK_LEAVE:
-                                    setValue(row1, 7, times);
+                                    sickLeaveTimes += minutes;
                                     break;
                                 case OFF_LEAVE:
-                                    setValue(row1, 8, times);
+                                    offLeaveTimes += minutes;
                                     break;
                                 case OUT_LEAVE:
                                 case FUNERAL_LEAVE:
@@ -481,6 +487,15 @@ public class AttendanceServiceImpl implements AttendanceService {
                                     remark += leave.getType().getLabel() + times;
                                     break;
                             }
+                        }
+                        if (normalLeaveTimes > 0) {
+                            setValue(row1, 6, normalLeaveTimes / 60d + "h");
+                        }
+                        if (sickLeaveTimes > 0) {
+                            setValue(row1, 7, sickLeaveTimes / 60d + "h");
+                        }
+                        if (offLeaveTimes > 0) {
+                            setValue(row1, 8, offLeaveTimes / 60d + "h");
                         }
                         setValue(row1, 9, remark);
                     }
