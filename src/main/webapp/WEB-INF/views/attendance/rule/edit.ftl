@@ -69,8 +69,8 @@
                 }
             }
         }).render();
-        $("#type").val("${entity.type.type!}");
-        $("#status").val("${entity.status.type!}");
+        $("#type").val("${(entity.type.type)!}");
+        $("#status").val("${(entity.status.type)!}");
     });
 
 </script>
