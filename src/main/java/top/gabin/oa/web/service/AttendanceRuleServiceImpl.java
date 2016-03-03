@@ -71,9 +71,9 @@ public class AttendanceRuleServiceImpl implements AttendanceRuleService {
             } else {
                 attendanceRuleDetail = new AttendanceRuleDetailImpl();
                 attendanceRuleDetail.setRule(rule);
-                attendanceRuleDetailDao.persist(attendanceRuleDetail);
-                attendanceRuleDetailMap.put(ruleType, attendanceRuleDetail);
+                attendanceRuleDetail = attendanceRuleDetailDao.saveOrUpdate(attendanceRuleDetail);
             }
+            attendanceRuleDetailMap.put(ruleType, attendanceRuleDetail);
             attendanceRuleDao.persist(attendanceRule);
         }
     }
