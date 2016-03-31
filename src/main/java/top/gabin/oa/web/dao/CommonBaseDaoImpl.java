@@ -37,6 +37,9 @@ public abstract class CommonBaseDaoImpl<SUB, T> implements CommonBaseDao<SUB, T>
     @Override
     @SuppressWarnings("unchecked")
     public SUB findById(Long id){
+        if (id == null) {
+            return null;
+        }
         return (SUB)em.find(clazz,id);
     }
 
