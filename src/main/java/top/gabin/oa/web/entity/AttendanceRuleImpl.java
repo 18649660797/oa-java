@@ -35,7 +35,7 @@ public class AttendanceRuleImpl implements AttendanceRule {
     private Date beginDate;
     @Column(name = "end_date")
     private Date endDate;
-    @ManyToMany(targetEntity = AttendanceRuleDetailImpl.class)
+    @ManyToMany(targetEntity = AttendanceRuleDetailImpl.class, cascade = CascadeType.PERSIST)
     @JoinTable(name = "edy_attendance_rule_detail_xref", joinColumns = @JoinColumn(name = "detail_id"), inverseJoinColumns = @JoinColumn(name = "rule_id"))
     @MapKeyColumn(name = "map_key")
     private Map<String, AttendanceRuleDetail> attendanceRuleDetailMap = new HashMap<String, AttendanceRuleDetail>();

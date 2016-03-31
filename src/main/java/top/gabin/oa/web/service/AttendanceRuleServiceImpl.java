@@ -43,7 +43,7 @@ public class AttendanceRuleServiceImpl implements AttendanceRuleService {
         return criteriaQueryService.query(AttendanceRuleImpl.class, criteriaCondition);
     }
 
-    @Transactional("transactionManager")
+    @Transactional(value = "transactionManager")
     @Override
     public void setAttendanceRule(EditAttendanceRuleForm form) {
         if (form != null) {
@@ -69,12 +69,14 @@ public class AttendanceRuleServiceImpl implements AttendanceRuleService {
                 attendanceRuleDetail = attendanceRuleDetailMap.get(ruleType);
                 attendanceRuleDetail.setRule(rule);
             } else {
+                attendanceRuleDetailMap.clear();
                 attendanceRuleDetail = new AttendanceRuleDetailImpl();
                 attendanceRuleDetail.setRule(rule);
                 attendanceRuleDetail = attendanceRuleDetailDao.saveOrUpdate(attendanceRuleDetail);
             }
+
             attendanceRuleDetailMap.put(ruleType, attendanceRuleDetail);
-            attendanceRuleDao.persist(attendanceRule);
+            attendanceRuleDao.saveOrUpdate(attendanceRule);
         }
     }
 
@@ -97,10 +99,10 @@ public class AttendanceRuleServiceImpl implements AttendanceRuleService {
             }
             for (AttendanceRule rule : attendanceRuleList) {
                 Map<String, AttendanceRuleDetail> attendanceRuleDetailMap = rule.getAttendanceRuleDetailMap();
+                attendanceRuleDao.delete(rule);
                 for (String key : attendanceRuleDetailMap.keySet()) {
                     attendanceRuleDetailDao.delete(attendanceRuleDetailMap.get(key));
                 }
-                attendanceRuleDao.delete(rule);
             }
         }
     }
