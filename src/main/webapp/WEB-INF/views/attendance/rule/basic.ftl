@@ -13,7 +13,7 @@
                 <div class="control-group">
                     <label class="control-label">上班打卡时间：</label>
                     <div class="controls">
-                        <input readonly type="text" data-messages="{regexp:'时间格式:18:00:00'}" data-rules="{regexp:/^[0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]$/}"  class="control-text" name="workFit" value="${(rule.workFit)!}" />
+                        <input type="text" data-messages="{regexp:'时间格式:18:00:00'}" data-rules="{regexp:/^[0-2][0-9]\:[0-6][0-9]\:[0-6][0-9]$/}"  class="control-text" name="workFit" value="${(rule.workFit)!}" />
                     </div>
                 </div>
                 <div class="control-group">
