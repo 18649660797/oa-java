@@ -17,5 +17,5 @@ public interface DepartmentService {
     List<Department> findAll();
     void batchDelete(String ids);
     Department findByName(String name);
-    void batchSave(List<AttendanceImportDTO> departmentList);
+    void importDepartment(List<AttendanceImportDTO> departmentList);
 }

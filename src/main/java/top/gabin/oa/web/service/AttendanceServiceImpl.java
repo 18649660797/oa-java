@@ -59,6 +59,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         List<Attendance> attendanceList = new ArrayList<Attendance>();
         for (AttendanceImportDTO dto : attendanceImportDTOList) {
             String realName = dto.getRealName();
+            realName = StringUtils.trim(realName);
             if (StringUtils.isBlank(realName)) {
                 continue;
             }

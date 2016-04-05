@@ -53,7 +53,8 @@ public class EmployeeServiceImpl implements EmployeeService {
             }
             String departmentName = dto.getDepartment();
             departmentName = StringUtils.trim(departmentName);
-            if (!cache.containsKey(realName)) {
+            String attendance = StringUtils.trim(dto.getAttendance());
+            if (!cache.containsKey(attendance)) {
                 Employee employee = new EmployeeImpl();
                 employee.setName(realName);
                 employee.setAttendanceCN(dto.getAttendance());
@@ -72,7 +73,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                     cacheDepartment.put(departmentName, department);
                 }
                 employees.add(employee);
-                cache.put(realName, 1);
+                cache.put(attendance, 1);
             }
         }
         batchInsert(employees);
@@ -157,14 +158,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee findByAttendanceCN(String attendanceCN) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("eq_attendanceCN", attendanceCN);
-        CriteriaCondition criteriaCondition = new CriteriaCondition(params);
-        return criteriaQueryService.singleQuery(EmployeeImpl.class, criteriaCondition);
+        return employeeDao.findByAttendanceCN(attendanceCN);
     }
 
     @Override
     public Map<String, Long> findAllNameMapId() {
         return employeeDao.findAllNameMapId();
+    }
+
+    @Override
+    public List<Long> findIdByDepartmentId(Long departmentId) {
+        return employeeDao.findIdByDepartmentId(departmentId);
     }
 }

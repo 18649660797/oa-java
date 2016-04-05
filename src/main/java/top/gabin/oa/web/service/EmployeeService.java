@@ -21,4 +21,7 @@ public interface EmployeeService {
     void persist(Employee employee);
     Employee findByAttendanceCN(String attendanceCN);
     Map<String, Long> findAllNameMapId();
+
+    List<Long> findIdByDepartmentId(Long departmentId);
+
 }

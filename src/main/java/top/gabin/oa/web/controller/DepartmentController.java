@@ -92,7 +92,7 @@ public class DepartmentController {
         try {
             ImportExcel importExcel = new ImportExcel(file, 3, 0);
             List<AttendanceImportDTO> dataList = importExcel.getDataList(AttendanceImportDTO.class);
-            departmentService.batchSave(dataList);
+            departmentService.importDepartment(dataList);
             resultMap.put("result", "success");
         } catch (Exception e) {
             e.printStackTrace();

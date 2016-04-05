@@ -28,6 +28,8 @@ import java.util.Map;
 public class DepartmentServiceImpl implements DepartmentService {
     @Resource(name = "departmentDao")
     private DepartmentDao departmentDao;
+    @Resource(name = "employeeService")
+    private EmployeeService employeeService;
     @Resource(name = "criteriaQueryService")
     private CriteriaQueryService criteriaQueryService;
 
@@ -75,6 +77,8 @@ public class DepartmentServiceImpl implements DepartmentService {
                 return;
             }
             for (Department department : departmentList) {
+                List<Long> employeeIds = employeeService.findIdByDepartmentId(department.getId());
+                employeeService.batchDelete(StringUtils.join(employeeIds, ","));
                 departmentDao.delete(department);
             }
         }
@@ -90,12 +94,12 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Transactional("transactionManager")
     @Override
-    public void batchSave(List<AttendanceImportDTO> dataList) {
+    public void importDepartment(List<AttendanceImportDTO> dataList) {
         Map<String, Integer> cache = new HashMap<String, Integer>();
         List<Department> departmentList = new ArrayList<Department>();
         for (AttendanceImportDTO dto : dataList) {
             String departmentName = dto.getDepartment();
-            if (StringUtils.isBlank(departmentName)) {
+            if (StringUtils.isBlank(departmentName) || findByName(departmentName) != null) {
                 continue;
             }
             if (!cache.containsKey(departmentName)) {
