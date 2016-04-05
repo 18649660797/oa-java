@@ -156,11 +156,13 @@
                                                 dataType : 'json',
                                                 method : 'post',
                                                 success: function (data) {
-                                                    edy.loaded();
-                                                    var w = top.window.open("/leave/preview");
-                                                    w.onunload = function() {
-                                                        edy.alert("导入成功！");
-                                                        reload();
+                                                    console.log(data);
+                                                    if (edy.ajaxHelp.handleAjax(data)) {
+                                                        edy.loaded();
+                                                        var w = top.window.open("/leave/preview");
+                                                        w.onunload = function() {
+                                                            reload();
+                                                        }
                                                     }
                                                 },
                                                 error: function (data, status, e) {

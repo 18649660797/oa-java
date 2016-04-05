@@ -50,7 +50,8 @@ public class LeaveImportDTO {
     }
 
     public String getLeaveType() {
-        return LeaveType.instance(leaveName).getType().toString();
+        LeaveType instance = LeaveType.instance(leaveName);
+        return instance == null ? null : instance.getType().toString();
     }
 
     public void setLeaveType(Integer leaveType) {
