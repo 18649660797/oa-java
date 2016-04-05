@@ -11,7 +11,8 @@ public enum LeaveType {
     FUNERAL_LEAVE(5, "丧假"),
     YEAR_LEAVE(6, "年假"),
     MATERNITY_LEAVE(7, "产假"),
-    MARRY_LEAVE(8, "婚假")
+    MARRY_LEAVE(8, "婚假"),
+    PATERNAL_LEAVE(9, "陪产假")
     ;
 
     LeaveType(Integer type, String label) {

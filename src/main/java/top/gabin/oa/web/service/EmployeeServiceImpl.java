@@ -47,20 +47,22 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> employees = new ArrayList<Employee>();
         for (AttendanceImportDTO dto : attendanceImportDTOList) {
             String realName = dto.getRealName();
+            realName = StringUtils.trim(realName);
             if (StringUtils.isBlank(realName)) {
                 continue;
             }
             String departmentName = dto.getDepartment();
+            departmentName = StringUtils.trim(departmentName);
             if (!cache.containsKey(realName)) {
                 Employee employee = new EmployeeImpl();
                 employee.setName(realName);
                 employee.setAttendanceCN(dto.getAttendance());
-                Department department = null;
+                Department department;
                 if (cacheDepartment.containsKey(departmentName)) {
                     department = cacheDepartment.get(departmentName);
                     employee.setDepartment(department);
                 } else {
-                    department = departmentService.findByName(StringUtils.trim(departmentName));
+                    department = departmentService.findByName(departmentName);
                     if (department == null) {
                         department = new DepartmentImpl();
                         department.setName(departmentName);

@@ -12,4 +12,6 @@ import java.util.List;
 public interface PermissionService {
     List<SimpleTreeDTO> getPermissionTreeData(HttpServletRequest request);
     List<Permission> findAll();
+    Permission findHelpPermissionTopById();
+    List<Permission> getChildren(Permission permission);
 }

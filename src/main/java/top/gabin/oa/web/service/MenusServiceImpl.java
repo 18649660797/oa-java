@@ -6,10 +6,7 @@ package top.gabin.oa.web.service;
 
 import org.springframework.stereotype.Service;
 import top.gabin.oa.web.dto.menus.MenusDTO;
-import top.gabin.oa.web.entity.Admin;
-import top.gabin.oa.web.entity.Menus;
-import top.gabin.oa.web.entity.MenusImpl;
-import top.gabin.oa.web.entity.Permission;
+import top.gabin.oa.web.entity.*;
 import top.gabin.oa.web.service.criteria.simple.QueryCondition;
 import top.gabin.oa.web.service.criteria.simple.QueryService;
 
@@ -28,6 +25,8 @@ import java.util.List;
 public class MenusServiceImpl implements MenusService {
     @Resource(name = "adminService")
     private AdminService adminService;
+    @Resource(name = "employeeService")
+    private EmployeeService employeeService;
     @Resource(name = "permissionService")
     private PermissionService permissionService;
     @Resource(name = "queryService")
@@ -37,9 +36,18 @@ public class MenusServiceImpl implements MenusService {
     public List<MenusDTO> findTopMenusByAdminName(String adminName) {
         List<MenusDTO> menusDTOList = new ArrayList<MenusDTO>();
         Admin admin = adminService.findByName(adminName);
-        List<Permission> permissionList = admin.getPermissionList();
-        if (admin.getId() == -1) {
-            permissionList = permissionService.findAll();
+        List<Permission> permissionList = new ArrayList<>();
+        if (admin == null) {
+            Employee employee = employeeService.findByAttendanceCN(adminName);
+            if (employee != null) {
+                Permission helpPermissionTop = permissionService.findHelpPermissionTopById();
+                permissionList.addAll(permissionService.getChildren(helpPermissionTop));
+            }
+        } else {
+            permissionList.addAll(admin.getPermissionList());
+            if (admin.getId() == -1) {
+                permissionList = permissionService.findAll();
+            }
         }
         final List<Long> permissionIds = new ArrayList<Long>();
         for (Permission permission : permissionList) {

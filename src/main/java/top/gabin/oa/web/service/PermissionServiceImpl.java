@@ -17,7 +17,9 @@ import top.gabin.oa.web.service.criteria.simple.QueryService;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author linjiabin  on  15/12/13
@@ -49,6 +51,30 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public List<Permission> findAll() {
         return queryService.query(Permission.class, PermissionImpl.class, null);
+    }
+
+    @Override
+    public Permission findHelpPermissionTopById() {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("eq_id", "4000");
+        CriteriaCondition criteriaCondition = new CriteriaCondition(params);
+        PermissionImpl permission = criteriaQueryService.singleQuery(PermissionImpl.class, criteriaCondition);
+        return permission;
+    }
+
+    @Override
+    public List<Permission> getChildren(Permission permission) {
+        List<Permission> permissionList = new ArrayList<>();
+        List<Permission> childrenList = permission.getChildrenList();
+        permissionList.add(permission);
+        if (childrenList.isEmpty()) {
+            return permissionList;
+        } else {
+            for (Permission p : childrenList) {
+                permissionList.addAll(getChildren(p));
+            }
+        }
+        return permissionList;
     }
 
 }

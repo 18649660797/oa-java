@@ -69,7 +69,7 @@ public class EmployeeController {
     }
 
     @RequestMapping(value = "import", method = RequestMethod.POST)
-    public @ResponseBody Map productImport(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+    public @ResponseBody Map productImport(@RequestParam("file") MultipartFile file) {
         try {
             ImportExcel importExcel = new ImportExcel(file, 3, 0);
             List<AttendanceImportDTO> dataList = importExcel.getDataList(AttendanceImportDTO.class);
