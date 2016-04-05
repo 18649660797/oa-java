@@ -81,6 +81,8 @@
                                     });
                                 }
                             }
+                        }, {text: '<div class="tips tips-small tips-notice bui-inline-block"><span class="x-icon x-icon-small x-icon-warning"><i class="icon icon-volume-up"></i></span><div class="tips-content">请核对清楚是否有数据缺失,或异常.再确认提交,可以通过字段排序排查</div></div>'
+                            ,  xclass:'bar-item-text'
                         }]
                     },
                     plugins : [editing,Grid.Plugins.CheckSelection,Grid.Plugins.ColumnResize]
