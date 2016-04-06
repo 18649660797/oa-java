@@ -1,7 +1,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans.xsd">
+       http://www.springframework.org/schema/beans/spring-beans.xsd"
+       xmlns:p="http://www.springframework.org/schema/p">
     <!-- 考勤工作流 -->
     <bean id="attendanceWorkFlow" class="top.gabin.oa.web.service.flow.attendance.execute.WorkFlowExecute">
         <property name="dataBuilder" ref="attendanceService"></property>
@@ -14,16 +15,8 @@
             </list>
         </property>
     </bean>
-    <bean id="highRuleWorkFlow" class="top.gabin.oa.web.service.flow.attendance.step.HighRuleWorkFlow">
-        <property name="order" value="500" ></property>
-    </bean>
-    <bean id="leaveWorkFlow" class="top.gabin.oa.web.service.flow.attendance.step.LeaveWorkFlow">
-        <property name="order" value="1000" ></property>
-    </bean>
-    <bean id="yesterdayDelayWorkFlow" class="top.gabin.oa.web.service.flow.attendance.step.YesterdayDelayWorkFlow">
-        <property name="order" value="2000" ></property>
-    </bean>
-    <bean id="ruleWorkFlow" class="top.gabin.oa.web.service.flow.attendance.step.RuleWorkFlow">
-        <property name="order" value="4000" ></property>
-    </bean>
+    <bean id="highRuleWorkFlow" class="top.gabin.oa.web.service.flow.attendance.step.HighRuleWorkFlow" p:order="500"></bean>
+    <bean id="leaveWorkFlow" class="top.gabin.oa.web.service.flow.attendance.step.LeaveWorkFlow" p:order="1000"></bean>
+    <bean id="yesterdayDelayWorkFlow" class="top.gabin.oa.web.service.flow.attendance.step.YesterdayDelayWorkFlow" p:order="2000"></bean>
+    <bean id="ruleWorkFlow" class="top.gabin.oa.web.service.flow.attendance.step.RuleWorkFlow" p:order="4000"></bean>
 </beans>
