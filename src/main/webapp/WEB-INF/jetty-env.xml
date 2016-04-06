@@ -21,7 +21,7 @@ IT IS NOT RECOMMENDED TO USE JETTY IN A PRODUCTION ENVIRONMENT.
                 <Set name="driverClassName">com.mysql.jdbc.Driver</Set>
                 <Set name="url">jdbc:mysql://localhost:3306/oa</Set>
                 <Set name="username">root</Set>
-                <Set name="password"></Set>
+                <Set name="password">19901204</Set>
             </New>
         </Arg>
     </New>
