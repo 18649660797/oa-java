@@ -30,6 +30,9 @@
                 <prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy</prop>
                 <prop key="hibernate.show_sql">false</prop>
                 <prop key="hibernate.hbm2ddl.auto">none</prop>
+                <!-- 拦截和事件机制demo配置 -->
+                <prop key="hibernate.ejb.interceptor">top.gabin.oa.web.tenant.interceptor.TenantInterceptor</prop>
+                <prop key="hibernate.ejb.event.load-collection">top.gabin.oa.web.tenant.listener.TenantListener</prop>
             </props>
         </property>
     </bean>

@@ -14,7 +14,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "edy_leave")
-public class LeaveImpl implements Leave {
+public class LeaveImpl extends BasicEntity implements Leave {
     @Id
     @TableGenerator(name = "leave_sequences", table = "edy_sequences", pkColumnName = "sequence_name",
             valueColumnName = "sequence_next_hi_value", initialValue = 20, allocationSize = 50)

@@ -37,6 +37,18 @@
 		<listener-class>top.gabin.oa.web.listener.ApplicationFlywayListener</listener-class>
 	</listener>
 	<filter>
+		<filter-name>tenancyFilter</filter-name>
+		<filter-class>top.gabin.oa.web.tenant.filter.TenantFilter</filter-class>
+		<init-param>
+			<param-name>ignoreURIs</param-name>
+			<param-value>/static/**,/admin/**</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>tenancyFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter>
 		<filter-name>Spring OpenEntityManagerInViewFilter</filter-name>
 		<filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
 	</filter>
