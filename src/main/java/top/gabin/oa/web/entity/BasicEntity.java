@@ -38,7 +38,7 @@ public class BasicEntity {
 
     @PrePersist
     private void persist() {
-        setTenantId(TenantUtils.get());
+        setTenantId(TenantUtils.getTenantId());
     }
 
 }

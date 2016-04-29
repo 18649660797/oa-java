@@ -7,9 +7,8 @@
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
             http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.2.xsd
             http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
-<!-- 启动AOP注解 -->
-<aop:aspectj-autoproxy/>
-
+    <!-- 启动AOP注解 -->
+<aop:aspectj-autoproxy proxy-target-class="true"/>
 <!-- 启动注解缓存 -->
 <cache:annotation-driven cache-manager="cacheManager"/>
 

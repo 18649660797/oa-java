@@ -53,14 +53,14 @@ public class TenantFilter implements Filter {
         // 将新的租户信息存储线程单例中
         Long tenancyId = getTenancyIdByKey(tenancy);
         if (tenancyId != null) {
-            TenantUtils.set(tenancyId);
+            TenantUtils.setTenantId(tenancyId);
             TenantUtils.setSessionTenancy(session, tenancyId);
             if (AuthUtils.getCurrentLoginUserName() != null) {
                 servletRequest.getRequestDispatcher(requestURI.replace("/" + tenancy, "")).forward(request,response);
                 return;
             }
         } else if (sessionTenancy != null) {
-            TenantUtils.set(sessionTenancy);
+            TenantUtils.setTenantId(sessionTenancy);
         }
         filterChain.doFilter(request, response);
     }

@@ -47,7 +47,7 @@ public class TenantInterceptor extends EmptyInterceptor {
 
     @Override
     public boolean onLoad(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
-        return super.onLoad(entity, id, state, propertyNames, types);
+        return false;
     }
 
     @Override
