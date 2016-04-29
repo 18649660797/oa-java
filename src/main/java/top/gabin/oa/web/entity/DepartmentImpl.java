@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "edy_department")
-public class DepartmentImpl implements Department {
+public class DepartmentImpl extends BasicEntity implements Department {
     @Id
     @TableGenerator(name = "department_sequences", table = "edy_sequences", pkColumnName = "sequence_name",
             valueColumnName = "sequence_next_hi_value", initialValue = 20, allocationSize = 50)
