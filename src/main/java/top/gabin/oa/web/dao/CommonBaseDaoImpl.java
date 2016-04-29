@@ -1,21 +1,15 @@
 package top.gabin.oa.web.dao;
 
 
-import org.apache.commons.lang3.StringUtils;
-import top.gabin.oa.web.dto.AttendanceImportDTO;
-import top.gabin.oa.web.entity.Department;
-import top.gabin.oa.web.entity.DepartmentImpl;
-import top.gabin.oa.web.entity.Employee;
-import top.gabin.oa.web.entity.EmployeeImpl;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -28,10 +22,12 @@ public abstract class CommonBaseDaoImpl<SUB, T> implements CommonBaseDao<SUB, T>
     @PersistenceContext(name = "entityManagerFactory")
     protected EntityManager em;
     private Class clazz ;
+    private Class iClazz ;
 
     public CommonBaseDaoImpl() {
         ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass();
         clazz =(Class)type.getActualTypeArguments()[1];
+        iClazz =(Class)type.getActualTypeArguments()[0];
     }
 
     @Override
@@ -66,8 +62,12 @@ public abstract class CommonBaseDaoImpl<SUB, T> implements CommonBaseDao<SUB, T>
 
     @Override
     public List<SUB> findAll() {
-        Query query = em.createQuery("from " + clazz.getName());
-        return query.getResultList();
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaQuery query = criteriaBuilder.createQuery(iClazz);
+        Root from = query.from(clazz);
+        query.select(from);
+        TypedQuery typedQuery = em.createQuery(query);
+        return typedQuery.getResultList();
     }
 
     @Override
