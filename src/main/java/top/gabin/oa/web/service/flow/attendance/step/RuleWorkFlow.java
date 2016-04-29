@@ -58,37 +58,36 @@ public class RuleWorkFlow extends AbstractAnalysisWorkFlow {
                         String remark = "";
                         // 如果迟到
                         if (analysisResult.isWorkNeedFit() && amDate != null && amNeedFitTime != null && amDate.after(amNeedFitTime)) {
-                            int delaySeconds = employeeAnalysisResult.getDelaySeconds();
                             long minutes = TimeUtils.getMinutes(amDate, amNeedFitTime) + workFitOffset;
                             analysisResult.setWorkDelayMinutes((int) minutes);
-                            // 十五分钟内
-                            if (minutes <= 15 && delaySeconds < attendanceService.getDelayLimit()) {
-                                analysisResult.setImpunityWorkDelay(true);
-                                employeeAnalysisResult.setDelaySeconds(delaySeconds + 1);
-                            } else {
-                                // 如果超过15分钟
-                                int amMoney = employeeAnalysisResult.getDelayMoney();
-                                if (minutes <= 30) {
-                                    amMoney += fineMoneyBasicOfDelay;
-                                    remark += "迟到乐捐" + amMoney + "元;";
-                                } else if (minutes > 30 && minutes <= 60) {
-                                    remark +=  "迟到扣除1h工资;";
-                                } else if (minutes > 60 && minutes <= 180) {
-                                    remark += "迟到扣除3h工资;";
-                                } else if (minutes > 180) {
-                                    remark += "迟到扣除1天工资;";
-                                }
-                                analysisResult.setLightFineWorkDelay(amMoney);
-                                employeeAnalysisResult.setDelayMoney(amMoney);
+                            int amMoney = employeeAnalysisResult.getDelayMoney();
+                            if (minutes > 10 && minutes <= 30) {
+                                remark +=  "迟到扣除0.5h工资;";
+                            } else if (minutes > 30 && minutes <= 60) {
+                                remark +=  "迟到扣除1h工资;";
+                            } else if (minutes > 60 && minutes <= 180) {
+                                remark += "迟到扣除3h工资;";
+                            } else if (minutes > 180) {
+                                remark += "迟到扣除1天工资;";
                             }
+                            analysisResult.setLightFineWorkDelay(amMoney);
+                            employeeAnalysisResult.setDelayMoney(amMoney);
                         }
                         if (!analysisResult.isWorkNeedFit()) {
                             remark += "今天上班免打卡";
                         }
                         // 如果早退
                         if (analysisResult.isLeaveNeedFit() && ((amDate != null && pmDate == null) || (pmDate != null && pmNeedFitTime != null && pmDate.before(pmNeedFitTime)))) {
+                            if (attendance.getEmployee().getId().equals(2680L)) {
+                                System.out.println(1);
+                            }
+                            long minutes = 0;
                             if (pmDate != null && pmNeedFitTime != null) {
-                                long minutes = TimeUtils.getMinutes(pmNeedFitTime, pmDate);
+                                minutes = TimeUtils.getMinutes(pmNeedFitTime, pmDate);
+                                analysisResult.setLeaveEarlyMinutes((int) minutes);
+                            }
+                            if (pmDate == null) {
+                                minutes = 75 * 6;
                                 analysisResult.setLeaveEarlyMinutes((int) minutes);
                             }
                             int goQuickSeconds = employeeAnalysisResult.getLeaveEarlySeconds();
@@ -96,12 +95,14 @@ public class RuleWorkFlow extends AbstractAnalysisWorkFlow {
                                 analysisResult.setImpunityLeaveEarly(true);
                                 employeeAnalysisResult.setLeaveEarlySeconds(goQuickSeconds + 1);
                                 remark += "下班补卡;";
-                            } else {
+                            } else if (minutes > 0) {
                                 int pmMoney = employeeAnalysisResult.getLeaveEarlyMoney();
                                 pmMoney += fineMoneyBasicOfLeaveEarly;
                                 analysisResult.setFineLeaveEarly(pmMoney);
                                 employeeAnalysisResult.setLeaveEarlyMoney(pmMoney);
-                                remark += "早退乐捐" + pmMoney + "元;";
+                                int hour = (int)Math.ceil(minutes * 2 / 60d);
+//                                remark += "早退乐捐" + pmMoney + "元;";
+                                remark += "早退" + minutes + "分钟,扣除工资:" + hour +"小时工资";
                             }
                         }
                         if (!analysisResult.isLeaveNeedFit()) {

@@ -105,8 +105,11 @@ public class LeaveServiceImpl implements LeaveService {
                 continue;
             }
             Leave leave = new LeaveImpl();
-            leave.setBeginDate(dto.getBeginDate());
-            leave.setEndDate(dto.getEndDate());
+            // 清除秒为00
+            Date beginDate = dto.getBeginDate();
+            leave.setBeginDate(TimeUtils.parseDate(TimeUtils.format(beginDate, "yyyy-MM-dd HH:mm:00")));
+            Date endDate = dto.getEndDate();
+            leave.setEndDate(TimeUtils.parseDate(TimeUtils.format(endDate, "yyyy-MM-dd HH:mm:00")));
             leave.setType(LeaveType.instance(dto.getLeaveName()));
             Employee employee;
             if (cacheEmployee.containsKey(realName)) {

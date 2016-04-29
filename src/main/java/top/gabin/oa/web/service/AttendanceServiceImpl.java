@@ -344,21 +344,21 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
 
     /**
-     * 早退限制，默认4
+     * 早退限制，默认3
      * @return
      */
     @Override
     public int getLeaveEarlyLimit() {
-        return 4;
+        return 3;
     }
 
     /**
-     * 获取迟到限制，目前默认3
+     * 获取迟到限制，目前默认无
      * @return
      */
     @Override
     public int getDelayLimit() {
-        return 3;
+        return 0;
     }
 
     @Override
@@ -467,8 +467,8 @@ public class AttendanceServiceImpl implements AttendanceService {
                         long normalLeaveTimes = 0, sickLeaveTimes = 0, offLeaveTimes = 0;
                         for (LeaveResult leaveResult : leaveList) {
                             long minutes = leaveResult.getLeaveMinutes();
-                            double hours =  minutes / 60D;
-                            String times = hours + "h";
+                            double hours =  ((int)(minutes / 60D * 100)) / 100d;
+                            String times = hours + "h(" + minutes + ")";
                             Leave leave = leaveResult.getLeave();
                             switch (leave.getType()) {
                                 case NORMAL_LEAVE:
