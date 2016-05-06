@@ -9,7 +9,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import top.gabin.oa.web.tenant.anotation.Tenant;
 import top.gabin.oa.web.tenant.utils.TenantUtils;

@@ -7,7 +7,7 @@ import java.util.List;
  *
  * @author linjiabin  on  15/12/10
  */
-public interface Permission {
+public interface Permission extends BasicEntity {
     Long getId();
 
     void setId(Long id);

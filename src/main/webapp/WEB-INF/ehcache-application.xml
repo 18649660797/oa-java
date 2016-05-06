@@ -8,19 +8,19 @@
             http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.2.xsd
             http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
     <!-- 启动AOP注解 -->
-<aop:aspectj-autoproxy proxy-target-class="true"/>
-<!-- 启动注解缓存 -->
-<cache:annotation-driven cache-manager="cacheManager"/>
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+    <!-- 启动注解缓存 -->
+    <cache:annotation-driven cache-manager="cacheManager"/>
 
-<!--  缓存属性-->
-<bean id="cacheManagerFactory" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
-    <property name="configLocation" value="WEB-INF/ehcache.xml"/>
-    <property name="shared" value="true"/>
-</bean>
+    <!--  缓存属性-->
+    <bean id="cacheManagerFactory" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <property name="configLocation" value="WEB-INF/ehcache.xml"/>
+        <property name="shared" value="true"/>
+    </bean>
 
-<!-- 使用EhCacheCacheManager，默认是cacheManager -->
-<bean id="cacheManager" class="top.gabin.oa.web.cache.EhCacheManagerAdapter">
-    <property name="cacheManager" ref="cacheManagerFactory"/>
-</bean>
+    <!-- 使用EhCacheCacheManager，默认是cacheManager -->
+    <bean id="cacheManager" class="top.gabin.oa.web.cache.EhCacheManagerAdapter">
+        <property name="cacheManager" ref="cacheManagerFactory"/>
+    </bean>
 
 </beans>
