@@ -9,6 +9,16 @@ package top.gabin.oa.web.design.factory.normal;
  * @author linjiabin on  16/4/30
  */
 public class Screen implements Component {
+    private String brand;
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
     @Override
     public void assembly(Phone phone) {
         phone.setScreen(this);

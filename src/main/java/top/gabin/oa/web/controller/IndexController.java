@@ -9,6 +9,7 @@ import top.gabin.oa.web.service.MenusService;
 import top.gabin.oa.web.utils.AuthUtils;
 
 import javax.annotation.Resource;
+import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
 @Controller
@@ -16,6 +17,7 @@ import java.util.List;
 public class IndexController {
 	@Resource(name = "menusService")
 	private MenusService menusService;
+	@RolesAllowed("Admin_2")
 	@RequestMapping(method = RequestMethod.GET)
 	public String printWelcome(Model model) {
 		List<MenusDTO> menusDTOList = menusService.findTopMenusByAdminName(AuthUtils.getCurrentLoginUserName());
