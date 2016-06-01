@@ -117,6 +117,7 @@ public class LeaveServiceImpl implements LeaveService {
             } else {
                 employee = employeeService.findByName(realName);
             }
+            leave.setRemark(dto.getRemark());
             leave.setEmployee(employee);
             leaveList.add(leave);
         }

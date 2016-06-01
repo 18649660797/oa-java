@@ -474,6 +474,8 @@ public class AttendanceServiceImpl implements AttendanceService {
                                 case NORMAL_LEAVE:
                                     normalLeaveTimes += minutes;
                                     break;
+                                case SALARY_SICK_LEAVE:
+                                    remark += leave.getType().getLabel() + times;
                                 case SICK_LEAVE:
                                     sickLeaveTimes += minutes;
                                     break;

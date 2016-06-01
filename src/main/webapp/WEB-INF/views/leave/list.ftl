@@ -27,6 +27,8 @@
                     <option value="6">年假</option>
                     <option value="7">婚假</option>
                     <option value="8">产假</option>
+                    <option value="9">陪产假</option>
+                    <option value="10">带薪病假</option>
                 </select>
 
                 <label>部门：</label>

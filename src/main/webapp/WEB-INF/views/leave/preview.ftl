@@ -32,7 +32,7 @@
                 </#if>
             };
 
-            var enumObj = {1: "事假",2: "病假",3 : "调休", 4: "外出", 5: "丧假", 6: "年假", 7: "产假", 8: "婚假", "9": "陪产假"},
+            var enumObj = {1: "事假",2: "病假",3 : "调休", 4: "外出", 5: "丧假", 6: "年假", 7: "产假", 8: "婚假", 9: "陪产假", 10: "带薪病假"},
 //            var enumObj = {"事假": "事假","病假": "病假","调休" : "调休", "外出": "外出", "丧假": "丧假", "年假": "年假", "产假": "产假", "婚假": "婚假"},
                     columns = [
                 {title: '员工', editor : {xtype : 'select', rules: {require:true},items : enumName}, dataIndex: 'id', width: 80, renderer : Grid.Format.multipleItemsRenderer(enumName)},
