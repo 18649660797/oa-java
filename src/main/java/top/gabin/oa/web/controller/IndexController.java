@@ -13,12 +13,11 @@ import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping()
 public class IndexController {
 	@Resource(name = "menusService")
 	private MenusService menusService;
-	@RolesAllowed("Admin_2")
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.GET, value = {"", "/index"})
 	public String printWelcome(Model model) {
 		List<MenusDTO> menusDTOList = menusService.findTopMenusByAdminName(AuthUtils.getCurrentLoginUserName());
 		model.addAttribute("menus", menusDTOList);
