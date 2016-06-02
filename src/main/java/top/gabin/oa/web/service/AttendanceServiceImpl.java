@@ -98,11 +98,12 @@ public class AttendanceServiceImpl implements AttendanceService {
             attendance.setWorkDateFormat(TimeUtils.format(date, "yyyy-MM-dd"));
             attendance.setWorkDate(date);
             String departmentName = dto.getDepartment();
+            String cn = dto.getCn();
             Employee employee;
-            if (cacheEmployee.containsKey(realName)) {
-                employee = cacheEmployee.get(realName);
+            if (cacheEmployee.containsKey(cn)) {
+                employee = cacheEmployee.get(cn);
             } else {
-                employee = employeeService.findByName(realName);
+                employee = employeeService.findByAttendanceCN(cn);
                 if (employee == null) {
                     employee = new EmployeeImpl();
                     employee.setName(realName);
@@ -123,7 +124,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                     employee.setDepartment(department);
                     cacheDepartment.put(departmentName, department);
                 }
-                cacheEmployee.put(realName, employee);
+                cacheEmployee.put(cn, employee);
             }
             attendance.setEmployee(employee);
             attendanceList.add(attendance);
