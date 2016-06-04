@@ -21,6 +21,8 @@
                     <option value="">全部</option>
                     <option value="0">上班打卡时间设置</option>
                     <option value="1">下班打卡时间设置</option>
+                    <option value="2">上班不打卡设置</option>
+                    <option value="3">下班不打卡设置</option>
                 </select>
             </span>
             </div>

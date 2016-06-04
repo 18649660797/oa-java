@@ -27,7 +27,7 @@
                 Store = Data.Store,
                 columns = [
                     {title: 'ID', dataIndex: 'id', width: 80},
-                    {title: '名称', dataIndex: 'name', width: 60},
+                    {title: '名称', dataIndex: 'name', width: 150},
                     {title: '操作', dataIndex: 'id', width: 150, renderer: function(val, row) {
                         var html = edy.rendererHelp.createJavaScriptLink("edit", val, "编辑");
                         html += "  " + edy.rendererHelp.createJavaScriptLink("delete", val, "删除");

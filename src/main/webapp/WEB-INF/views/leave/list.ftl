@@ -56,9 +56,10 @@
             var Grid = Grid,
                 Store = Data.Store,
                 columns = [
-                    {title: 'id', dataIndex: 'id', width: 80, renderer: function(val, row) {
+                    {title: '操作', dataIndex: 'id', width: 80, renderer: function(val, row) {
                         return edy.rendererHelp.createJavaScriptLink("edit", val, "编辑");
                     }},
+                    {title: 'id', dataIndex: 'id', width: 80},
                     {title: '姓名', dataIndex: 'realName', width: 60},
                     {title: '部门', dataIndex: 'department', width: 100},
                     {title: '类型', dataIndex: 'type', width: 60},
@@ -209,14 +210,14 @@
             }
             top.reload = reload;
             function edit () {
-                var id = $(this).attr("data-edit");
+                var id = $(this).attr("data-edit") || "";
                 var dialog = new top.BUI.Overlay.Dialog({
                     title: (id && '编辑' || '新增') + '请假登记',
                     width:800,
                     height:400,
                     closeAction: "destroy",
                     loader : {
-                        url : '/leave/edit',
+                        url : '/leave/edit?id=' + id,
                         autoLoad : false, //不自动加载
                         lazyLoad : false
                     },

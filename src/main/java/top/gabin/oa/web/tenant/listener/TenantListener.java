@@ -23,8 +23,5 @@ public class TenantListener implements LoadEventListener {
     @Override
     public void onLoad(LoadEvent loadEvent, LoadType loadType) throws HibernateException {
 
-        if (loadEvent.getResult() instanceof Leave) {
-            loadEvent.setResult(null);
-        }
     }
 }
