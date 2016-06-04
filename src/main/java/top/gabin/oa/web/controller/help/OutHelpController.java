@@ -9,19 +9,28 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import top.gabin.oa.web.constant.LeaveType;
 import top.gabin.oa.web.constant.attendance.LeaveTypeEnum;
-import top.gabin.oa.web.dto.form.EditLeaveTypeForm;
-import top.gabin.oa.web.entity.LeaveTypeImpl;
+import top.gabin.oa.web.dto.LeaveDTO;
+import top.gabin.oa.web.dto.PageDTO;
+import top.gabin.oa.web.entity.Department;
+import top.gabin.oa.web.entity.Employee;
+import top.gabin.oa.web.entity.LeaveImpl;
+import top.gabin.oa.web.service.DepartmentService;
+import top.gabin.oa.web.service.EmployeeService;
 import top.gabin.oa.web.service.LeaveService;
+import top.gabin.oa.web.service.criteria.CriteriaCondition;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
+import top.gabin.oa.web.service.criteria.CriteriaQueryUtils;
+import top.gabin.oa.web.utils.AuthUtils;
 import top.gabin.oa.web.utils.RenderUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author linjiabin  on  16/3/31
  */
 @Controller("outHelpController")
@@ -31,12 +40,18 @@ public class OutHelpController {
     private CriteriaQueryService criteriaQueryService;
     @Resource(name = "leaveService")
     private LeaveService leaveService;
+    @Resource(name = "departmentService")
+    private DepartmentService departmentService;
+    @Resource(name = "employeeService")
+    private EmployeeService employeeService;
     private String dir = "help/out";
 
     @RequestMapping("/list")
     public String list(Model model) {
         model.addAttribute("leaveTypeEnums", LeaveTypeEnum.values());
-        return  dir + "/list";
+        List<Department> departmentList = departmentService.findAll();
+        model.addAttribute("departmentList", departmentList);
+        return dir + "/list";
     }
 
     @RequestMapping("/edit")
@@ -45,23 +60,32 @@ public class OutHelpController {
             model.addAttribute("entity", leaveService.findById(id));
         }
         model.addAttribute("leaveTypeEnums", LeaveTypeEnum.values());
-        return  dir + "/edit";
+        String cn = AuthUtils.getCurrentLoginUserName();
+        Employee employee = employeeService.findByAttendanceCN(cn);
+        model.addAttribute("employee", employee);
+        return dir + "/edit";
     }
 
     @RequestMapping(value = "grid", method = RequestMethod.GET)
-    public @ResponseBody
-    Map<String, Object> grid(HttpServletRequest request) {
-        return criteriaQueryService.queryPage(LeaveTypeImpl.class, request, "id,label,type.label type");
+    @ResponseBody
+    public Map<String, Object> grid(HttpServletRequest request) {
+        String currentLoginUserName = AuthUtils.getCurrentLoginUserName();
+        CriteriaCondition criteriaCondition = CriteriaQueryUtils.parseCondition(request, "eq_employee.attendanceCN", currentLoginUserName, "eq_type", "4");
+        PageDTO<LeaveImpl> adminPageDTO = criteriaQueryService.queryPage(LeaveImpl.class, criteriaCondition);
+        return RenderUtils.filterPageDataResult(adminPageDTO, "id,beginDate,endDate,type.label type,employee.name realName,employee.department.name department,remark");
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> saveRule(EditLeaveTypeForm form) {
-//        leaveService.editSave(form);
+    @ResponseBody
+    public Map<String, Object> saveRule(LeaveDTO leaveDTO) {
+        leaveDTO.setType(LeaveType.OUT_LEAVE.getType());
+        leaveService.merge(leaveDTO);
         return RenderUtils.SUCCESS_RESULT;
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> saveRule(String ids) {
+    @ResponseBody
+    public Map<String, Object> saveRule(String ids) {
         try {
             leaveService.batchDelete(ids);
         } catch (Exception e) {

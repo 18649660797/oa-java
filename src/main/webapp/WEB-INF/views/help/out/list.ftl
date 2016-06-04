@@ -8,21 +8,21 @@
         <form id="J_FORM" class="form-panel" action="data" method="post" style="margin-bottom:0;">
             <div class="panel-title">
             <span>
-                <label>名称：</label>
-                <input type="text" name="like_label" value="">
-                <label>类型：</label>
-                <select name="eq_type">
-                    <option value="">全部</option>
-                    <#if leaveTypeEnums?? && leaveTypeEnums?size gt 0>
-                        <#list leaveTypeEnums as leaveType>
-                            <option value="${(leaveType.type!)}">${(leaveType.label)!}</option>
-                        </#list>
-                    </#if>
-                </select>
+                <label>开始时间：</label><input name="ge_beginDate" type="text" class="calendar" /> <label>至</label> <input name="le_beginDate" type="text" class="calendar" />
+                <label>结束时间：</label><input name="ge_endDate" type="text" class="calendar" /> <label>至</label> <input name="le_endDate" type="text" class="calendar" />
             </span>
             </div>
             <ul class="panel-content">
                 <li>
+                    <label>部门：</label>
+                    <select name="eq_employee.department.id">
+                        <option value="">全部</option>
+                    <#if departmentList?? && departmentList?size gt 0>
+                        <#list departmentList as department>
+                            <option value="${(department.id)!}">${(department.name)!}</option>
+                        </#list>
+                    </#if>
+                    </select>
                     <button type="submit" class="button button-primary">查询>></button>
                 </li>
             </ul>
@@ -44,15 +44,17 @@
                 var Grid = Grid,
                     Store = Data.Store,
                     columns = [
-                        {title: '操作', dataIndex: 'id', width: 60, renderer: function(val, row) {
+                        {title: 'id', dataIndex: 'id', width: 80, renderer: function(val, row) {
                             return edy.rendererHelp.createJavaScriptLink("edit", val, "编辑");
                         }},
-                        {title: 'id', dataIndex: 'id', width: 60},
-                        {title: '名称', dataIndex: 'label', width: 60},
-                        {title: '类型', dataIndex: 'type', width: 150}
+                        {title: '姓名', dataIndex: 'realName', width: 60},
+                        {title: '部门', dataIndex: 'department', width: 100},
+                        {title: '开始日期', dataIndex: 'beginDate', width: 150, renderer: BUI.Grid.Format.datetimeRenderer},
+                        {title: '结束时间', dataIndex: 'endDate', width: 150, renderer: BUI.Grid.Format.datetimeRenderer},
+                        {title: '备注', dataIndex: 'remark', width: 150}
                     ];
                 var store = new Store({
-                    url : '/attendance/leave/grid',
+                    url : '/help/out/grid',
                     autoLoad:false, //自动加载数据
 //                        params : $("#J_FORM").serialize(),
                     pageSize:10	// 配置分页数目
@@ -71,7 +73,7 @@
                     tbar:{ //添加、删除
                         items : [{
                             btnCls : 'button button-small',
-                            text : '<i class="icon-plus"></i>新增',
+                            text : '<i class="icon-plus"></i>外出登记',
                             listeners : {
                                 'click' : edit
                             }
@@ -84,8 +86,8 @@
                                     if (!ids) {
                                         return edy.alert("至少选择一个记录");
                                     }
-                                    edy.confirm("确认要删除选中的请假类型?", function() {
-                                        $.post("/attendance/leave/delete", {ids: ids}, function(data) {
+                                    edy.confirm("确认要删除选中的外出记录?", function() {
+                                        $.post("/help/leave/delete", {ids: ids}, function(data) {
                                             if (edy.ajaxHelp.handleAjax(data)) {
                                                 edy.alert("删除成功！");
                                                 reload();
@@ -125,14 +127,14 @@
                 top.reload = reload;
             });
             function edit () {
-                var id = $(this).attr("data-edit");
+                var id = $(this).attr("data-edit") || "";
                 var dialog = new top.BUI.Overlay.Dialog({
-                    title: (id && '编辑' || '新增') + '请假类型',
+                    title: (id && '编辑' || '新增') + '外出登记',
                     width:500,
                     height:400,
                     closeAction: "destroy",
                     loader : {
-                        url : '/attendance/leave/edit',
+                        url : '/help/out/edit',
                         autoLoad : false, //不自动加载
                         lazyLoad : false
                     },

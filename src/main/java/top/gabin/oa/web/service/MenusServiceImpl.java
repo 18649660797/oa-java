@@ -48,6 +48,9 @@ public class MenusServiceImpl implements MenusService {
             if (admin.getId() == -1) {
                 permissionList = permissionService.findAll();
             }
+            Permission helpPermissionTop = permissionService.findHelpPermissionTopById();
+            permissionList.remove(helpPermissionTop);
+            permissionList.removeAll(permissionService.getChildren(helpPermissionTop));
         }
         final List<Long> permissionIds = new ArrayList<Long>();
         for (Permission permission : permissionList) {

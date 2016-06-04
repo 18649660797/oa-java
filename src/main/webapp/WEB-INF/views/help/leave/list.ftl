@@ -8,21 +8,35 @@
         <form id="J_FORM" class="form-panel" action="data" method="post" style="margin-bottom:0;">
             <div class="panel-title">
             <span>
-                <label>名称：</label>
-                <input type="text" name="like_label" value="">
-                <label>类型：</label>
-                <select name="eq_type">
-                    <option value="">全部</option>
-                    <#if leaveTypeEnums?? && leaveTypeEnums?size gt 0>
-                        <#list leaveTypeEnums as leaveType>
-                            <option value="${(leaveType.type!)}">${(leaveType.label)!}</option>
-                        </#list>
-                    </#if>
-                </select>
+                <label>开始时间：</label><input name="ge_beginDate" type="text" class="calendar" /> <label>至</label> <input name="le_beginDate" type="text" class="calendar" />
+                <label>结束时间：</label><input name="ge_endDate" type="text" class="calendar" /> <label>至</label> <input name="le_endDate" type="text" class="calendar" />
             </span>
             </div>
             <ul class="panel-content">
                 <li>
+                    <label>假别：</label>
+                    <select name="eq_type">
+                        <option value="">全部</option>
+                        <option value="1">事假</option>
+                        <option value="2">病假</option>
+                        <option value="3">调休</option>
+                        <option value="5">丧假</option>
+                        <option value="6">年假</option>
+                        <option value="7">婚假</option>
+                        <option value="8">产假</option>
+                        <option value="9">陪产假</option>
+                        <option value="10">带薪病假</option>
+                    </select>
+
+                    <label>部门：</label>
+                    <select name="eq_employee.department.id">
+                        <option value="">全部</option>
+                    <#if departmentList?? && departmentList?size gt 0>
+                        <#list departmentList as department>
+                            <option value="${(department.id)!}">${(department.name)!}</option>
+                        </#list>
+                    </#if>
+                    </select>
                     <button type="submit" class="button button-primary">查询>></button>
                 </li>
             </ul>
@@ -74,7 +88,7 @@
                     tbar:{ //添加、删除
                         items : [{
                             btnCls : 'button button-small',
-                            text : '<i class="icon-plus"></i>新增',
+                            text : '<i class="icon-plus"></i>请假登记',
                             listeners : {
                                 'click' : edit
                             }
