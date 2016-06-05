@@ -4,6 +4,8 @@
  */
 package top.gabin.oa.web.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +28,8 @@ import top.gabin.oa.web.utils.json.JsonUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
@@ -47,6 +51,7 @@ public class LeaveController {
     private DepartmentService departmentService;
     @Resource(name = "employeeService")
     private EmployeeService employeeService;
+    private static final Logger logger = LoggerFactory.getLogger(LeaveController.class);
     private final static String IMPORT_DATA = "SESSION_LEAVE_IMPORT";
 
     private String dir = "leave";
@@ -67,18 +72,21 @@ public class LeaveController {
     }
 
     @RequestMapping(value = "grid", method = RequestMethod.GET)
-    public @ResponseBody Map<String, Object> grid(HttpServletRequest request) {
+    @ResponseBody
+    public Map<String, Object> grid(HttpServletRequest request) {
         return criteriaQueryService.queryPage(LeaveImpl.class, request, "id,beginDate,endDate,type.label type,employee.name realName,employee.department.name department,remark");
     }
 
     @RequestMapping(value = "save", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> save(LeaveDTO leaveDTO) {
+    @ResponseBody
+    public Map<String, Object> save(LeaveDTO leaveDTO) {
         leaveService.merge(leaveDTO);
         return RenderUtils.SUCCESS_RESULT;
     }
 
     @RequestMapping(value = "delete", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> delete(String ids) {
+    @ResponseBody
+    public Map<String, Object> delete(String ids) {
         leaveService.batchDelete(ids);
         return RenderUtils.SUCCESS_RESULT;
     }
@@ -95,7 +103,8 @@ public class LeaveController {
      * @return
      */
     @RequestMapping(value = "import", method = RequestMethod.POST)
-    public @ResponseBody Map productImport(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+    @ResponseBody
+    public Map productImport(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
         try {
             ImportExcel importExcel = new ImportExcel(file, 0, 0);
             List<LeaveImportDTO> dataList = importExcel.getDataList(LeaveImportDTO.class);
@@ -108,7 +117,8 @@ public class LeaveController {
     }
 
     @RequestMapping(value = "previewCheck")
-    public @ResponseBody Map<String, Object> previewCheck(HttpServletRequest request) {
+    @ResponseBody
+    public Map<String, Object> previewCheck(HttpServletRequest request) {
         try {
             List<Object> dataList = (List) request.getSession().getAttribute(IMPORT_DATA);
             PageDTO<Object> objectPageDTO = new PageDTO<Object>(1, 1000, dataList.size(), dataList);
@@ -130,7 +140,8 @@ public class LeaveController {
 
     // 3 确认导入
     @RequestMapping(value = "check", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> check(HttpServletRequest request, String jsonData) {
+    @ResponseBody
+    public Map<String, Object> check(HttpServletRequest request, String jsonData) {
         JsonData data = JsonUtils.json2Bean(JsonData.class, jsonData);
         leaveService.importLeave(data.getData());
         request.getSession().removeAttribute(IMPORT_DATA);
@@ -155,9 +166,15 @@ public class LeaveController {
     }
 
     @RequestMapping(value = "dropMonth", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> dropMonth(String month) {
+    public Map<String, Object> dropMonth(String month) {
         leaveService.clearMonth(month);
         return RenderUtils.SUCCESS_RESULT;
+    }
+
+    @RequestMapping(value = "demo", method = RequestMethod.GET)
+    public void demo(HttpSession session, HttpServletResponse response) {
+        String realPath = session.getServletContext().getRealPath("/static/download/leave.xlsx");
+        RenderUtils.downloadFile(response, realPath, "请假外出导入模板.xlsx");
     }
 
 }

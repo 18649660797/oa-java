@@ -80,7 +80,7 @@
                                 });
                             }
                         }
-                    }, {
+                    }/*, {
                         btnCls : 'button button-small',
                         text : '<i class="icon-plus"></i>导入',
                         listeners : {
@@ -118,7 +118,7 @@
                                 dialog.get('loader').load()
                             }
                         }
-                    }]
+                    }*/]
                 },
                 plugins : [editing,Grid.Plugins.CheckSelection,Grid.Plugins.ColumnResize]
             });

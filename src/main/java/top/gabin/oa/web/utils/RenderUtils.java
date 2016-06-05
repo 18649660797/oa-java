@@ -7,9 +7,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import top.gabin.oa.web.dto.PageDTO;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -178,6 +176,24 @@ public class RenderUtils {
         pageInfo.put("page_size", page.getPageSize());
         pageInfo.put("data_list", transListProp(page.getContent(), props));
         return pageInfo;
+    }
+
+    public static void downloadFile(HttpServletResponse response, String realPath, String fileName) {
+        try {
+            response.setContentType("application/x-msdownload");
+            response.setHeader("Content-Disposition", "attachment; filename=" + new String(fileName.getBytes("UTF-8"), "ISO8859-1"));
+            InputStream in = new FileInputStream(new File(realPath));
+            OutputStream os = response.getOutputStream();
+            byte[] buf = new byte[1024];
+            int len ;
+            while ((len=in.read(buf))!=-1){
+                os.write(buf,0,len);
+            }
+            os.flush();
+            os.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
