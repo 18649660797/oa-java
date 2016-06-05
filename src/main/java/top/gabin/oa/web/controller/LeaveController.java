@@ -71,27 +71,27 @@ public class LeaveController {
         return  dir + "/edit";
     }
 
-    @RequestMapping(value = "grid", method = RequestMethod.GET)
+    @RequestMapping(value = "/grid", method = RequestMethod.GET)
     @ResponseBody
     public Map<String, Object> grid(HttpServletRequest request) {
         return criteriaQueryService.queryPage(LeaveImpl.class, request, "id,beginDate,endDate,type.label type,employee.name realName,employee.department.name department,remark");
     }
 
-    @RequestMapping(value = "save", method = RequestMethod.POST)
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> save(LeaveDTO leaveDTO) {
         leaveService.merge(leaveDTO);
         return RenderUtils.SUCCESS_RESULT;
     }
 
-    @RequestMapping(value = "delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> delete(String ids) {
         leaveService.batchDelete(ids);
         return RenderUtils.SUCCESS_RESULT;
     }
 
-    @RequestMapping(value = "importView", method = RequestMethod.GET)
+    @RequestMapping(value = "/importView", method = RequestMethod.GET)
     public String importView() {
         return dir + "/import";
     }
@@ -102,7 +102,7 @@ public class LeaveController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "import", method = RequestMethod.POST)
+    @RequestMapping(value = "/import", method = RequestMethod.POST)
     @ResponseBody
     public Map productImport(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
         try {
@@ -116,7 +116,7 @@ public class LeaveController {
         }
     }
 
-    @RequestMapping(value = "previewCheck")
+    @RequestMapping(value = "/previewCheck")
     @ResponseBody
     public Map<String, Object> previewCheck(HttpServletRequest request) {
         try {
@@ -131,7 +131,7 @@ public class LeaveController {
     }
 
     // 2 预览数据
-    @RequestMapping(value = "preview", method = RequestMethod.GET)
+    @RequestMapping(value = "/preview", method = RequestMethod.GET)
     public String preview(Model model) {
         Map<String, Long> allNameMapId = employeeService.findAllNameMapId();
         model.addAttribute("allNameMapId", allNameMapId);
@@ -139,7 +139,7 @@ public class LeaveController {
     }
 
     // 3 确认导入
-    @RequestMapping(value = "check", method = RequestMethod.POST)
+    @RequestMapping(value = "/check", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> check(HttpServletRequest request, String jsonData) {
         JsonData data = JsonUtils.json2Bean(JsonData.class, jsonData);
@@ -160,18 +160,19 @@ public class LeaveController {
         }
     }
 
-    @RequestMapping(value = "dropView", method = RequestMethod.GET)
+    @RequestMapping(value = "/dropView", method = RequestMethod.GET)
     public String dropView() {
         return dir + "/drop";
     }
 
-    @RequestMapping(value = "dropMonth", method = RequestMethod.POST)
+    @RequestMapping(value = "/dropMonth", method = RequestMethod.POST)
+    @ResponseBody
     public Map<String, Object> dropMonth(String month) {
         leaveService.clearMonth(month);
         return RenderUtils.SUCCESS_RESULT;
     }
 
-    @RequestMapping(value = "demo", method = RequestMethod.GET)
+    @RequestMapping(value = "/demo", method = RequestMethod.GET)
     public void demo(HttpSession session, HttpServletResponse response) {
         String realPath = session.getServletContext().getRealPath("/static/download/leave.xlsx");
         RenderUtils.downloadFile(response, realPath, "请假外出导入模板.xlsx");
