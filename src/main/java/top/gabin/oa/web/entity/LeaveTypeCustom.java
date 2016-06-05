@@ -5,7 +5,7 @@ import top.gabin.oa.web.constant.attendance.LeaveTypeEnum;
 /**
  * @author linjiabin  on  16/3/31
  */
-public interface LeaveType {
+public interface LeaveTypeCustom {
     Long getId();
 
     void setId(Long id);

@@ -14,7 +14,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "edy_leave_type")
-public class LeaveTypeImpl implements LeaveType {
+public class LeaveTypeCustomImpl implements LeaveTypeCustom {
     @Id
     @TableGenerator(name = "leave_type_sequences", table = "edy_sequences", pkColumnName = "sequence_name",
             valueColumnName = "sequence_next_hi_value", initialValue = 1000, allocationSize = 50)

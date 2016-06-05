@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import top.gabin.oa.web.dto.AttendanceDTO;
 import top.gabin.oa.web.dto.AttendanceImportDTO;
+import top.gabin.oa.web.dto.attendance.AnalysisResult;
 import top.gabin.oa.web.dto.attendance.DepartmentAnalysisResult;
 import top.gabin.oa.web.entity.Attendance;
 import top.gabin.oa.web.entity.AttendanceImpl;
@@ -67,31 +68,35 @@ public class AttendanceController {
         return  dir + "/edit";
     }
 
-    @RequestMapping(value = "grid", method = RequestMethod.GET)
-    public @ResponseBody Map<String, Object> grid(HttpServletRequest request) {
+    @RequestMapping(value = "/grid", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> grid(HttpServletRequest request) {
         return criteriaQueryService.queryPage(AttendanceImpl.class, request, "id,workDate,amTime,pmTime,employee.name employee,employee.department.name department,yesterdayPm yesterday,status.label status");
     }
 
-    @RequestMapping(value = "save", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> save(AttendanceDTO attendanceDTO) {
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> save(AttendanceDTO attendanceDTO) {
         attendanceService.merge(attendanceDTO);
         return RenderUtils.SUCCESS_RESULT;
     }
 
-    @RequestMapping(value = "delete", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> delete(String ids) {
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> delete(String ids) {
         attendanceService.batchDelete(ids);
         return RenderUtils.SUCCESS_RESULT;
     }
 
 
-    @RequestMapping(value = "importView", method = RequestMethod.GET)
+    @RequestMapping(value = "/importView", method = RequestMethod.GET)
     public String importView() {
         return dir + "/import";
     }
 
-    @RequestMapping(value = "import", method = RequestMethod.POST)
-    public @ResponseBody Map productImport(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+    @RequestMapping(value = "/import", method = RequestMethod.POST)
+    @ResponseBody
+    public Map productImport(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
         try {
             ImportExcel importExcel = new ImportExcel(file, 3, 0);
             List<AttendanceImportDTO> dataList = importExcel.getDataList(AttendanceImportDTO.class);
@@ -104,43 +109,61 @@ public class AttendanceController {
     }
 
 
-    @RequestMapping(value = "dropView", method = RequestMethod.GET)
+    @RequestMapping(value = "/dropView", method = RequestMethod.GET)
     public String dropView() {
         return dir + "/drop";
     }
 
     @RequestMapping(value = "dropMonth", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> dropMonth(String month) {
+    @ResponseBody
+    public Map<String, Object> dropMonth(String month) {
         attendanceService.clearMonth(month);
         return RenderUtils.SUCCESS_RESULT;
     }
 
-    @RequestMapping(value = "getDays", method = RequestMethod.POST)
-    public @ResponseBody List getDays(String month) {
+    @RequestMapping(value = "/getDays", method = RequestMethod.POST)
+    @ResponseBody
+    public List getDays(String month) {
         Date start = TimeUtils.parseDate(month + "-01", "yyyy-MM-dd");
         Date end = DateUtils.addMonths(start, 1);
         return TimeUtils.getDays(start, end);
     }
 
-    @RequestMapping(value = "unsetDays", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> unsetDays(String days) {
+    @RequestMapping(value = "/unsetDays", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> unsetDays(String days) {
         attendanceService.batchSetLeaveDays(days);
         return RenderUtils.SUCCESS_RESULT;
     }
 
-    @RequestMapping(value = "setDays", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> setDays(String days) {
+    @RequestMapping(value = "/setDays", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> setDays(String days) {
         attendanceService.batchSetWorkDays(days);
         return RenderUtils.SUCCESS_RESULT;
     }
 
-    @RequestMapping(value = "analysis", method = RequestMethod.GET)
+    @RequestMapping(value = "/analysis", method = RequestMethod.GET)
     public void analysis(String month, HttpServletResponse response) {
         try {
             List<DepartmentAnalysisResult> data = execute.execute(month);
             HSSFWorkbook hssfWorkbook = attendanceService.buildAnalysisExcel(data);
             RenderUtils.renderExcel(response, hssfWorkbook, "analysis_" + month);
         } catch (Exception e) {
+            throw new RuntimeException("导出Excel文件出错", e);
+        }
+    }
+
+    @RequestMapping(value = "/analysis/new", method = RequestMethod.GET)
+    public void newAnalysis(String month, HttpServletResponse response) {
+        try {
+            List<DepartmentAnalysisResult> data = execute.execute(month);
+            HSSFWorkbook hssfWorkbook = attendanceService.buildNewAnalysisExcel(data);
+            Map<Long, List<AnalysisResult>> leaveData = attendanceService.buildLeaveData(data, month);
+            attendanceService.buildSheetLeave(leaveData, hssfWorkbook);
+            RenderUtils.renderExcel(response, hssfWorkbook, "analysis_" + month);
+        } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("导出Excel文件出错", e);
         }
     }

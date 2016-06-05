@@ -10,7 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import top.gabin.oa.web.constant.attendance.LeaveTypeEnum;
 import top.gabin.oa.web.dao.LeaveTypeDao;
 import top.gabin.oa.web.dto.form.EditLeaveTypeForm;
-import top.gabin.oa.web.entity.*;
+import top.gabin.oa.web.entity.LeaveTypeCustom;
+import top.gabin.oa.web.entity.LeaveTypeCustomImpl;
 import top.gabin.oa.web.service.criteria.CriteriaCondition;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
 
@@ -32,13 +33,13 @@ public class LeaveTypeServiceImpl implements LeaveTypeService {
     private LeaveTypeDao leaveTypeDao;
 
     @Override
-    public LeaveType findById(Long id) {
+    public LeaveTypeCustom findById(Long id) {
         return leaveTypeDao.findById(id);
     }
 
     @Override
     @Transactional("transactionManager")
-    public LeaveType merge(LeaveType leaveType) {
+    public LeaveTypeCustom merge(LeaveTypeCustom leaveType) {
         return leaveTypeDao.saveOrUpdate(leaveType);
     }
 
@@ -47,9 +48,9 @@ public class LeaveTypeServiceImpl implements LeaveTypeService {
     public void editSave(EditLeaveTypeForm form) {
         if (form != null) {
             Long id = form.getId();
-            LeaveType leaveType = findById(id);
+            LeaveTypeCustom leaveType = findById(id);
             if (leaveType == null) {
-                leaveType = new LeaveTypeImpl();
+                leaveType = new LeaveTypeCustomImpl();
             }
             leaveType.setLabel(form.getLabel());
             leaveType.setType(LeaveTypeEnum.instance(form.getType()));
@@ -71,11 +72,11 @@ public class LeaveTypeServiceImpl implements LeaveTypeService {
             params.put("in_id", ids);
             CriteriaCondition condition = new CriteriaCondition();
             condition.setConditions(params);
-            List<LeaveTypeImpl> leaveTypeList = criteriaQueryService.query(LeaveTypeImpl.class, condition);
+            List<LeaveTypeCustomImpl> leaveTypeList = criteriaQueryService.query(LeaveTypeCustomImpl.class, condition);
             if (leaveTypeList == null) {
                 return;
             }
-            for (LeaveType leaveType : leaveTypeList) {
+            for (LeaveTypeCustom leaveType : leaveTypeList) {
                 leaveTypeDao.delete(leaveType);
             }
         }

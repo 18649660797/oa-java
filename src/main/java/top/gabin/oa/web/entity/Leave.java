@@ -32,4 +32,7 @@ public interface Leave {
 
     LeaveType getType();
 
+    LeaveTypeCustom getLeaveTypeCustom();
+
+    void setLeaveTypeCustom(LeaveTypeCustom leaveTypeCustom);
 }

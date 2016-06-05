@@ -9,9 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.gabin.oa.web.constant.LeaveType;
 import top.gabin.oa.web.dao.LeaveDao;
-import top.gabin.oa.web.dto.LeaveImportDTO;
+import top.gabin.oa.web.dao.LeaveTypeDao;
 import top.gabin.oa.web.dto.LeaveDTO;
-import top.gabin.oa.web.entity.*;
+import top.gabin.oa.web.dto.LeaveImportDTO;
+import top.gabin.oa.web.entity.Employee;
+import top.gabin.oa.web.entity.Leave;
+import top.gabin.oa.web.entity.LeaveImpl;
+import top.gabin.oa.web.entity.LeaveTypeCustom;
 import top.gabin.oa.web.service.criteria.CriteriaCondition;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
 import top.gabin.oa.web.utils.date.TimeUtils;
@@ -30,6 +34,8 @@ public class LeaveServiceImpl implements LeaveService {
     private LeaveDao leaveDao;
     @Resource(name = "employeeService")
     private EmployeeService employeeService;
+    @Resource(name = "leaveTypeDao")
+    private LeaveTypeDao leaveTypeDao;
 
     @Override
     @Transactional("transactionManager")
@@ -97,6 +103,11 @@ public class LeaveServiceImpl implements LeaveService {
     @Override
     @Transactional("transactionManager")
     public void importLeave(List<LeaveImportDTO> leaveImportDTOList) {
+        List<LeaveTypeCustom> all = leaveTypeDao.findAll();
+        Map<String, LeaveTypeCustom> leaveTypeCustomMap = new HashMap<>();
+        for (LeaveTypeCustom leaveTypeCustom : all) {
+            leaveTypeCustomMap.put(leaveTypeCustom.getLabel(), leaveTypeCustom);
+        }
         Map<String, Employee> cacheEmployee = new HashMap<String, Employee>();
         List<Leave> leaveList = new ArrayList<Leave>();
         for (LeaveImportDTO dto : leaveImportDTOList) {
@@ -111,6 +122,7 @@ public class LeaveServiceImpl implements LeaveService {
             Date endDate = dto.getEndDate();
             leave.setEndDate(TimeUtils.parseDate(TimeUtils.format(endDate, "yyyy-MM-dd HH:mm:00")));
             leave.setType(LeaveType.instance(dto.getLeaveName()));
+            leave.setLeaveTypeCustom(leaveTypeCustomMap.get(dto.getLeaveName()));
             Employee employee;
             if (cacheEmployee.containsKey(realName)) {
                 employee = cacheEmployee.get(realName);

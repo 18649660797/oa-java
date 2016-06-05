@@ -58,7 +58,7 @@ public class LeaveWorkFlow extends AbstractAnalysisWorkFlow {
                             Date endDate = leave.getEndDate();
                             long delayTimes = 0;
                             if (TimeUtils.beforeOrEqual(beginDate, tmpBeginDate) && TimeUtils.afterOrEqual(endDate, tmpEndDate)) {
-                                delayTimes = 450l - analysisResult.getLeaveMinutes();
+                                delayTimes = 450l;
                                 analysisResult.setIsLeaveDay(true);
                             } else if (TimeUtils.beforeOrEqual(beginDate, tmpBeginDate)) { // 请假开始时间在上午需要打卡的时刻或之前
                                 // 请假结束时间在上午需要打卡之后

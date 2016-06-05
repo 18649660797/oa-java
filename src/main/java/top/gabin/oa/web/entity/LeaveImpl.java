@@ -31,6 +31,9 @@ public class LeaveImpl implements Leave {
     private Integer type;
     @Column(name = "remark")
     private String remark;
+    @ManyToOne(targetEntity = LeaveTypeCustomImpl.class)
+    @JoinColumn(name = "leave_type_id")
+    private LeaveTypeCustom leaveTypeCustom;
 
     @Override
     public String getRemark() {
@@ -94,4 +97,13 @@ public class LeaveImpl implements Leave {
         return LeaveType.instance(this.type);
     }
 
+    @Override
+    public LeaveTypeCustom getLeaveTypeCustom() {
+        return leaveTypeCustom;
+    }
+
+    @Override
+    public void setLeaveTypeCustom(LeaveTypeCustom leaveTypeCustom) {
+        this.leaveTypeCustom = leaveTypeCustom;
+    }
 }

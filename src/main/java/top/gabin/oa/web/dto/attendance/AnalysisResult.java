@@ -136,9 +136,6 @@ public class AnalysisResult {
     }
 
     public void setLeaveFit(Date leaveFit) {
-        if (attendance.getEmployee().getId() == 552 && attendance.getWorkDateFormat().equals("2015-11-09")) {
-            System.out.println();
-        }
         this.leaveFit = leaveFit;
     }
 

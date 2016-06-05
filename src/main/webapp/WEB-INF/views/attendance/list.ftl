@@ -406,7 +406,19 @@
                                     window.open("/attendance/analysis?month=" + month)
                                 }
                             }
-                        }]
+                        },{
+                                btnCls : 'button button-small',
+                                text : '<i class="icon-plus"></i>分析数据(新版)',
+                                listeners : {
+                                    'click' : function() {
+                                        var Select = BUI.Select, select, month = $("#J_Month").val(), calendar;
+                                        if (!month) {
+                                            return edy.alert("请选择一个考勤月");
+                                        }
+                                        window.open("/attendance/analysis/new?month=" + month)
+                                    }
+                                }
+                            }]
                     },
                     plugins : [Grid.Plugins.CheckSelection,Grid.Plugins.ColumnResize],
                 });

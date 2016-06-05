@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import top.gabin.oa.web.constant.attendance.LeaveTypeEnum;
 import top.gabin.oa.web.dto.form.EditLeaveTypeForm;
-import top.gabin.oa.web.entity.LeaveTypeImpl;
+import top.gabin.oa.web.entity.LeaveTypeCustomImpl;
 import top.gabin.oa.web.service.attendance.LeaveTypeService;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
 import top.gabin.oa.web.utils.RenderUtils;
@@ -50,7 +50,7 @@ public class LeaveController {
 
     @RequestMapping(value = "grid", method = RequestMethod.GET)
     public @ResponseBody Map<String, Object> grid(HttpServletRequest request) {
-        return criteriaQueryService.queryPage(LeaveTypeImpl.class, request, "id,label,type.label type");
+        return criteriaQueryService.queryPage(LeaveTypeCustomImpl.class, request, "id,label,type.label type");
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)

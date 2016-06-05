@@ -3,11 +3,13 @@ package top.gabin.oa.web.service;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import top.gabin.oa.web.dto.AttendanceDTO;
 import top.gabin.oa.web.dto.AttendanceImportDTO;
+import top.gabin.oa.web.dto.attendance.AnalysisResult;
 import top.gabin.oa.web.dto.attendance.DepartmentAnalysisResult;
 import top.gabin.oa.web.entity.Attendance;
 import top.gabin.oa.web.service.flow.attendance.data.DataBuilder;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author linjiabin  on  15/12/15
@@ -43,6 +45,10 @@ public interface AttendanceService extends DataBuilder {
      * @return
      */
     HSSFWorkbook buildAnalysisExcel(List<DepartmentAnalysisResult> data);
+
+    HSSFWorkbook buildNewAnalysisExcel(List<DepartmentAnalysisResult> data);
+
+    void buildSheetLeave(Map<Long, List<AnalysisResult>> leaveGroupMap, HSSFWorkbook workbook);
 
     void batchDeleteByEmployeeIds(String ids);
 }

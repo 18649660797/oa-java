@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.gabin.oa.web.constant.AttendanceStatus;
 import top.gabin.oa.web.dao.AttendanceDao;
+import top.gabin.oa.web.dao.LeaveTypeDao;
 import top.gabin.oa.web.dto.AttendanceDTO;
 import top.gabin.oa.web.dto.AttendanceImportDTO;
 import top.gabin.oa.web.dto.attendance.AnalysisResult;
@@ -50,6 +51,8 @@ public class AttendanceServiceImpl implements AttendanceService {
     private AttendanceRuleService attendanceRuleService;
     @Resource(name = "criteriaQueryService")
     private CriteriaQueryService criteriaQueryService;
+    @Resource(name = "leaveTypeDao")
+    private LeaveTypeDao leaveTypeDao;
 
     @Override
     @Transactional("transactionManager")
@@ -321,6 +324,30 @@ public class AttendanceServiceImpl implements AttendanceService {
         return departmentAnalysisResultList;
     }
 
+    @Override
+    public Map<Long, List<AnalysisResult>> buildLeaveData(List<DepartmentAnalysisResult> departmentAnalysisResults, String month) {
+        Map<Long, List<AnalysisResult>> dataMap = new HashMap<>();
+        for (DepartmentAnalysisResult departmentAnalysisResult : departmentAnalysisResults) {
+            for (EmployeeAnalysisResult employeeAnalysisResult : departmentAnalysisResult.getEmployeeAnalysisResultList()) {
+                for (AnalysisResult analysisResult : employeeAnalysisResult.getAnalysisResultList()) {
+                    for (LeaveResult leaveResult : analysisResult.getLeaveList()) {
+                        Long id = leaveResult.getLeave().getLeaveTypeCustom().getId();
+                        List<AnalysisResult> analysisResults = dataMap.get(id);
+                        if (analysisResults == null) {
+                            analysisResults = new ArrayList<>();
+                            dataMap.put(id, analysisResults);
+                        }
+                        AnalysisResult analysisResult1 = new AnalysisResult();
+                        analysisResult1.setAttendance(analysisResult.getAttendance());
+                        analysisResult1.add(leaveResult);
+                        analysisResults.add(analysisResult1);
+                    }
+                }
+            }
+        }
+        return dataMap;
+    }
+
     private void fillLeave(AnalysisResult analysisResult, List<Leave> leaveList) {
         if (leaveList != null) {
             Attendance attendance = analysisResult.getAttendance();
@@ -364,11 +391,174 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     public HSSFWorkbook buildAnalysisExcel(List<DepartmentAnalysisResult> data) {
-        String fileName = "analysis";
-        //声明一个工作簿
+        // 声明一个工作簿
         HSSFWorkbook workbook = new HSSFWorkbook();
-        //生成一个表格
-        HSSFSheet sheet = workbook.createSheet(fileName);
+        buildSheetBasic(data, workbook);
+        return workbook;
+    }
+
+    @Override
+    public HSSFWorkbook buildNewAnalysisExcel(List<DepartmentAnalysisResult> data) {
+        // 声明一个工作簿
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        buildSheetBasic(data, workbook);
+        buildSheetBasicCount(data, workbook);
+        return workbook;
+    }
+
+    @Override
+    public void buildSheetLeave(Map<Long, List<AnalysisResult>> leaveGroupMap, HSSFWorkbook workbook) {
+        HSSFSheet sheet = workbook.createSheet("请假外出");
+        List<LeaveTypeCustom> leaveTypeCustomList = leaveTypeDao.findAll();
+        int j = 0;
+        for (LeaveTypeCustom leaveTypeCustom : leaveTypeCustomList) {
+            List<AnalysisResult> analysisResults = leaveGroupMap.get(leaveTypeCustom.getId());
+            if (analysisResults != null) {
+                int i = 0;
+                HSSFRow row = sheet.createRow(j++);
+                setValue(row, i++, "部门");
+                setValue(row, i++, "姓名");
+                setValue(row, i++, "日期");
+                setValue(row, i++, "周期");
+                setValue(row, i++, "开始时间");
+                setValue(row, i++, "结束时间");
+                setValue(row, i++, leaveTypeCustom.getLabel());
+                for (AnalysisResult analysisResult : analysisResults) {
+                    Attendance attendance = analysisResult.getAttendance();
+                    LeaveResult leaveResult = analysisResult.getLeaveList().get(0);
+                    Leave leave = leaveResult.getLeave();
+                    Employee employee = leave.getEmployee();
+                    int k = 0;
+                    HSSFRow rowTemp = sheet.createRow(j++);
+                    setValue(rowTemp, k++, employee.getDepartment().getName());
+                    setValue(rowTemp, k++, employee.getName());
+                    setValue(rowTemp, k++, attendance.getWorkDateFormat());
+                    setValue(rowTemp, k++, TimeUtils.getDay(attendance.getWorkDate()));
+                    setValue(rowTemp, k++, attendance.getAmTime());
+                    setValue(rowTemp, k++, attendance.getPmTime());
+                    setValue(rowTemp, k++, leaveResult.getLeaveMinutes());
+                }
+                j+= 2;
+            }
+        }
+    }
+
+    private void buildSheetBasicCount(List<DepartmentAnalysisResult> data, HSSFWorkbook workbook) {
+        HSSFSheet sheet = workbook.createSheet("考勤分析数据版");
+        //设置表格默认列宽度为18个字节
+        sheet.setDefaultColumnWidth(10);
+        List<LeaveTypeCustom> leaveTypeList = leaveTypeDao.findAll();
+        String[] basicHeader = {"部门", "姓名", "周期", "日期", "上班", "下班", "迟到", "早退", "旷工", "备注", "下班免打卡", "上班免打卡", "免责补卡"};
+        int length = basicHeader.length;
+        List<String> headerList = new ArrayList<String>();
+        for (String header : basicHeader) {
+            headerList.add(header);
+        }
+        Map<Long, Integer> leaveTypeIndexMap = new HashMap<Long, Integer>();
+        int tmp = 1;
+        for (LeaveTypeCustom leaveType : leaveTypeList) {
+            headerList.add(leaveType.getLabel());
+            leaveTypeIndexMap.put(leaveType.getId(), length + tmp++);
+        }
+        //产生表格标题行
+        HSSFRow row = sheet.createRow(0);
+        for (int i = 0; i < headerList.size(); i++) {
+            HSSFRichTextString text = new HSSFRichTextString(headerList.get(i));
+            setValue(row, i, text);
+        }
+        int i = 2;
+        for (DepartmentAnalysisResult departmentAnalysisResult : data) {
+            for (EmployeeAnalysisResult employeeAnalysisResult : departmentAnalysisResult.getEmployeeAnalysisResultList()) {
+                for (AnalysisResult analysisResult : employeeAnalysisResult.getAnalysisResultList()) {
+                    Attendance attendance = analysisResult.getAttendance();
+                    HSSFRow row1 = sheet.createRow(i++);
+                    // 填充部门
+                    String departmentName = attendance.getEmployee().getDepartment().getName();
+                    setValue(row1, 0, departmentName);
+                    // 填充员工
+                    String employeeName = attendance.getEmployee().getName();
+                    setValue(row1, 1, employeeName);
+                    Date workDate = attendance.getWorkDate();
+                    // 填充周几
+                    setValue(row1, 2, TimeUtils.getDay(workDate));
+                    // 填充日期
+                    String workDateFormat = attendance.getWorkDateFormat();
+                    setValue(row1, 3, workDateFormat);
+                    // 填充上午打卡时间
+                    setValue(row1, 4, attendance.getAmTime());
+                    // 填充下午打卡时间
+                    setValue(row1, 5, attendance.getPmTime());
+                    if (AttendanceStatus.LEAVE.equals(attendance.getStatus())) {
+                        row1.getCell(2).setCellStyle(getBlueFontStyle(workbook));
+                    } else {
+                        HSSFCellStyle workFitStyle = null;
+                        HSSFCellStyle leaveFitStyle = null;
+                        if (analysisResult.isWorkBad()) { // 旷工
+                            setValue(row1, 8, 7.5);
+                            workFitStyle = getYellowFillStyle(workbook);
+                            leaveFitStyle = getYellowFillStyle(workbook);
+                        } else {
+                            // 如果下午不需要打卡并且上午没有打卡记录
+                            if (!analysisResult.isLeaveNeedFit() && StringUtils.isBlank(attendance.getAmTime())) {
+                                workFitStyle = getYellowFillStyle(workbook);
+                                setValue(row1, 11, "是");
+                            } else {
+                                // 迟到
+                                int amMinutes = analysisResult.getWorkDelayMinutes();
+                                if (amMinutes > 0) {
+                                    setValue(row1, 6, amMinutes);
+                                    workFitStyle = getYellowFillStyle(workbook);
+                                } else {
+                                    // 昨日晚上加班到9点半,隔天早上10点后打卡
+                                    if (analysisResult.isYesterdayWorkDelay()) {
+                                        workFitStyle = getGreenFillStyle(workbook);
+                                    }
+                                }
+                            }
+
+                            // 如果上午不需要打卡并且下午没有打卡记录
+                            if (!analysisResult.isWorkNeedFit() && StringUtils.isBlank(attendance.getPmTime())) {
+                                leaveFitStyle = getYellowFillStyle(workbook);
+                                setValue(row1, 10, "是");
+                            } else if (analysisResult.isImpunityLeaveEarly()) {
+                                // 如果在下班免补卡的次数里
+                                leaveFitStyle = getBlueFillStyle(workbook);
+                                setValue(row1, 12, "是");
+                            } else {
+                                // 早退
+                                int pmMinutes = analysisResult.getLeaveEarlyMinutes();
+                                if (pmMinutes > 0) {
+                                    setValue(row1, 7, pmMinutes);
+                                    leaveFitStyle = getYellowFillStyle(workbook);
+                                }
+                            }
+
+                        }
+                        if (workFitStyle != null) {
+                            row1.getCell(4).setCellStyle(workFitStyle);
+                        }
+                        if (leaveFitStyle != null) {
+                            row1.getCell(5).setCellStyle(leaveFitStyle);
+                        }
+                        List<LeaveResult> leaveList = analysisResult.getLeaveList();
+                        String remark = StringUtils.isBlank(analysisResult.getRemark()) ? "" : analysisResult.getRemark();
+                        setValue(row1, 9, remark);
+                        for (LeaveResult leaveResult : leaveList) {
+                            long minutes = leaveResult.getLeaveMinutes();
+                            Leave leave = leaveResult.getLeave();
+                            setValue(row1, leaveTypeIndexMap.get(leave.getLeaveTypeCustom().getId()), minutes);
+                        }
+                    }
+                }
+                i++;
+            }
+        }
+        _font = null;
+    }
+
+
+    private void buildSheetBasic(List<DepartmentAnalysisResult> data, HSSFWorkbook workbook) {
+        HSSFSheet sheet = workbook.createSheet("考勤数据分析旧版");
         //设置表格默认列宽度为18个字节
         sheet.setDefaultColumnWidth(10);
         // 合并第一行
@@ -508,7 +698,6 @@ public class AttendanceServiceImpl implements AttendanceService {
             }
         }
         _font = null;
-        return workbook;
     }
 
     private void setValue(HSSFRow row1, int idx, Object o) {
