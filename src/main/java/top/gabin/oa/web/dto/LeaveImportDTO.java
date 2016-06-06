@@ -12,6 +12,7 @@ import top.gabin.oa.web.service.attendance.LeaveTypeService;
 import top.gabin.oa.web.utils.SpringBeanUtils;
 import top.gabin.oa.web.utils.excel.annotation.ExcelField;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.Map;
 /**
  * @author linjiabin  on  15/12/14
  */
-public class LeaveImportDTO {
+public class LeaveImportDTO implements Serializable {
     public LeaveImportDTO() {
     }
     public static Map<String, Long> leaveTypeCustomMap = new HashMap<>();
