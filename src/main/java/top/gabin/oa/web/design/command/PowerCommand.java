@@ -9,9 +9,9 @@ package top.gabin.oa.web.design.command;
  * @author linjiabin on  16/5/2
  */
 public class PowerCommand implements Command{
-    private TV tv;
+    private Tv tv;
 
-    public PowerCommand(TV tv) {
+    public PowerCommand(Tv tv) {
         this.tv = tv;
     }
 

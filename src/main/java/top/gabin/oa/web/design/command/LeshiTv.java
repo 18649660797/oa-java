@@ -8,7 +8,7 @@ package top.gabin.oa.web.design.command;
  * 乐视TV
  * @author linjiabin on  16/5/2
  */
-public class LeshiTv implements TV {
+public class LeshiTv implements Tv {
     @Override
     public void powerOn() {
         System.out.println("打开电视");

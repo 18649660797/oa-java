@@ -10,7 +10,7 @@ package top.gabin.oa.web.design.command;
  */
 public class RemoteControl {
     // 最简单的单例模式
-    private static TV tv = new LeshiTv();
+    private static Tv tv = new LeshiTv();
 
     public void powerButtonOn() {
         PowerCommand powerCommand = new PowerCommand(tv);
