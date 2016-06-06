@@ -148,7 +148,7 @@ public class AttendanceController {
         try {
             List<DepartmentAnalysisResult> data = execute.execute(month);
             HSSFWorkbook hssfWorkbook = attendanceService.buildAnalysisExcel(data);
-            RenderUtils.renderExcel(response, hssfWorkbook, "analysis_" + month);
+            RenderUtils.renderExcel(response, hssfWorkbook, "考勤分析旧版_" + month);
         } catch (Exception e) {
             throw new RuntimeException("导出Excel文件出错", e);
         }
@@ -161,7 +161,7 @@ public class AttendanceController {
             HSSFWorkbook hssfWorkbook = attendanceService.buildNewAnalysisExcel(data);
             Map<Long, List<AnalysisResult>> leaveData = attendanceService.buildLeaveData(data, month);
             attendanceService.buildSheetLeave(leaveData, hssfWorkbook);
-            RenderUtils.renderExcel(response, hssfWorkbook, "analysis_" + month);
+            RenderUtils.renderExcel(response, hssfWorkbook, "考勤分析新版_" + month);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("导出Excel文件出错", e);

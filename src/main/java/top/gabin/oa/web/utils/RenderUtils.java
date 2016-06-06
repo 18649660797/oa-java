@@ -153,6 +153,7 @@ public class RenderUtils {
      */
     public static void renderExcel(HttpServletResponse response, HSSFWorkbook workbook, String fileName) throws IOException {
         response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+        fileName = new String(fileName.getBytes("UTF-8"), "ISO8859-1");
         response.setHeader("Content-disposition", "attachment; filename=" + fileName +".xls");
         OutputStream bufferedOutputStream = new BufferedOutputStream(response.getOutputStream());
         workbook.write(bufferedOutputStream);

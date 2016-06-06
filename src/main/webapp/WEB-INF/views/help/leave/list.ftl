@@ -15,17 +15,11 @@
             <ul class="panel-content">
                 <li>
                     <label>假别：</label>
-                    <select name="eq_type">
+                    <select name="eq_leaveTypeCustom.id">
                         <option value="">全部</option>
-                        <option value="1">事假</option>
-                        <option value="2">病假</option>
-                        <option value="3">调休</option>
-                        <option value="5">丧假</option>
-                        <option value="6">年假</option>
-                        <option value="7">婚假</option>
-                        <option value="8">产假</option>
-                        <option value="9">陪产假</option>
-                        <option value="10">带薪病假</option>
+                    <#list typeCustomList as type>
+                        <option value="${(type.id)!}">${(type.label)!}</option>
+                    </#list>
                     </select>
 
                     <label>部门：</label>

@@ -19,6 +19,7 @@ import top.gabin.oa.web.entity.LeaveImpl;
 import top.gabin.oa.web.service.DepartmentService;
 import top.gabin.oa.web.service.EmployeeService;
 import top.gabin.oa.web.service.LeaveService;
+import top.gabin.oa.web.service.attendance.LeaveTypeService;
 import top.gabin.oa.web.service.criteria.CriteriaCondition;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
 import top.gabin.oa.web.service.criteria.CriteriaQueryUtils;
@@ -44,6 +45,8 @@ public class OutHelpController {
     private DepartmentService departmentService;
     @Resource(name = "employeeService")
     private EmployeeService employeeService;
+    @Resource(name = "leaveTypeService")
+    private LeaveTypeService leaveTypeService;
     private String dir = "help/out";
 
     @RequestMapping("/list")
@@ -70,15 +73,15 @@ public class OutHelpController {
     @ResponseBody
     public Map<String, Object> grid(HttpServletRequest request) {
         String currentLoginUserName = AuthUtils.getCurrentLoginUserName();
-        CriteriaCondition criteriaCondition = CriteriaQueryUtils.parseCondition(request, "eq_employee.attendanceCN", currentLoginUserName, "eq_type", "4");
+        CriteriaCondition criteriaCondition = CriteriaQueryUtils.parseCondition(request, "eq_employee.attendanceCN", currentLoginUserName, "eq_leaveTypeCustom.id", "4");
         PageDTO<LeaveImpl> adminPageDTO = criteriaQueryService.queryPage(LeaveImpl.class, criteriaCondition);
-        return RenderUtils.filterPageDataResult(adminPageDTO, "id,beginDate,endDate,type.label type,employee.name realName,employee.department.name department,remark");
+        return RenderUtils.filterPageDataResult(adminPageDTO, "id,beginDate,endDate,leaveTypeCustom.label type,employee.name realName,employee.department.name department,remark");
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> saveRule(LeaveDTO leaveDTO) {
-        leaveDTO.setType(LeaveType.OUT_LEAVE.getType());
+        leaveDTO.setType(leaveTypeService.findById(4L).getId());
         leaveService.merge(leaveDTO);
         return RenderUtils.SUCCESS_RESULT;
     }

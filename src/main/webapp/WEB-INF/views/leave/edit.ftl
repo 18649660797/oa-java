@@ -26,14 +26,9 @@
                     <label class="control-label"><s>*</s>类型：</label>
                     <div class="controls">
                         <select id="type" name="type">
-                            <option value="1">事假</option>
-                            <option value="2">病假</option>
-                            <option value="3">调休</option>
-                            <option value="4">外出</option>
-                            <option value="5">丧假</option>
-                            <option value="6">年假</option>
-                            <option value="7">婚假</option>
-                            <option value="8">产假</option>
+                        <#list typeCustomList as type>
+                            <option value="${(type.id)!}">${(type.label)!}</option>
+                        </#list>
                         </select>
                     </div>
                 </div>
@@ -87,7 +82,7 @@
         });
         suggest.render();
         $("[name='name']").val("${(entity.employee.name)!}");
-        $("#type").val("${(entity.type)!}");
+        $("#type").val("${(entity.leaveTypeCustome.id)!}");
     });
 </script>
 <!-- script end -->

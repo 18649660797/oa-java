@@ -18,11 +18,15 @@ import top.gabin.oa.web.dto.LeaveImportDTO;
 import top.gabin.oa.web.dto.PageDTO;
 import top.gabin.oa.web.entity.Department;
 import top.gabin.oa.web.entity.LeaveImpl;
+import top.gabin.oa.web.entity.LeaveTypeCustom;
 import top.gabin.oa.web.service.DepartmentService;
 import top.gabin.oa.web.service.EmployeeService;
 import top.gabin.oa.web.service.LeaveService;
+import top.gabin.oa.web.service.attendance.LeaveTypeService;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
+import top.gabin.oa.web.service.criteria.CriteriaQueryUtils;
 import top.gabin.oa.web.utils.RenderUtils;
+import top.gabin.oa.web.utils.excel.ExcelUtils;
 import top.gabin.oa.web.utils.excel.ImportExcel;
 import top.gabin.oa.web.utils.json.JsonUtils;
 
@@ -30,6 +34,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +56,8 @@ public class LeaveController {
     private DepartmentService departmentService;
     @Resource(name = "employeeService")
     private EmployeeService employeeService;
+    @Resource(name = "leaveTypeService")
+    private LeaveTypeService leaveTypeService;
     private static final Logger logger = LoggerFactory.getLogger(LeaveController.class);
     private final static String IMPORT_DATA = "SESSION_LEAVE_IMPORT";
 
@@ -60,6 +67,8 @@ public class LeaveController {
     public String list(Model model) {
         List<Department> departmentList = departmentService.findAll();
         model.addAttribute("departmentList", departmentList);
+        List<LeaveTypeCustom> typeCustomList = leaveTypeService.findAll();
+        model.addAttribute("typeCustomList", typeCustomList);
         return  dir + "/list";
     }
 
@@ -68,6 +77,8 @@ public class LeaveController {
         if (id != null) {
             model.addAttribute("entity", leaveService.findById(id));
         }
+        List<LeaveTypeCustom> typeCustomList = leaveTypeService.findAll();
+        model.addAttribute("typeCustomList", typeCustomList);
         return  dir + "/edit";
     }
 
@@ -123,7 +134,7 @@ public class LeaveController {
             List<Object> dataList = (List) request.getSession().getAttribute(IMPORT_DATA);
             PageDTO<Object> objectPageDTO = new PageDTO<Object>(1, 1000, dataList.size(), dataList);
             LeaveImportDTO.ID_CACHE = employeeService.findAllNameMapId();
-            return RenderUtils.filterPageDataResult(objectPageDTO, "name,leaveName,beginDate,endDate,remark,exception,id,leaveType");
+            return RenderUtils.filterPageDataResult(objectPageDTO, "name,leaveName,beginDate,endDate,remark,exception,id,leaveTypeCustom");
         } catch (Exception e) {
             e.printStackTrace();
             return RenderUtils.getFailMap("获取数据有异常");
@@ -176,6 +187,15 @@ public class LeaveController {
     public void demo(HttpSession session, HttpServletResponse response) {
         String realPath = session.getServletContext().getRealPath("/static/download/leave.xlsx");
         RenderUtils.downloadFile(response, realPath, "请假外出导入模板.xlsx");
+    }
+
+    @RequestMapping(value = "/excel", method = RequestMethod.GET)
+    public void excel(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String prosStr = "employee.name realName,employee.department.name department,leaveTypeCustom.label type,beginDate,endDate,remark";
+        String[] pros = {"realName", "department", "type", "beginDate",  "endDate", "remark"};
+        List<LeaveImpl> leaveList = criteriaQueryService.query(LeaveImpl.class, CriteriaQueryUtils.parseCondition(request));
+        List<Map<String, Object>> data = RenderUtils.transListProp(leaveList, prosStr);
+        ExcelUtils.excel(response, data, pros);
     }
 
 }

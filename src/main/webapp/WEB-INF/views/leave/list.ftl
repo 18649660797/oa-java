@@ -17,18 +17,11 @@
         <ul class="panel-content">
             <li>
                 <label>假别：</label>
-                <select name="eq_type">
+                <select name="eq_leaveTypeCustom.id">
                     <option value="">全部</option>
-                    <option value="1">事假</option>
-                    <option value="2">病假</option>
-                    <option value="3">调休</option>
-                    <option value="4">外出</option>
-                    <option value="5">丧假</option>
-                    <option value="6">年假</option>
-                    <option value="7">婚假</option>
-                    <option value="8">产假</option>
-                    <option value="9">陪产假</option>
-                    <option value="10">带薪病假</option>
+                    <#list typeCustomList as type>
+                        <option value="${(type.id)!}">${(type.label)!}</option>
+                    </#list>
                 </select>
 
                 <label>部门：</label>
@@ -57,6 +50,9 @@
                 Store = Data.Store,
                 columns = [
                     {title: '操作', dataIndex: 'id', width: 80, renderer: function(val, row) {
+                        if (val < 1000) {
+                            return "系统内置";
+                        }
                         return edy.rendererHelp.createJavaScriptLink("edit", val, "编辑");
                     }},
                     {title: 'id', dataIndex: 'id', width: 80},
@@ -178,6 +174,14 @@
                                     });
                                     dialog.show();
                                     dialog.get('loader').load()
+                                }
+                            }
+                        }, {
+                            btnCls : 'button button-small',
+                            text : '<i class="icon-plus"></i>导出',
+                            listeners : {
+                                "click": function() {
+                                    window.open("/leave/excel?sort=leaveTypeCustom.id asc&" + $("#J_FORM").serialize());
                                 }
                             }
                         }]

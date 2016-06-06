@@ -90,7 +90,9 @@ public class LeaveServiceImpl implements LeaveService {
                 }
             }
             if (leaveDTO.getType() != null) {
-                leave.setType(LeaveType.instance(leaveDTO.getType()));
+                LeaveTypeCustom leaveTypeCustom = leaveTypeDao.findById(leaveDTO.getType());
+                leave.setLeaveTypeCustom(leaveTypeCustom);
+                leave.setType(LeaveType.instance(leaveTypeCustom.getLabel()));
             }
             if (StringUtils.isNotBlank(leaveDTO.getRemark())) {
                 leave.setRemark(leaveDTO.getRemark());

@@ -15,9 +15,11 @@ import top.gabin.oa.web.dto.PageDTO;
 import top.gabin.oa.web.entity.Department;
 import top.gabin.oa.web.entity.Employee;
 import top.gabin.oa.web.entity.LeaveImpl;
+import top.gabin.oa.web.entity.LeaveTypeCustom;
 import top.gabin.oa.web.service.DepartmentService;
 import top.gabin.oa.web.service.EmployeeService;
 import top.gabin.oa.web.service.LeaveService;
+import top.gabin.oa.web.service.attendance.LeaveTypeService;
 import top.gabin.oa.web.service.criteria.CriteriaCondition;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
 import top.gabin.oa.web.service.criteria.CriteriaQueryUtils;
@@ -44,6 +46,8 @@ public class LeaveHelpController {
     private EmployeeService employeeService;
     @Resource(name = "departmentService")
     private DepartmentService departmentService;
+    @Resource(name = "leaveTypeService")
+    private LeaveTypeService leaveTypeService;
     private String dir = "help/leave";
 
     @RequestMapping("/list")
@@ -51,6 +55,8 @@ public class LeaveHelpController {
         model.addAttribute("leaveTypeEnums", LeaveTypeEnum.values());
         List<Department> departmentList = departmentService.findAll();
         model.addAttribute("departmentList", departmentList);
+        List<LeaveTypeCustom> typeCustomList = leaveTypeService.findAll();
+        model.addAttribute("typeCustomList", typeCustomList);
         return  dir + "/list";
     }
 
@@ -63,6 +69,8 @@ public class LeaveHelpController {
         Employee employee = employeeService.findByAttendanceCN(cn);
         model.addAttribute("employee", employee);
         model.addAttribute("leaveTypeEnums", LeaveTypeEnum.values());
+        List<LeaveTypeCustom> typeCustomList = leaveTypeService.findAll();
+        model.addAttribute("typeCustomList", typeCustomList);
         return  dir + "/edit";
     }
 
@@ -72,7 +80,7 @@ public class LeaveHelpController {
         String currentLoginUserName = AuthUtils.getCurrentLoginUserName();
         CriteriaCondition criteriaCondition = CriteriaQueryUtils.parseCondition(request, "eq_employee.attendanceCN", currentLoginUserName);
         PageDTO<LeaveImpl> adminPageDTO = criteriaQueryService.queryPage(LeaveImpl.class, criteriaCondition);
-        return RenderUtils.filterPageDataResult(adminPageDTO, "id,beginDate,endDate,type.label type,employee.name realName,employee.department.name department,remark");
+        return RenderUtils.filterPageDataResult(adminPageDTO, "id,beginDate,endDate,leaveTypeCustom.label type,employee.name realName,employee.department.name department,remark");
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)

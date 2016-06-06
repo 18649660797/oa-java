@@ -9,7 +9,7 @@ package top.gabin.oa.web.dto;
  */
 public class LeaveDTO {
     private Long id;
-    private Integer type;
+    private Long type;
     private Long employeeId;
     private String name;
     private String beginDate;
@@ -40,11 +40,11 @@ public class LeaveDTO {
         this.id = id;
     }
 
-    public Integer getType() {
+    public Long getType() {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType(Long type) {
         this.type = type;
     }
 

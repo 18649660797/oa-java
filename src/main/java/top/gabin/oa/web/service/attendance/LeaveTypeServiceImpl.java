@@ -38,6 +38,11 @@ public class LeaveTypeServiceImpl implements LeaveTypeService {
     }
 
     @Override
+    public List<LeaveTypeCustom> findAll() {
+        return leaveTypeDao.findAll();
+    }
+
+    @Override
     @Transactional("transactionManager")
     public LeaveTypeCustom merge(LeaveTypeCustom leaveType) {
         return leaveTypeDao.saveOrUpdate(leaveType);
