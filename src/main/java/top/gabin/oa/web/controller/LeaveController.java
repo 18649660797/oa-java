@@ -134,7 +134,7 @@ public class LeaveController {
             List<Object> dataList = (List) request.getSession().getAttribute(IMPORT_DATA);
             PageDTO<Object> objectPageDTO = new PageDTO<Object>(1, 1000, dataList.size(), dataList);
             LeaveImportDTO.ID_CACHE = employeeService.findAllNameMapId();
-            return RenderUtils.filterPageDataResult(objectPageDTO, "name,leaveName,beginDate,endDate,remark,exception,id,leaveTypeCustom");
+            return RenderUtils.filterPageDataResult(objectPageDTO, "name,leaveName,beginDate,endDate,remark,exception,id,leaveTypeCustom leaveType");
         } catch (Exception e) {
             e.printStackTrace();
             return RenderUtils.getFailMap("获取数据有异常");
@@ -144,6 +144,8 @@ public class LeaveController {
     // 2 预览数据
     @RequestMapping(value = "/preview", method = RequestMethod.GET)
     public String preview(Model model) {
+        List<LeaveTypeCustom> typeCustomList = leaveTypeService.findAll();
+        model.addAttribute("typeCustomList", typeCustomList);
         Map<String, Long> allNameMapId = employeeService.findAllNameMapId();
         model.addAttribute("allNameMapId", allNameMapId);
         return dir + "/preview";

@@ -7,10 +7,14 @@ package top.gabin.oa.web.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.StringUtils;
 import top.gabin.oa.web.constant.LeaveType;
+import top.gabin.oa.web.entity.LeaveTypeCustom;
+import top.gabin.oa.web.service.attendance.LeaveTypeService;
+import top.gabin.oa.web.utils.SpringBeanUtils;
 import top.gabin.oa.web.utils.excel.annotation.ExcelField;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,6 +22,16 @@ import java.util.Map;
  */
 public class LeaveImportDTO {
     public LeaveImportDTO() {
+    }
+    public static Map<String, Long> leaveTypeCustomMap = new HashMap<>();
+    static {
+        initCache();
+    }
+    public static void initCache() {
+        List<LeaveTypeCustom> all = SpringBeanUtils.getBean(LeaveTypeService.class).findAll();
+        for (LeaveTypeCustom leaveTypeCustom : all) {
+            leaveTypeCustomMap.put(leaveTypeCustom.getLabel(), leaveTypeCustom.getId());
+        }
     }
 
     public static Map<String, Long> ID_CACHE = new HashMap<String, Long>();
@@ -32,6 +46,15 @@ public class LeaveImportDTO {
     @ExcelField(value = "remark", title = "备注")
     private String remark;
     private Integer leaveType;
+
+    public Long getLeaveTypeCustom() {
+        Long leaveTypeId = leaveTypeCustomMap.get(leaveName);
+        if (leaveTypeId == null) {
+            initCache();
+        }
+        leaveTypeId = leaveTypeCustomMap.get(leaveName);
+        return leaveTypeId;
+    }
 
     public String getRemark() {
         return remark;
