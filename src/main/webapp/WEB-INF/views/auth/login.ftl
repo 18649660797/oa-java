@@ -1,50 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>OA 内测</title>
-    <#include "../include/resource.ftl"/>
+    <title>OA Beta</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+    <!-- 可选的Bootstrap主题文件（一般不用引入） -->
+    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
 </head>
-<body class="login-page">
-<div class="login-box">
-    <form id="J_Form" action="/j_admin_login" method="post" class="form-horizontal">
-        <input style="display: none;" checked type="checkbox" name="_spring_security_remember_me">
-        <div class="control-group">
-            <label class="control-label">用户名：</label>
-            <div class="controls">
-                <input type="text" name="j_username" data-rules="{required:true}" /><br>
-            </div>
+<body>
+
+<div class="container">
+
+    <form class="form-signin" action="/j_admin_login" method="post">
+        <h2 class="form-signin-heading">OA Beta</h2>
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="text" id="inputPassword" name="j_username" class="form-control" placeholder="管理员名称/考勤号" required="true" autofocus="">
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="inputPassword" class="form-control" placeholder="管理员密码/考勤号" required="true" name="j_password" data-rules="{required:true}">
+        <div class="checkbox">
+            <label>
+                <input checked type="checkbox" name="_spring_security_remember_me"> Remember me
+            </label>
         </div>
-        <div class="control-group">
-            <label class="control-label">密码：</label>
-            <div class="controls">
-                <input type="password" name="j_password" data-rules="{required:true}" /><br>
-            </div>
-        </div>
-        <hr/>
-        <div class="row">
-            <div class="form-actions span13 offset3">
-                <button type="submit" class="button button-primary">登录</button>
-                <button type="reset" class="button">重置</button>
-            </div>
-        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
     </form>
-</div>
+
+</div> <!-- /container -->
+</body>
 <script>
-    (function($) {
-        $(function() {
-            var Form = BUI.Form;
-            new Form.Form({
-                srcNode : '#J_Form',
-                submitType : 'normal',
-                callback : function(data){
-                    if (edy.ajaxHelp.handleAjax((data))) {
-                        BUI.Message.Alert("登录成功");
-                        location.href = "/";
-                    }
-                }
-            }).render();
-        });
-    } (jQuery));
+
 </script>
 </body>
 </html>

@@ -85,7 +85,7 @@ public class LeaveController {
     @RequestMapping(value = "/grid", method = RequestMethod.GET)
     @ResponseBody
     public Map<String, Object> grid(HttpServletRequest request) {
-        return criteriaQueryService.queryPage(LeaveImpl.class, request, "id,beginDate,endDate,type.label type,employee.name realName,employee.department.name department,remark");
+        return criteriaQueryService.queryPage(LeaveImpl.class, request, "id,beginDate,endDate,leaveTypeCustom.label type,employee.name realName,employee.department.name department,remark");
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)

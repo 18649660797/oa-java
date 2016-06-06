@@ -80,12 +80,16 @@ public class LeaveHelpController {
         String currentLoginUserName = AuthUtils.getCurrentLoginUserName();
         CriteriaCondition criteriaCondition = CriteriaQueryUtils.parseCondition(request, "eq_employee.attendanceCN", currentLoginUserName);
         PageDTO<LeaveImpl> adminPageDTO = criteriaQueryService.queryPage(LeaveImpl.class, criteriaCondition);
-        return RenderUtils.filterPageDataResult(adminPageDTO, "id,beginDate,endDate,leaveTypeCustom.label type,employee.name realName,employee.department.name department,remark");
+        return RenderUtils.filterPageDataResult(adminPageDTO, "id,beginDate,endDate,leaveTypeCustom.label type,leaveTypeCustom.id typeId,employee.name realName,employee.department.name department,remark");
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> saveRule(LeaveDTO leaveDTO) {
+        String currentLoginUserName = AuthUtils.getCurrentLoginUserName();
+        Employee employee = employeeService.findByAttendanceCN(currentLoginUserName);
+        leaveDTO.setEmployeeId(employee.getId());
+        leaveDTO.setName(employee.getName());
         leaveService.merge(leaveDTO);
         return RenderUtils.SUCCESS_RESULT;
     }
