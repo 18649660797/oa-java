@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "edy_permission")
-public class PermissionImpl extends BasicEntityImpl implements Permission {
+public class PermissionImpl implements Permission {
     @Id
     @TableGenerator(name = "permission_sequences",table = "edy_sequences", pkColumnName = "sequence_name",
             valueColumnName = "sequence_next_hi_value", initialValue = 1000, allocationSize = 100)
