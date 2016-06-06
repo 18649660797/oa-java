@@ -342,6 +342,28 @@ public class AttendanceServiceImpl implements AttendanceService {
                         analysisResult1.add(leaveResult);
                         analysisResults.add(analysisResult1);
                     }
+                    if (analysisResult.getWorkDelayMinutes() > 0) {
+                        List<AnalysisResult> analysisResults = dataMap.get(-1L);
+                        if (analysisResults == null) {
+                            analysisResults = new ArrayList<>();
+                            dataMap.put(-1L, analysisResults);
+                        }
+                        AnalysisResult analysisResult1 = new AnalysisResult();
+                        analysisResult1.setAttendance(analysisResult.getAttendance());
+                        analysisResult1.setWorkDelayMinutes(analysisResult.getWorkDelayMinutes());
+                        analysisResults.add(analysisResult1);
+                    }
+                    if (analysisResult.getLeaveEarlyMinutes() > 0) {
+                        List<AnalysisResult> analysisResults = dataMap.get(-2L);
+                        if (analysisResults == null) {
+                            analysisResults = new ArrayList<>();
+                            dataMap.put(-2L, analysisResults);
+                        }
+                        AnalysisResult analysisResult1 = new AnalysisResult();
+                        analysisResult1.setAttendance(analysisResult.getAttendance());
+                        analysisResult1.setLeaveEarlyMinutes(analysisResult.getLeaveEarlyMinutes());
+                        analysisResults.add(analysisResult1);
+                    }
                 }
             }
         }
@@ -440,6 +462,53 @@ public class AttendanceServiceImpl implements AttendanceService {
                 }
                 j+= 2;
             }
+        }
+        int i = 0;
+        HSSFRow row = sheet.createRow(j++);
+        setValue(row, i++, "部门");
+        setValue(row, i++, "姓名");
+        setValue(row, i++, "日期");
+        setValue(row, i++, "周期");
+        setValue(row, i++, "开始时间");
+        setValue(row, i++, "结束时间");
+        setValue(row, i++, "迟到");
+        List<AnalysisResult> analysisResults1 = leaveGroupMap.get(-1L);
+        for (AnalysisResult analysisResult : analysisResults1) {
+            Attendance attendance = analysisResult.getAttendance();
+            Employee employee = attendance.getEmployee();
+            int k = 0;
+            HSSFRow rowTemp = sheet.createRow(j++);
+            setValue(rowTemp, k++, employee.getDepartment().getName());
+            setValue(rowTemp, k++, employee.getName());
+            setValue(rowTemp, k++, attendance.getWorkDateFormat());
+            setValue(rowTemp, k++, TimeUtils.getDay(attendance.getWorkDate()));
+            setValue(rowTemp, k++, attendance.getAmTime());
+            setValue(rowTemp, k++, attendance.getPmTime());
+            setValue(rowTemp, k++, analysisResult.getWorkDelayMinutes());
+        }
+        j+= 2;
+        i = 0;
+        HSSFRow row2 = sheet.createRow(j++);
+        setValue(row2, i++, "部门");
+        setValue(row2, i++, "姓名");
+        setValue(row2, i++, "日期");
+        setValue(row2, i++, "周期");
+        setValue(row2, i++, "开始时间");
+        setValue(row2, i++, "结束时间");
+        setValue(row2, i++, "早退");
+        List<AnalysisResult> analysisResults2 = leaveGroupMap.get(-2L);
+        for (AnalysisResult analysisResult : analysisResults2) {
+            Attendance attendance = analysisResult.getAttendance();
+            Employee employee = attendance.getEmployee();
+            int k = 0;
+            HSSFRow rowTemp = sheet.createRow(j++);
+            setValue(rowTemp, k++, employee.getDepartment().getName());
+            setValue(rowTemp, k++, employee.getName());
+            setValue(rowTemp, k++, attendance.getWorkDateFormat());
+            setValue(rowTemp, k++, TimeUtils.getDay(attendance.getWorkDate()));
+            setValue(rowTemp, k++, attendance.getAmTime());
+            setValue(rowTemp, k++, attendance.getPmTime());
+            setValue(rowTemp, k++, analysisResult.getLeaveEarlyMinutes());
         }
     }
 
