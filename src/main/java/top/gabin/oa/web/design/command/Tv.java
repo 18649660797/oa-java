@@ -8,7 +8,7 @@ package top.gabin.oa.web.design.command;
  * 电视接口
  * @author linjiabin on  16/5/2
  */
-public interface TV {
+public interface Tv {
     void powerOn();
     void powerOff();
 }
