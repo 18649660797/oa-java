@@ -21,7 +21,7 @@
                     <label class="control-label"><s>*</s>开始时间：</label>
                     <div class="controls">
                     <#if (entity.beginDate)??>
-                        <input type="text" data-rules="{required:true}" class="calendar calendar-time" name="beginDate" value="${(entity.beginDate)?string("Y-M-d H:m:ss")}" />
+                        <input type="text" data-rules="{required:true}" class="calendar calendar-time" name="beginDate" value="${(entity.beginDate)?string("Y-MM-dd HH:mm:ss")}" />
                     <#else>
                         <input type="text" data-rules="{required:true}" class="calendar calendar-time" name="beginDate"  />
                     </#if>
@@ -31,7 +31,7 @@
                     <label class="control-label"><s>*</s>结束时间：</label>
                     <div class="controls">
                     <#if (entity.endDate)??>
-                        <input type="text" data-rules="{required:true}" class="calendar calendar-time" name="endDate" value="${(entity.endDate)?string("Y-M-d H:m:ss")}" />
+                        <input type="text" data-rules="{required:true}" class="calendar calendar-time" name="endDate" value="${(entity.endDate)?string("Y-MM-dd HH:mm:ss")}" />
                     <#else>
                         <input type="text" data-rules="{required:true}" class="calendar calendar-time" name="endDate" />
                     </#if>
