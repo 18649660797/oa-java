@@ -1,0 +1,1 @@
+DELETE FROM `edy_leave_type` WHERE `ID` = 9;
