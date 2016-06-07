@@ -45,6 +45,9 @@
                     Store = Data.Store,
                     columns = [
                         {title: '操作', dataIndex: 'id', width: 60, renderer: function(val, row) {
+                            if (val < 1000) {
+                                return "系统内置";
+                            }
                             return edy.rendererHelp.createJavaScriptLink("edit", val, "编辑");
                         }},
                         {title: 'id', dataIndex: 'id', width: 60},
