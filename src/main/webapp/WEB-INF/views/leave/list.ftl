@@ -94,7 +94,7 @@
                                 if (!ids) {
                                     return edy.alert("至少选择一个记录");
                                 }
-                                edy.confirm("确认要删除选中的账号?", function() {
+                                edy.confirm("确认要删除选中的记录?", function() {
                                     $.post("/leave/delete", {ids: ids}, function(data) {
                                         if (edy.ajaxHelp.handleAjax(data)) {
                                             edy.confirm("删除成功！");
