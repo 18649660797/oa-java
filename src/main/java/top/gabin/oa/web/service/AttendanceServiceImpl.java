@@ -348,21 +348,15 @@ public class AttendanceServiceImpl implements AttendanceService {
                             analysisResults = new ArrayList<>();
                             dataMap.put(-1L, analysisResults);
                         }
-                        AnalysisResult analysisResult1 = new AnalysisResult();
-                        analysisResult1.setAttendance(analysisResult.getAttendance());
-                        analysisResult1.setWorkDelayMinutes(analysisResult.getWorkDelayMinutes());
-                        analysisResults.add(analysisResult1);
+                        analysisResults.add(analysisResult);
                     }
-                    if (analysisResult.getLeaveEarlyMinutes() > 0) {
+                    if (analysisResult.getLeaveEarlyMinutes() > 0 && analysisResult.isImpunityLeaveEarly()) {
                         List<AnalysisResult> analysisResults = dataMap.get(-2L);
                         if (analysisResults == null) {
                             analysisResults = new ArrayList<>();
                             dataMap.put(-2L, analysisResults);
                         }
-                        AnalysisResult analysisResult1 = new AnalysisResult();
-                        analysisResult1.setAttendance(analysisResult.getAttendance());
-                        analysisResult1.setLeaveEarlyMinutes(analysisResult.getLeaveEarlyMinutes());
-                        analysisResults.add(analysisResult1);
+                        analysisResults.add(analysisResult);
                     }
                 }
             }
@@ -458,7 +452,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                     setValue(rowTemp, k++, TimeUtils.getDay(attendance.getWorkDate()));
                     setValue(rowTemp, k++, attendance.getAmTime());
                     setValue(rowTemp, k++, attendance.getPmTime());
-                    setValue(rowTemp, k++, leaveResult.getLeaveMinutes());
+                    setValue(rowTemp, k++, Math.ceil(leaveResult.getLeaveMinutes()/30D) / 2D);
                 }
                 j+= 2;
             }
@@ -484,7 +478,7 @@ public class AttendanceServiceImpl implements AttendanceService {
             setValue(rowTemp, k++, TimeUtils.getDay(attendance.getWorkDate()));
             setValue(rowTemp, k++, attendance.getAmTime());
             setValue(rowTemp, k++, attendance.getPmTime());
-            setValue(rowTemp, k++, analysisResult.getWorkDelayMinutes());
+            setValue(rowTemp, k++, Math.ceil(analysisResult.getWorkDelayMinutes()/30D) / 2D);
         }
         j+= 2;
         i = 0;
@@ -508,7 +502,7 @@ public class AttendanceServiceImpl implements AttendanceService {
             setValue(rowTemp, k++, TimeUtils.getDay(attendance.getWorkDate()));
             setValue(rowTemp, k++, attendance.getAmTime());
             setValue(rowTemp, k++, attendance.getPmTime());
-            setValue(rowTemp, k++, analysisResult.getLeaveEarlyMinutes());
+            setValue(rowTemp, k++, Math.ceil(analysisResult.getLeaveEarlyMinutes()/30D) / 2D);
         }
     }
 

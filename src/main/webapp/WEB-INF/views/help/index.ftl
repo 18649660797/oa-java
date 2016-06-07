@@ -206,7 +206,7 @@
             $http.get("/help/leave/grid?start=" + start + "&limit=" + limit + "&" + decodeURIComponent($scope.pageOptions.params.join("&"))).success(function(response) {
                 $scope.leaveList = response.rows;
                 var total = $scope.pageOptions.total = response.results;
-                var pages = parseInt((total/limit));
+                var pages = Math.ceil((total/limit));
                 var arr = [];
                 for (var i = page - 2; i <= pages; i++) {
                     if (arr.length == 5) {

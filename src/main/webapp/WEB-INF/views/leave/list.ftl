@@ -6,6 +6,7 @@
 <body>
 <div class="row">
     <form id="J_FORM" class="form-panel" action="data" method="post" style="margin-bottom:0;">
+        <input type="hidden" name="sort" value="employee.id asc,beginDate asc"/>
         <div class="panel-title">
             <span>
                 <label>姓名：</label>
@@ -33,6 +34,7 @@
                     </#list>
                 </#if>
                 </select>
+                <label class="control-text">过滤可能重复的数据：</label><input type="checkbox" name="same" />
                 <button type="submit" class="button button-primary">查询>></button>
             </li>
         </ul>
@@ -193,6 +195,8 @@
                 //序列化成对象
                 var obj = form.serializeToObject();
                 obj.start = 0; //返回第一页
+                var lastParams = store.get("lastParams");
+                lastParams["same"] = "";
                 store.load(obj);
                 return false;
             });

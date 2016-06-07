@@ -53,13 +53,6 @@
                     srcNode : '#J_FORM'
                 }).render();
 
-                form.on('beforesubmit',function(ev) {
-                    //序列化成对象
-                    var obj = form.serializeToObject();
-                    obj.start = 0; //返回第一页
-                    store.load(obj);
-                    return false;
-                });
                 var inputEl = $('#J_Month'),
                     monthpicker = new BUI.Calendar.MonthPicker({
                         trigger : inputEl,

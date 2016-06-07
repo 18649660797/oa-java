@@ -23,6 +23,8 @@ import top.gabin.oa.web.service.DepartmentService;
 import top.gabin.oa.web.service.EmployeeService;
 import top.gabin.oa.web.service.LeaveService;
 import top.gabin.oa.web.service.attendance.LeaveTypeService;
+import top.gabin.oa.web.service.criteria.CriteriaCallBack;
+import top.gabin.oa.web.service.criteria.CriteriaCondition;
 import top.gabin.oa.web.service.criteria.CriteriaQueryService;
 import top.gabin.oa.web.service.criteria.CriteriaQueryUtils;
 import top.gabin.oa.web.utils.RenderUtils;
@@ -31,10 +33,12 @@ import top.gabin.oa.web.utils.excel.ImportExcel;
 import top.gabin.oa.web.utils.json.JsonUtils;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -85,7 +89,29 @@ public class LeaveController {
     @RequestMapping(value = "/grid", method = RequestMethod.GET)
     @ResponseBody
     public Map<String, Object> grid(HttpServletRequest request) {
-        return criteriaQueryService.queryPage(LeaveImpl.class, request, "id,beginDate,endDate,leaveTypeCustom.label type,employee.name realName,employee.department.name department,remark");
+        String pros = "id,beginDate,endDate,leaveTypeCustom.label type,employee.name realName,employee.department.name department,remark";
+        CriteriaCondition criteriaCondition = CriteriaQueryUtils.parseCondition(request);
+        final boolean same = "on".equals(request.getParameter("same"));
+        criteriaCondition.setCallBack(new CriteriaCallBack() {
+            @Override
+            public List<Predicate> callback(CriteriaBuilder criteriaBuilder, CriteriaQuery query, Root root) {
+                List<Predicate> predicateList = new ArrayList<Predicate>();
+                if (same) {
+                    Subquery<Long> subquery = query.subquery(Long.class);
+                    Root<LeaveImpl> from = subquery.from(LeaveImpl.class);
+                    Path<Long> id = from.get("id");
+                    subquery.select(id);
+                    Expression beginDate1 = criteriaBuilder.substring(root.get("beginDate"), 1, 10);
+                    Path<String> beginDate = from.get("beginDate");
+                    Expression<String> beginDate2 = criteriaBuilder.substring(beginDate, 1, 10);
+                    subquery.where(criteriaBuilder.and(criteriaBuilder.equal(beginDate1, beginDate2), criteriaBuilder.notEqual(root.get("id"), id), criteriaBuilder.equal(root.get("employee").get("id"), from.get("employee").get("id"))));
+                    predicateList.add(criteriaBuilder.exists(subquery));
+                }
+                return predicateList;
+            }
+        });
+        PageDTO<LeaveImpl> adminPageDTO = criteriaQueryService.queryPage(LeaveImpl.class, criteriaCondition);
+        return RenderUtils.filterPageDataResult(adminPageDTO, pros);
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
