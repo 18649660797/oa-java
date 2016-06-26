@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2015 云智盛世
- * Created with MvelTests.
+ * Created with TestMvel.
  */
 package top.gabin.oa.web.utils.mvel;
 
@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 /**
  * @author linjiabin  on  15/12/22
  */
-public class MvelTests {
-    protected static final Logger logger = LoggerFactory.getLogger(MvelTests.class);
+public class TestMvel {
+    protected static final Logger logger = LoggerFactory.getLogger(TestMvel.class);
     @Test
     public void testExecute() {
         Map<String, Object> vars = new HashMap<String, Object>();

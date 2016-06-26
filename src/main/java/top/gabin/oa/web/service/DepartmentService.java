@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface DepartmentService {
     void merge(DepartmentDTO departmentDTO);
-    void merge(Department department);
+    Department merge(Department department);
     void persist(Department department);
     Department findById(Long id);
     List<Department> findAll();

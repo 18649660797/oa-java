@@ -49,9 +49,10 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     }
 
+    @Transactional("transactionManager")
     @Override
-    public void merge(Department department) {
-        departmentDao.saveOrUpdate(department);
+    public Department merge(Department department) {
+        return departmentDao.saveOrUpdate(department);
     }
 
     @Override
