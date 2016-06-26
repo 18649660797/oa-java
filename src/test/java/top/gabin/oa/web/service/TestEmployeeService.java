@@ -35,7 +35,6 @@ public class TestEmployeeService extends BaseTest {
         employee.setName("林嘉斌");
         employee.setDepartment(department);
         employeeService.merge(employee);
-        logger.info(employee.getId() + "");
         logger.info(employeeService.findByAttendanceCN("A33").getName());
     }
 }
