@@ -37,6 +37,5 @@ public class TestEmployeeService extends BaseTest {
         employeeService.merge(employee);
         logger.info(employee.getId() + "");
         logger.info(employeeService.findByAttendanceCN("A33").getName());
-
     }
 }
