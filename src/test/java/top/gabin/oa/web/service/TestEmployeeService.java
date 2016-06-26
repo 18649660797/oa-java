@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import top.gabin.oa.BaseTest;
 import top.gabin.oa.web.entity.Department;
 import top.gabin.oa.web.entity.DepartmentImpl;
+import top.gabin.oa.web.entity.Employee;
 import top.gabin.oa.web.entity.EmployeeImpl;
 
 import javax.annotation.Resource;
@@ -35,6 +36,7 @@ public class TestEmployeeService extends BaseTest {
         employee.setName("林嘉斌");
         employee.setDepartment(department);
         employeeService.merge(employee);
-        logger.info(employeeService.findByAttendanceCN("A33").getName());
+        Employee a33 = employeeService.findByAttendanceCN("A33");
+        logger.info(a33.getName());
     }
 }
