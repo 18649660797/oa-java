@@ -719,30 +719,32 @@ public class AttendanceServiceImpl implements AttendanceService {
                         row1.createCell(7);
                         row1.createCell(8);
                         long normalLeaveTimes = 0, sickLeaveTimes = 0, offLeaveTimes = 0;
-                        for (LeaveResult leaveResult : leaveList) {
-                            long minutes = leaveResult.getLeaveMinutes();
-                            double hours =  ((int)(minutes / 60D * 100)) / 100d;
-                            String times = hours + "h(" + minutes + ")";
-                            Leave leave = leaveResult.getLeave();
-                            switch (leave.getType()) {
-                                case NORMAL_LEAVE:
-                                    normalLeaveTimes += minutes;
-                                    break;
-                                case SALARY_SICK_LEAVE:
-                                    remark += leave.getType().getLabel() + times;
-                                case SICK_LEAVE:
-                                    sickLeaveTimes += minutes;
-                                    break;
-                                case OFF_LEAVE:
-                                    offLeaveTimes += minutes;
-                                    break;
-                                case OUT_LEAVE:
-                                case FUNERAL_LEAVE:
-                                case YEAR_LEAVE:
-                                case MATERNITY_LEAVE:
-                                case MARRY_LEAVE:
-                                    remark += leave.getType().getLabel() + times;
-                                    break;
+                        if(!leaveList.isEmpty()) {
+                            for (LeaveResult leaveResult : leaveList) {
+                                long minutes = leaveResult.getLeaveMinutes();
+                                double hours = ((int) (minutes / 60D * 100)) / 100d;
+                                String times = hours + "h(" + minutes + ")";
+                                Leave leave = leaveResult.getLeave();
+                                switch (leave.getType()) {
+                                    case NORMAL_LEAVE:
+                                        normalLeaveTimes += minutes;
+                                        break;
+                                    case SALARY_SICK_LEAVE:
+                                        remark += leave.getType().getLabel() + times;
+                                    case SICK_LEAVE:
+                                        sickLeaveTimes += minutes;
+                                        break;
+                                    case OFF_LEAVE:
+                                        offLeaveTimes += minutes;
+                                        break;
+                                    case OUT_LEAVE:
+                                    case FUNERAL_LEAVE:
+                                    case YEAR_LEAVE:
+                                    case MATERNITY_LEAVE:
+                                    case MARRY_LEAVE:
+                                        remark += leave.getType().getLabel() + times;
+                                        break;
+                                }
                             }
                         }
                         if (normalLeaveTimes > 0) {
