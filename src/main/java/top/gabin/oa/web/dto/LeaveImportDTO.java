@@ -46,7 +46,6 @@ public class LeaveImportDTO implements Serializable {
     private Date endDate;
     @ExcelField(value = "remark", title = "备注")
     private String remark;
-    private Integer leaveType;
 
     public Long getLeaveTypeCustom() {
         Long leaveTypeId = leaveTypeCustomMap.get(leaveName);
@@ -76,10 +75,6 @@ public class LeaveImportDTO implements Serializable {
     public String getLeaveType() {
         LeaveType instance = LeaveType.instance(leaveName);
         return instance == null ? null : instance.getType().toString();
-    }
-
-    public void setLeaveType(Integer leaveType) {
-        this.leaveType = leaveType;
     }
 
     public String getLeaveName() {

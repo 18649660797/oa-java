@@ -287,7 +287,7 @@ public class ImportExcel {
 		//log.debug("Import column count:"+annotationList.size());
 		// Get excel data
 		List<E> dataList = new ArrayList<E>();
-		for (int i = this.getDataRowNum(); i <= this.getLastDataRowNum(); i++) {
+		outer : for (int i = this.getDataRowNum(); i <= this.getLastDataRowNum(); i++) {
 			E e = (E)cls.newInstance();
 			int column = 0;
 			Row row = this.getRow(i);
@@ -346,6 +346,7 @@ public class ImportExcel {
 					} catch (Exception ex) {
 						log.info("Get cell value ["+i+","+column+"] error: " + ex.toString());
 						val = null;
+						continue outer;
 					}
 					// set entity value
 					if (os[1] instanceof Field){
