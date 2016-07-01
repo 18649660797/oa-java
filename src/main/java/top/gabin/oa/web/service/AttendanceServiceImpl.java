@@ -101,7 +101,7 @@ public class AttendanceServiceImpl implements AttendanceService {
             attendance.setWorkDateFormat(TimeUtils.format(date, "yyyy-MM-dd"));
             attendance.setWorkDate(date);
             String departmentName = dto.getDepartment();
-            String cn = dto.getCn();
+            String cn = dto.getAttendance();
             Employee employee;
             if (cacheEmployee.containsKey(cn)) {
                 employee = cacheEmployee.get(cn);
