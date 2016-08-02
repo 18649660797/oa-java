@@ -6,7 +6,7 @@ package top.gabin.oa.web.constant;
 public enum LeaveType {
     NORMAL_LEAVE(1, "事假"),
     SICK_LEAVE(2, "病假"),
-    OFF_LEAVE(3, "调休"),
+    OFF_LEAVE(3, "调休假"),
     OUT_LEAVE(4, "外出"),
     FUNERAL_LEAVE(5, "丧假"),
     YEAR_LEAVE(6, "年假"),

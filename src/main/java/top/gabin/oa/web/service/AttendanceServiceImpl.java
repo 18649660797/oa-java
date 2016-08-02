@@ -721,6 +721,9 @@ public class AttendanceServiceImpl implements AttendanceService {
                         long normalLeaveTimes = 0, sickLeaveTimes = 0, offLeaveTimes = 0;
                         if(!leaveList.isEmpty()) {
                             for (LeaveResult leaveResult : leaveList) {
+                                if (leaveResult == null) {
+                                    continue;
+                                }
                                 long minutes = leaveResult.getLeaveMinutes();
                                 double hours = ((int) (minutes / 60D * 100)) / 100d;
                                 String times = hours + "h(" + minutes + ")";

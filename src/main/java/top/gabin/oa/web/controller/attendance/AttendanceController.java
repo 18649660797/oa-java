@@ -150,6 +150,7 @@ public class AttendanceController {
             HSSFWorkbook hssfWorkbook = attendanceService.buildAnalysisExcel(data);
             RenderUtils.renderExcel(response, hssfWorkbook, "考勤分析旧版_" + month);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("导出Excel文件出错", e);
         }
     }
